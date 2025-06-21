@@ -383,92 +383,92 @@ dhammastream/
 // 📚 dhamma_content collection
 interface DhammaContent {
   // Original fields from SQLite dataset
-  id: string
-  title: string
-  speaker?: string
-  contentType: "audio" | "video" | "ebook" | "other"
-  fileUrl: string // External URL: https://dhammadownload.com/MP3Library/[Teacher]/[File].mp3
-  fileSizeEstimate?: number
-  durationEstimate?: number
-  language: string
-  category?: string
-  tags: string[]
-  description?: string
-  dateRecorded?: Timestamp
-  sourcePage?: string
-  scrapedDate?: Timestamp
+  id: string;
+  title: string;
+  speaker?: string;
+  contentType: "audio" | "video" | "ebook" | "other";
+  fileUrl: string; // External URL: https://dhammadownload.com/MP3Library/[Teacher]/[File].mp3
+  fileSizeEstimate?: number;
+  durationEstimate?: number;
+  language: string;
+  category?: string;
+  tags: string[];
+  description?: string;
+  dateRecorded?: Timestamp;
+  sourcePage?: string;
+  scrapedDate?: Timestamp;
 
   // Enhanced fields for app (script-managed)
-  createdAt: Timestamp
-  updatedAt: Timestamp
-  downloadCount: number
-  avgRating: number
-  reviewCount: number
-  featured: boolean
-  trending: boolean
-  difficulty: "beginner" | "intermediate" | "advanced"
-  transcription?: string
-  thumbnailUrl?: string // External or generated thumbnail
-  chapters?: Chapter[]
-  relatedContent: string[] // Reference to other content IDs
-  developerNotes?: string // Internal developer notes
-  qualityScore?: number // Script-assigned quality rating
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+  downloadCount: number;
+  avgRating: number;
+  reviewCount: number;
+  featured: boolean;
+  trending: boolean;
+  difficulty: "beginner" | "intermediate" | "advanced";
+  transcription?: string;
+  thumbnailUrl?: string; // External or generated thumbnail
+  chapters?: Chapter[];
+  relatedContent: string[]; // Reference to other content IDs
+  developerNotes?: string; // Internal developer notes
+  qualityScore?: number; // Script-assigned quality rating
 }
 
 // 👤 users collection (Registration for personal features only)
 interface User {
-  uid: string
-  email: string
-  displayName?: string
-  photoURL?: string
+  uid: string;
+  email: string;
+  displayName?: string;
+  photoURL?: string;
 
   // Personal organization features only
-  preferences: UserPreferences
-  favoriteContentIds: string[] // Personal favorites list
-  createdAt: Timestamp
-  lastActiveAt: Timestamp
-  totalListeningTime: number
-  achievementBadges: string[] // Listening milestones
+  preferences: UserPreferences;
+  favoriteContentIds: string[]; // Personal favorites list
+  createdAt: Timestamp;
+  lastActiveAt: Timestamp;
+  totalListeningTime: number;
+  achievementBadges: string[]; // Listening milestones
 }
 
 // 🎯 user_progress subcollection
 interface ContentProgress {
-  contentId: string
-  userId: string
-  progress: number // 0-100 percentage
-  currentPosition: number // seconds
-  completed: boolean
-  bookmarks: Bookmark[]
-  notes: Note[]
-  rating?: number
-  lastAccessed: Timestamp
-  totalListenTime: number
+  contentId: string;
+  userId: string;
+  progress: number; // 0-100 percentage
+  currentPosition: number; // seconds
+  completed: boolean;
+  bookmarks: Bookmark[];
+  notes: Note[];
+  rating?: number;
+  lastAccessed: Timestamp;
+  totalListenTime: number;
 }
 
 // 📝 playlists collection
 interface Playlist {
-  id: string
-  userId: string
-  title: string
-  description?: string
-  isPublic: boolean
-  contentIds: string[]
-  createdAt: Timestamp
-  updatedAt: Timestamp
-  followerCount: number
-  thumbnailUrl?: string
+  id: string;
+  userId: string;
+  title: string;
+  description?: string;
+  isPublic: boolean;
+  contentIds: string[];
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+  followerCount: number;
+  thumbnailUrl?: string;
 }
 
 // 💬 reviews collection
 interface Review {
-  id: string
-  contentId: string
-  userId: string
-  rating: number // 1-5
-  comment?: string
-  helpful: number // helpfulness votes
-  createdAt: Timestamp
-  updatedAt: Timestamp
+  id: string;
+  contentId: string;
+  userId: string;
+  rating: number; // 1-5
+  comment?: string;
+  helpful: number; // helpfulness votes
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
 }
 ```
 
@@ -664,9 +664,9 @@ npm install --save-dev \
 
 ```typescript
 // vite.config.ts
-import { defineConfig } from "vite"
-import react from "@vitejs/plugin-react"
-import tailwindcss from "@tailwindcss/vite"
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   plugins: [
@@ -698,7 +698,7 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: "./src/test/setup.ts"
   }
-})
+});
 ```
 
 ### 3. Setup TypeScript 5.8 Configuration
@@ -986,19 +986,19 @@ This modern setup provides you with:
 ```typescript
 // Import script interfaces
 interface ImportJobStatus {
-  id: string
-  status: "pending" | "processing" | "completed" | "failed"
-  totalRecords: number
-  processedRecords: number
-  failedRecords: ImportError[]
-  startedAt: Timestamp
-  completedAt?: Timestamp
+  id: string;
+  status: "pending" | "processing" | "completed" | "failed";
+  totalRecords: number;
+  processedRecords: number;
+  failedRecords: ImportError[];
+  startedAt: Timestamp;
+  completedAt?: Timestamp;
 }
 
 interface ImportError {
-  recordId: string
-  error: string
-  originalData: any
+  recordId: string;
+  error: string;
+  originalData: any;
 }
 ```
 
@@ -1381,7 +1381,7 @@ npm run validate-data admin@yourcompany.com
 
 ```typescript
 // Firebase Cloud Function to set admin claims
-import { auth } from "firebase-admin"
+import { auth } from "firebase-admin";
 
 export const setAdminClaim = functions.https.onCall(async (data, context) => {
   // Only allow existing admins to create new admins
@@ -1389,107 +1389,107 @@ export const setAdminClaim = functions.https.onCall(async (data, context) => {
     throw new functions.https.HttpsError(
       "permission-denied",
       "Only admins can set admin claims"
-    )
+    );
   }
 
-  const { uid } = data
+  const { uid } = data;
 
   try {
-    await auth().setCustomUserClaims(uid, { admin: true })
-    return { message: `Admin claim set for user ${uid}` }
+    await auth().setCustomUserClaims(uid, { admin: true });
+    return { message: `Admin claim set for user ${uid}` };
   } catch (error) {
     throw new functions.https.HttpsError(
       "internal",
       "Error setting admin claim"
-    )
+    );
   }
-})
+});
 
 // Initial admin setup (run once)
 export const setInitialAdmin = functions.https.onCall(async (data, context) => {
-  const { email } = data
+  const { email } = data;
 
   // Hardcode first admin email for initial setup
-  const INITIAL_ADMIN_EMAIL = "your-admin@email.com"
+  const INITIAL_ADMIN_EMAIL = "your-admin@email.com";
 
   if (email !== INITIAL_ADMIN_EMAIL) {
-    throw new functions.https.HttpsError("permission-denied", "Unauthorized")
+    throw new functions.https.HttpsError("permission-denied", "Unauthorized");
   }
 
   try {
-    const user = await auth().getUserByEmail(email)
-    await auth().setCustomUserClaims(user.uid, { admin: true })
-    return { message: "Initial admin set successfully" }
+    const user = await auth().getUserByEmail(email);
+    await auth().setCustomUserClaims(user.uid, { admin: true });
+    return { message: "Initial admin set successfully" };
   } catch (error) {
-    throw new functions.https.HttpsError("not-found", "User not found")
+    throw new functions.https.HttpsError("not-found", "User not found");
   }
-})
+});
 ```
 
 #### **Frontend Admin Verification**
 
 ```typescript
 // hooks/useAuth.ts
-import { useAuthState } from "react-firebase-hooks/auth"
-import { auth } from "@/services/firebase"
-import { useEffect, useState } from "react"
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "@/services/firebase";
+import { useEffect, useState } from "react";
 
 interface AuthUser {
-  uid: string
-  email: string | null
-  isAdmin: boolean
-  loading: boolean
+  uid: string;
+  email: string | null;
+  isAdmin: boolean;
+  loading: boolean;
 }
 
 export const useAuth = (): AuthUser => {
-  const [user, loading] = useAuthState(auth)
-  const [isAdmin, setIsAdmin] = useState(false)
-  const [claimsLoading, setClaimsLoading] = useState(true)
+  const [user, loading] = useAuthState(auth);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [claimsLoading, setClaimsLoading] = useState(true);
 
   useEffect(() => {
     const checkAdminClaims = async () => {
       if (user) {
         try {
-          const idTokenResult = await user.getIdTokenResult()
-          setIsAdmin(!!idTokenResult.claims.admin)
+          const idTokenResult = await user.getIdTokenResult();
+          setIsAdmin(!!idTokenResult.claims.admin);
         } catch (error) {
-          console.error("Error checking admin claims:", error)
-          setIsAdmin(false)
+          console.error("Error checking admin claims:", error);
+          setIsAdmin(false);
         }
       } else {
-        setIsAdmin(false)
+        setIsAdmin(false);
       }
-      setClaimsLoading(false)
-    }
+      setClaimsLoading(false);
+    };
 
-    checkAdminClaims()
-  }, [user])
+    checkAdminClaims();
+  }, [user]);
 
   return {
     uid: user?.uid || "",
     email: user?.email || null,
     isAdmin,
     loading: loading || claimsLoading
-  }
-}
+  };
+};
 
 // hooks/useAdminOnly.ts
-import { useAuth } from "./useAuth"
-import { useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import { useAuth } from "./useAuth";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const useAdminOnly = (redirectTo: string = "/") => {
-  const { isAdmin, loading } = useAuth()
-  const navigate = useNavigate()
+  const { isAdmin, loading } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!loading && !isAdmin) {
-      navigate(redirectTo)
+      navigate(redirectTo);
     }
-  }, [isAdmin, loading, navigate, redirectTo])
+  }, [isAdmin, loading, navigate, redirectTo]);
 
-  return { isAdmin, loading }
-}
+  return { isAdmin, loading };
+};
 ```
 
 #### **Admin Route Protection**
