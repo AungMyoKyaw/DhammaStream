@@ -1,6 +1,9 @@
 {
   "name": "@dhammastream/firebase-seeder",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=22"
+  },
   "main": "src/index.ts",
   "scripts": {
     "seed": "tsx src/index.ts"

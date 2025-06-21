@@ -9,3 +9,5 @@ For every request, Copilot should:
 - Adhere to the project’s coding standards, style conventions, and formatting rules.
 - Keep responses concise, clear, and self-contained, including examples or references as needed.
 - Use Conventional Commits: before committing, review file changes and write meaningful commit messages.
+
+#codebase

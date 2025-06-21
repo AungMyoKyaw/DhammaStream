@@ -18,6 +18,18 @@ A progressive web app for streaming and managing Dhamma (Buddhist teachings) con
 └── README.md                  📘 This documentation file
 ```
 
+<!-- Mermaid diagram for repository structure -->
+```mermaid
+graph TB
+  Root["DhammaStream"] --> data["data/"]
+  Root --> docs["docs/"]
+  Root --> packages["packages/"]
+  packages --> firebaseSeeder["firebase-seeder/"]
+  firebaseSeeder --> src["src/"]
+  firebaseSeeder --> dataFolder["data/"]
+  firebaseSeeder --> key["serviceAccountKey.json"]
+```
+
 ## Getting Started
 
 1. Install global prerequisites:
