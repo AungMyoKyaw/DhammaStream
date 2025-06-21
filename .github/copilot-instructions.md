@@ -8,3 +8,4 @@ For every request, Copilot should:
 - Utilize Model Context Protocol (MCP) tools to gather and manage contextual data.
 - Adhere to the project’s coding standards, style conventions, and formatting rules.
 - Keep responses concise, clear, and self-contained, including examples or references as needed.
+- Use Conventional Commits: before committing, review file changes and write meaningful commit messages.
