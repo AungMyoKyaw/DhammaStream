@@ -19,6 +19,7 @@ A progressive web app for streaming and managing Dhamma (Buddhist teachings) con
 ```
 
 <!-- Mermaid diagram for repository structure -->
+
 ```mermaid
 graph TB
   Root["DhammaStream"] --> data["data/"]
@@ -33,16 +34,19 @@ graph TB
 ## Getting Started
 
 1. Install global prerequisites:
+
    - Node.js v16+ and npm
    - Firebase CLI (`npm install -g firebase-tools`)
 
 2. Clone the repo:
+
    ```bash
    git clone https://github.com/AungMyoKyaw/DhammaStream.git
    cd DhammaStream
    ```
 
 3. Migrate data to Firestore:
+
    ```bash
    cd packages/firebase-seeder
    npm install
@@ -56,6 +60,7 @@ graph TB
 ## Documentation
 
 See `docs/` for planning, architecture, and Firebase setup guides:
+
 - `DhammaStream-App-Planning.md`
 - `Firebase-Setup-Plan.md`
 
