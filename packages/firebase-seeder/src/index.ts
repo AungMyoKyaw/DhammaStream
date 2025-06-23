@@ -85,9 +85,16 @@ async function main() {
     `Resuming from index ${state.lastProcessedIndex} of ${total}; ${dailyLimit - state.dailyProcessedCount} writes remaining today.`
   );
 
-  const chunkSize = 100;
-  for (let i = state.lastProcessedIndex; i < total; i += chunkSize) {
-    const rawChunk = rows.slice(i, i + chunkSize);
+  // Process records in parallel with concurrency limit
+  const collectionMap: Record<string, string> = {
+    audio: "sermons",
+    video: "videos",
+    ebook: "ebooks",
+    other: "others"
+  };
+  const concurrentLimit = 10;
+  let i = state.lastProcessedIndex;
+  while (i < total) {
     const remaining = dailyLimit - state.dailyProcessedCount;
     if (remaining <= 0) {
       console.error(
@@ -96,18 +103,15 @@ async function main() {
       await saveState(state);
       process.exit(1);
     }
-    const chunk = rawChunk.slice(0, Math.min(rawChunk.length, remaining));
-    const batchNum = Math.floor(i / chunkSize) + 1;
-    const start = i + 1;
-    const end = i + chunk.length;
-    console.log(
-      `Seeding chunk ${batchNum}/${Math.ceil(total / chunkSize)}: docs ${start}-${end} of ${total}`
-    );
-
-    // Use WriteBatch for atomic upsert per chunk
-    const batch = firestore.batch();
-    for (const row of chunk) {
-      const docRef = firestore.collection("sermons").doc(row.id.toString());
+    // Determine how many to process in this batch
+    const batchCount = Math.min(concurrentLimit, total - i, remaining);
+    const tasks: Promise<void>[] = [];
+    for (let c = 0; c < batchCount; c++, i++) {
+      const row = rows[i];
+      const collectionName = collectionMap[row.content_type] || "content";
+      const docRef = firestore
+        .collection(collectionName)
+        .doc(row.id.toString());
       const data = {
         title: row.title,
         speaker: row.speaker || null,
@@ -130,49 +134,22 @@ async function main() {
           ? admin.firestore.Timestamp.fromDate(new Date(row.created_at))
           : admin.firestore.Timestamp.now()
       };
-      // Upsert: create or update existing document
-      batch.set(docRef, data, { merge: true });
-    }
-    // Commit batch with retry logic
-    let commitAttempts = 0;
-    while (true) {
-      try {
-        await batch.commit();
-        console.log(
-          `Chunk ${batchNum} seeded successfully (${end}/${total} docs processed).`
-        );
-        break;
-      } catch (err) {
-        commitAttempts++;
-        console.error(
-          `Error committing chunk ${batchNum}, attempt ${commitAttempts}:`,
-          err
-        );
-        if (commitAttempts >= 3) {
-          console.error(
-            `Failed to commit chunk ${batchNum} after ${commitAttempts} attempts.`
-          );
-          throw err;
-        }
-        // Exponential backoff before retry
-        const backoff = commitAttempts * 1000;
-        console.log(`Retrying chunk ${batchNum} in ${backoff}ms...`);
-        await new Promise((resolve) => setTimeout(resolve, backoff));
-      }
-    }
-    // Update state.dailyProcessedCount & state.lastProcessedIndex
-    state.dailyProcessedCount += chunk.length;
-    state.lastProcessedIndex += chunk.length;
-    await saveState(state);
-
-    if (rawChunk.length > remaining) {
-      console.error(
-        `Daily limit reached while seeding chunk. Processed ${state.dailyProcessedCount} docs today. Resume tomorrow.`
+      tasks.push(
+        docRef
+          .set(data, { merge: true })
+          .then(() => console.log(`Seeded doc ${i + 1}/${total}`))
+          .catch((err) => {
+            console.error(`Error seeding doc ${i + 1}:`, err);
+            throw err;
+          })
       );
-      process.exit(1);
     }
-    // Optional delay between chunks to avoid rate limits
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // Await parallel execution of this batch
+    await Promise.all(tasks);
+    // Update state and persist
+    state.dailyProcessedCount += batchCount;
+    state.lastProcessedIndex = i;
+    await saveState(state);
   }
 
   console.log(`Successfully seeded all ${total} documents. Clearing state.`);
