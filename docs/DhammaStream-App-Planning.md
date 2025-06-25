@@ -66,6 +66,30 @@ This project builds upon the existing [myanmar-dhamma-catalog](https://github.co
 - **WisdomWave** - Broader appeal, learning emphasis
 - **DharmaHub** - Central repository concept
 
+```js
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyDMNDYIcGMe0lkrpUI1uORq0rH9ZIk-e8c",
+  authDomain: "dhammastream-app.firebaseapp.com",
+  projectId: "dhammastream-app",
+  storageBucket: "dhammastream-app.firebasestorage.app",
+  messagingSenderId: "1021419256809",
+  appId: "1:1021419256809:web:4f92ce36fa104cddaae978",
+  measurementId: "G-40GP59YT44"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+```
+
 ---
 
 ## 🎯 Comprehensive Requirements Analysis
