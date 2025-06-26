@@ -31,7 +31,7 @@ related: "[[006-project/dhamma-talks-dataset/project-plan]]"
 # DhammaStream - React App Planning Document
 
 **Project**: DhammaStream
-**Technology Stack**: Vite + TypeScript + React + Firebase
+**Technology Stack**: Vite + TypeScript + React + Firebase + shadcn/ui
 **Data Source**: [myanmar-dhamma-catalog](https://github.com/AungMyoKyaw/myanmar-dhamma-catalog) SQLite Database → Firebase Migration via Script
 **Purpose**: Modern progressive web app for streaming and managing Dhamma content
 
@@ -88,6 +88,18 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
+---
+
+## 🖌 UI Library & Design Inspiration
+
+- **UI Library**: shadcn/ui
+- **Design Inspiration**: Apple Music-like interface
+- **Media Modes**: Ability to read (PDF), listen (audio), and watch (video) Dhamma content
+- **Home Page Random Content**:
+  - Random monk profile always displayed
+  - Random audio, video, and PDF content always populated
+
+---
 ```
 
 ---
