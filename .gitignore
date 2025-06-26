@@ -126,3 +126,4 @@ dist
 
 # Firebase seeder service account key
 packages/firebase-seeder/serviceAccountKey.json
+.DS_Store
