@@ -86,11 +86,11 @@ async function main() {
   );
 
   // Process records in parallel with concurrency limit
+  // Only seed three collections: sermons, videos, ebooks
   const collectionMap: Record<string, string> = {
     audio: "sermons",
     video: "videos",
-    ebook: "ebooks",
-    other: "others"
+    ebook: "ebooks"
   };
   const concurrentLimit = 10;
   let i = state.lastProcessedIndex;
@@ -108,7 +108,13 @@ async function main() {
     const tasks: Promise<void>[] = [];
     for (let c = 0; c < batchCount; c++, i++) {
       const row = rows[i];
-      const collectionName = collectionMap[row.content_type] || "content";
+      const collectionName = collectionMap[row.content_type];
+      if (!collectionName) {
+        console.log(
+          `Skipping row ${i + 1} with unsupported content type '${row.content_type}'`
+        );
+        continue;
+      }
       const docRef = firestore
         .collection(collectionName)
         .doc(row.id.toString());
