@@ -1,25 +1,15 @@
-// Main Content service for DhammaStream
+// Optimized Content service - No pagination, loads all data upfront for performance
 import type {
   DhammaContent,
   SearchQuery,
   SearchResult,
   ContentFilters,
-  Speaker,
-  PaginatedResponse
+  Speaker
 } from "@/types";
 import { db } from "../firebase";
-import {
-  collection,
-  getDocs,
-  query,
-  orderBy,
-  doc,
-  getDoc,
-  limit as firestoreLimit,
-  type QueryDocumentSnapshot
-} from "firebase/firestore";
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
 
-// In-memory cache for all content
+// In-memory cache for all content to eliminate repeated Firestore calls
 interface ContentCache {
   ebooks: DhammaContent[];
   sermons: DhammaContent[];
@@ -33,7 +23,7 @@ const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 // Helper function to convert Firestore document to DhammaContent
 function convertFirestoreDoc(
-  doc: QueryDocumentSnapshot,
+  doc: any,
   contentType: DhammaContent["contentType"]
 ): DhammaContent {
   const data = doc.data();
@@ -51,24 +41,10 @@ function convertFirestoreDoc(
   } as DhammaContent;
 }
 
-// Get collection name for content type
-function getCollectionName(contentType: DhammaContent["contentType"]): string {
-  switch (contentType) {
-    case "ebook":
-      return "ebooks";
-    case "sermon":
-      return "sermons";
-    case "video":
-      return "videos";
-    default:
-      return "sermons";
-  }
-}
-
 // Check Firebase connection
 async function checkFirebaseConnection(): Promise<boolean> {
   try {
-    const testQuery = query(collection(db, "sermons"), firestoreLimit(1));
+    const testQuery = query(collection(db, "sermons"));
     const snapshot = await getDocs(testQuery);
     return snapshot.size >= 0;
   } catch (error) {
@@ -77,11 +53,11 @@ async function checkFirebaseConnection(): Promise<boolean> {
   }
 }
 
-// Load all content into cache
+// Load all content from all collections into memory cache
 async function loadAllContent(): Promise<ContentCache> {
-  console.log("🔄 Loading content into cache...");
-  const isConnected = await checkFirebaseConnection();
+  console.log("🔄 Loading all content into memory cache...");
 
+  const isConnected = await checkFirebaseConnection();
   if (!isConnected) {
     console.log("❌ Firebase not accessible, using mock data");
     return {
@@ -101,40 +77,48 @@ async function loadAllContent(): Promise<ContentCache> {
     lastFetch: Date.now()
   };
 
-  // Load content from each collection
-  for (const [type, collectionName] of [
-    ["ebook", "ebooks"],
-    ["sermon", "sermons"],
-    ["video", "videos"]
-  ] as const) {
+  const contentTypes: Array<{
+    type: DhammaContent["contentType"];
+    collectionName: string;
+  }> = [
+    { type: "ebook", collectionName: "ebooks" },
+    { type: "sermon", collectionName: "sermons" },
+    { type: "video", collectionName: "videos" }
+  ];
+
+  // Load all content types in parallel for maximum performance
+  const loadPromises = contentTypes.map(async ({ type, collectionName }) => {
     try {
-      console.log(`📚 Loading ${collectionName}...`);
+      console.log(`📚 Loading all ${collectionName}...`);
       const q = query(
         collection(db, collectionName),
         orderBy("createdAt", "desc")
       );
-      const snapshot = await getDocs(q);
-      const items: DhammaContent[] = [];
+      const querySnapshot = await getDocs(q);
 
-      snapshot.forEach((doc) => {
+      const items: DhammaContent[] = [];
+      querySnapshot.forEach((doc) => {
         items.push(convertFirestoreDoc(doc, type));
       });
 
-      if (type === "ebook") cache.ebooks = items;
-      else if (type === "sermon") cache.sermons = items;
-      else if (type === "video") cache.videos = items;
-
-      console.log(`✅ Loaded ${items.length} ${type}s`);
+      console.log(`✅ Loaded ${items.length} items from ${collectionName}`);
+      return { type, items };
     } catch (error) {
       console.error(`❌ Error loading ${collectionName}:`, error);
-      const mockItems = getMockContent(type);
-      if (type === "ebook") cache.ebooks = mockItems;
-      else if (type === "sermon") cache.sermons = mockItems;
-      else if (type === "video") cache.videos = mockItems;
+      return { type, items: getMockContent(type) };
     }
-  }
+  });
 
-  // Generate speakers list
+  const results = await Promise.all(loadPromises);
+
+  // Populate cache
+  results.forEach(({ type, items }) => {
+    if (type === "ebook") cache.ebooks = items;
+    else if (type === "sermon") cache.sermons = items;
+    else if (type === "video") cache.videos = items;
+  });
+
+  // Extract unique speakers from all content
   const allContent = [...cache.ebooks, ...cache.sermons, ...cache.videos];
   const speakerNames = new Set<string>();
   allContent.forEach((content) => {
@@ -151,12 +135,12 @@ async function loadAllContent(): Promise<ContentCache> {
     }));
 
   console.log(
-    `🎯 Cache loaded: ${allContent.length} items, ${cache.speakers.length} speakers`
+    `🎯 Cache loaded: ${allContent.length} total items, ${cache.speakers.length} speakers`
   );
   return cache;
 }
 
-// Get or refresh cache
+// Get or refresh content cache
 async function getContentCache(): Promise<ContentCache> {
   if (!contentCache || Date.now() - contentCache.lastFetch > CACHE_DURATION) {
     contentCache = await loadAllContent();
@@ -164,44 +148,50 @@ async function getContentCache(): Promise<ContentCache> {
   return contentCache;
 }
 
-// EXPORTED FUNCTIONS
+// Fetch content by ID from cache
 export async function getContentById(
   id: string,
   contentType: DhammaContent["contentType"]
 ): Promise<DhammaContent | null> {
   try {
-    // Try Firebase first
-    const collectionName = getCollectionName(contentType);
-    const docRef = doc(db, collectionName, id);
-    const docSnap = await getDoc(docRef);
+    console.log(`🔍 Fetching content by ID: ${id} (${contentType})`);
 
-    if (docSnap.exists()) {
-      return convertFirestoreDoc(docSnap as QueryDocumentSnapshot, contentType);
-    }
-
-    // Fall back to cache
     const cache = await getContentCache();
-    let contentArray: DhammaContent[] = [];
+    let contentArray: DhammaContent[];
 
     if (contentType === "ebook") contentArray = cache.ebooks;
     else if (contentType === "sermon") contentArray = cache.sermons;
-    else if (contentType === "video") contentArray = cache.videos;
+    else contentArray = cache.videos;
 
-    return contentArray.find((item) => item.id === id) || null;
+    const content = contentArray.find((item) => item.id === id);
+
+    if (content) {
+      console.log(`✅ Found content: ${content.title}`);
+      return content;
+    } else {
+      console.log(`❌ Content not found: ${id}`);
+      return null;
+    }
   } catch (error) {
-    console.error("Error fetching content by ID:", error);
+    console.error("❌ Error fetching content by ID:", error);
     return null;
   }
 }
 
+// Get all content with filtering and sorting (no pagination)
 export async function getContent(
   filters: ContentFilters = {},
+  _page = 1,
+  _pageLimit = 50,
   sortBy: "createdAt" | "title" = "createdAt",
   sortOrder: "asc" | "desc" = "desc"
-): Promise<PaginatedResponse<DhammaContent>> {
+): Promise<{ items: DhammaContent[]; total: number; hasMore: boolean }> {
   try {
+    console.log("🔄 Fetching all content...", { filters, sortBy, sortOrder });
+
     const cache = await getContentCache();
     const contentTypes = filters.contentType || ["ebook", "sermon", "video"];
+
     let allContent: DhammaContent[] = [];
 
     // Collect content from requested types
@@ -213,7 +203,7 @@ export async function getContent(
     });
 
     // Apply filters
-    if (filters.speakers?.length) {
+    if (filters.speakers && filters.speakers.length > 0) {
       allContent = allContent.filter((content) =>
         filters.speakers?.some((speaker) =>
           content.speaker.toLowerCase().includes(speaker.toLowerCase())
@@ -221,15 +211,22 @@ export async function getContent(
       );
     }
 
-    if (filters.categories?.length) {
+    if (filters.categories && filters.categories.length > 0) {
       allContent = allContent.filter((content) =>
         filters.categories?.includes(content.category)
       );
     }
 
-    if (filters.languages?.length) {
+    if (filters.languages && filters.languages.length > 0) {
       allContent = allContent.filter((content) =>
         filters.languages?.includes(content.language)
+      );
+    }
+
+    if (filters.difficulty && filters.difficulty.length > 0) {
+      allContent = allContent.filter(
+        (content) =>
+          content.difficulty && filters.difficulty?.includes(content.difficulty)
       );
     }
 
@@ -239,49 +236,94 @@ export async function getContent(
       );
     }
 
+    if (filters.minDuration) {
+      allContent = allContent.filter(
+        (content) =>
+          (content.durationEstimate || 0) >= (filters.minDuration || 0)
+      );
+    }
+
+    if (filters.maxDuration) {
+      allContent = allContent.filter(
+        (content) =>
+          (content.durationEstimate || 0) <= (filters.maxDuration || 0)
+      );
+    }
+
     // Sort content
     allContent.sort((a, b) => {
       let comparison = 0;
-      if (sortBy === "title") {
-        comparison = a.title.localeCompare(b.title);
-      } else {
-        comparison = a.createdAt.getTime() - b.createdAt.getTime();
+
+      switch (sortBy) {
+        case "title":
+          comparison = a.title.localeCompare(b.title);
+          break;
+        case "createdAt":
+        default:
+          comparison = a.createdAt.getTime() - b.createdAt.getTime();
+          break;
       }
+
       return sortOrder === "desc" ? -comparison : comparison;
     });
 
+    console.log(`✅ Filtered and sorted ${allContent.length} items`);
     return {
       items: allContent,
       total: allContent.length,
-      page: 1,
-      limit: allContent.length,
-      hasMore: false
+      hasMore: false // No pagination
     };
   } catch (error) {
-    console.error("Error fetching content:", error);
+    console.error("❌ Error fetching all content:", error);
     return {
-      items: [],
+      items: getMockContent(),
       total: 0,
-      page: 1,
-      limit: 0,
       hasMore: false
     };
   }
 }
 
+// Get featured content
+export async function getFeaturedContent(limit = 10): Promise<DhammaContent[]> {
+  try {
+    console.log("🔄 Fetching featured content...");
+
+    const result = await getContent(
+      { featured: true },
+      1,
+      limit,
+      "createdAt",
+      "desc"
+    );
+    const featured = result.items.slice(0, limit);
+
+    console.log(`✅ Found ${featured.length} featured items`);
+    return featured;
+  } catch (error) {
+    console.error("❌ Error fetching featured content:", error);
+    return getMockContent()
+      .filter((c) => c.featured)
+      .slice(0, limit);
+  }
+}
+
+// Search content with advanced filtering
 export async function searchContent(
   searchQuery: SearchQuery
 ): Promise<SearchResult> {
   try {
+    console.log("🔍 Searching content...", searchQuery);
+
     const cache = await getContentCache();
     const contentTypes = searchQuery.filters?.contentType || [
       "ebook",
       "sermon",
       "video"
     ];
+
     let allContent: DhammaContent[] = [];
 
-    // Collect content
+    // Collect content from requested types
     contentTypes.forEach((type) => {
       if (type === "ebook") allContent = [...allContent, ...cache.ebooks];
       else if (type === "sermon")
@@ -289,22 +331,32 @@ export async function searchContent(
       else if (type === "video") allContent = [...allContent, ...cache.videos];
     });
 
-    // Apply search filter
+    // Apply search query if provided
     if (searchQuery.query?.trim()) {
       const searchLower = searchQuery.query.toLowerCase();
       allContent = allContent.filter((content) => {
+        const titleMatch = content.title.toLowerCase().includes(searchLower);
+        const descMatch =
+          content.description?.toLowerCase().includes(searchLower) || false;
+        const speakerMatch = content.speaker
+          .toLowerCase()
+          .includes(searchLower);
+        const tagsMatch = content.tags.toLowerCase().includes(searchLower);
+        const categoryMatch = content.category
+          .toLowerCase()
+          .includes(searchLower);
+
         return (
-          content.title.toLowerCase().includes(searchLower) ||
-          content.description?.toLowerCase().includes(searchLower) ||
-          content.speaker.toLowerCase().includes(searchLower) ||
-          content.tags.toLowerCase().includes(searchLower) ||
-          content.category.toLowerCase().includes(searchLower)
+          titleMatch || descMatch || speakerMatch || tagsMatch || categoryMatch
         );
       });
     }
 
-    // Apply other filters
-    if (searchQuery.filters?.speakers?.length) {
+    // Apply additional filters
+    if (
+      searchQuery.filters?.speakers &&
+      searchQuery.filters.speakers.length > 0
+    ) {
       allContent = allContent.filter((content) =>
         searchQuery.filters?.speakers?.some((speaker) =>
           content.speaker.toLowerCase().includes(speaker.toLowerCase())
@@ -312,100 +364,121 @@ export async function searchContent(
       );
     }
 
+    if (
+      searchQuery.filters?.categories &&
+      searchQuery.filters.categories.length > 0
+    ) {
+      allContent = allContent.filter((content) =>
+        searchQuery.filters?.categories?.includes(content.category)
+      );
+    }
+
+    if (
+      searchQuery.filters?.languages &&
+      searchQuery.filters.languages.length > 0
+    ) {
+      allContent = allContent.filter((content) =>
+        searchQuery.filters?.languages?.includes(content.language)
+      );
+    }
+
+    if (
+      searchQuery.filters?.difficulty &&
+      searchQuery.filters.difficulty.length > 0
+    ) {
+      allContent = allContent.filter(
+        (content) =>
+          content.difficulty &&
+          searchQuery.filters?.difficulty?.includes(content.difficulty)
+      );
+    }
+
     // Sort results
+    const sortBy =
+      searchQuery.sortBy === "relevance" ? "createdAt" : searchQuery.sortBy;
     allContent.sort((a, b) => {
-      const comparison = a.createdAt.getTime() - b.createdAt.getTime();
+      let comparison = 0;
+
+      switch (sortBy) {
+        case "title":
+          comparison = a.title.localeCompare(b.title);
+          break;
+        case "rating":
+          comparison = (a.avgRating || 0) - (b.avgRating || 0);
+          break;
+        case "duration":
+          comparison = (a.durationEstimate || 0) - (b.durationEstimate || 0);
+          break;
+        case "date":
+        default:
+          comparison = a.createdAt.getTime() - b.createdAt.getTime();
+          break;
+      }
+
       return searchQuery.sortOrder === "desc" ? -comparison : comparison;
     });
+
+    // Generate facets for better search experience
+    const facets = {
+      speakers: generateFacets(allContent, "speaker"),
+      categories: generateFacets(allContent, "category"),
+      languages: generateFacets(allContent, "language"),
+      contentTypes: generateContentTypeFacets(allContent)
+    };
+
+    console.log(`🎯 Search complete: ${allContent.length} results`);
 
     return {
       content: allContent,
       total: allContent.length,
-      page: searchQuery.page || 1,
+      page: searchQuery.page,
       hasMore: false,
-      facets: {
-        speakers: [],
-        categories: [],
-        languages: [],
-        contentTypes: []
-      }
+      facets
     };
   } catch (error) {
-    console.error("Error searching content:", error);
-    return {
-      content: [],
-      total: 0,
-      page: 1,
-      hasMore: false,
-      facets: {
-        speakers: [],
-        categories: [],
-        languages: [],
-        contentTypes: []
-      }
-    };
+    console.error("❌ Error searching content:", error);
+    return getMockSearchResult(searchQuery);
   }
 }
 
-export async function getFeaturedContent(limit = 10): Promise<DhammaContent[]> {
-  try {
-    const result = await getContent({ featured: true }, "createdAt", "desc");
-    return result.items.slice(0, limit);
-  } catch (error) {
-    console.error("Error fetching featured content:", error);
-    return getMockContent()
-      .filter((c) => c.featured)
-      .slice(0, limit);
-  }
-}
-
-export async function getRandomContent(
-  contentType?: DhammaContent["contentType"],
-  limit = 5
-): Promise<DhammaContent[]> {
-  try {
-    const filters: ContentFilters = contentType
-      ? { contentType: [contentType] }
-      : {};
-    const result = await getContent(filters);
-
-    // Shuffle and return limited results
-    const shuffled = [...result.items].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, limit);
-  } catch (error) {
-    console.error("Error fetching random content:", error);
-    return getMockContent().slice(0, limit);
-  }
-}
-
+// Get all speakers
 export async function getSpeakers(
   contentType?: DhammaContent["contentType"]
 ): Promise<Speaker[]> {
   try {
+    console.log("🔄 Fetching speakers...", { contentType });
+
     const cache = await getContentCache();
 
     if (contentType) {
-      let contentArray: DhammaContent[] = [];
+      // Filter speakers by content type
+      let contentArray: DhammaContent[];
       if (contentType === "ebook") contentArray = cache.ebooks;
       else if (contentType === "sermon") contentArray = cache.sermons;
-      else if (contentType === "video") contentArray = cache.videos;
+      else contentArray = cache.videos;
 
       const speakerNames = new Set<string>();
       contentArray.forEach((content) => {
-        if (content.speaker) speakerNames.add(content.speaker);
+        if (content.speaker) {
+          speakerNames.add(content.speaker);
+        }
       });
 
-      return Array.from(speakerNames)
+      const speakers = Array.from(speakerNames)
         .sort()
         .map((name) => ({
           id: name.toLowerCase().replace(/\s+/g, "-"),
           name
         }));
+
+      console.log(`✅ Found ${speakers.length} speakers for ${contentType}`);
+      return speakers;
     }
 
+    console.log(`✅ Found ${cache.speakers.length} total speakers`);
     return cache.speakers;
   } catch (error) {
-    console.error("Error fetching speakers:", error);
+    console.error("❌ Error fetching speakers:", error);
     return getMockSpeakers();
   }
 }
@@ -422,17 +495,23 @@ export async function getSpeakerById(
   }
 }
 
+// Get content by speaker
 export async function getContentBySpeaker(
   speakerName: string,
   contentType: DhammaContent["contentType"]
 ): Promise<DhammaContent[]> {
   try {
+    console.log("🔄 Fetching content by speaker...", {
+      speakerName,
+      contentType
+    });
+
     const cache = await getContentCache();
-    let contentArray: DhammaContent[] = [];
+    let contentArray: DhammaContent[];
 
     if (contentType === "ebook") contentArray = cache.ebooks;
     else if (contentType === "sermon") contentArray = cache.sermons;
-    else if (contentType === "video") contentArray = cache.videos;
+    else contentArray = cache.videos;
 
     const content = contentArray.filter((item) =>
       item.speaker.toLowerCase().includes(speakerName.toLowerCase())
@@ -441,16 +520,77 @@ export async function getContentBySpeaker(
     // Sort by creation date, newest first
     content.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
+    console.log(`✅ Found ${content.length} items by ${speakerName}`);
     return content;
   } catch (error) {
-    console.error("Error fetching content by speaker:", error);
+    console.error("❌ Error fetching content by speaker:", error);
     return getMockContentBySpeaker(speakerName, contentType);
   }
 }
 
-// Mock data functions
+// Get random content (from cache for performance)
+export async function getRandomContent(
+  contentType?: DhammaContent["contentType"],
+  limit = 5
+): Promise<DhammaContent[]> {
+  try {
+    console.log("🔄 Fetching random content...", { contentType, limit });
+
+    const filters: ContentFilters = contentType
+      ? { contentType: [contentType] }
+      : {};
+    const result = await getContent(filters);
+    const allContent = result.items;
+
+    // Shuffle array and return limited results
+    const shuffled = [...allContent].sort(() => Math.random() - 0.5);
+    const randomContent = shuffled.slice(0, limit);
+
+    console.log(`🎲 Returning ${randomContent.length} random items`);
+    return randomContent;
+  } catch (error) {
+    console.error("❌ Error fetching random content:", error);
+    return getMockContent().slice(0, limit);
+  }
+}
+
+// Helper function to generate facets for search
+function generateFacets(
+  content: DhammaContent[],
+  field: keyof DhammaContent
+): Array<{ name: string; count: number }> {
+  const counts = new Map<string, number>();
+
+  content.forEach((item) => {
+    const value = item[field] as string;
+    if (value) {
+      counts.set(value, (counts.get(value) || 0) + 1);
+    }
+  });
+
+  return Array.from(counts.entries())
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count);
+}
+
+function generateContentTypeFacets(
+  content: DhammaContent[]
+): Array<{ type: string; count: number }> {
+  const counts = new Map<string, number>();
+
+  content.forEach((item) => {
+    counts.set(item.contentType, (counts.get(item.contentType) || 0) + 1);
+  });
+
+  return Array.from(counts.entries())
+    .map(([type, count]) => ({ type, count }))
+    .sort((a, b) => b.count - a.count);
+}
+
+// Mock data functions (improved for development)
 function getMockContent(
-  contentType?: DhammaContent["contentType"]
+  contentType?: DhammaContent["contentType"],
+  limit = 20
 ): DhammaContent[] {
   const allMockData: DhammaContent[] = [
     {
@@ -545,11 +685,14 @@ function getMockContent(
     }
   ];
 
+  let filteredData = allMockData;
   if (contentType) {
-    return allMockData.filter((item) => item.contentType === contentType);
+    filteredData = allMockData.filter(
+      (item) => item.contentType === contentType
+    );
   }
 
-  return allMockData;
+  return filteredData.slice(0, limit);
 }
 
 function getMockSpeakers(): Speaker[] {
@@ -558,7 +701,10 @@ function getMockSpeakers(): Speaker[] {
     { id: "bhante-henepola-gunaratana", name: "Bhante Henepola Gunaratana" },
     { id: "ajahn-chah", name: "Ajahn Chah" },
     { id: "ajahn-brahm", name: "Ajahn Brahm" },
-    { id: "sharon-salzberg", name: "Sharon Salzberg" }
+    { id: "sharon-salzberg", name: "Sharon Salzberg" },
+    { id: "jack-kornfield", name: "Jack Kornfield" },
+    { id: "pema-chodron", name: "Pema Chödrön" },
+    { id: "dalai-lama", name: "His Holiness the Dalai Lama" }
   ];
 }
 
@@ -574,4 +720,38 @@ function getMockContentBySpeaker(
         content.contentType === contentType
     )
     .slice(0, 10);
+}
+
+function getMockSearchResult(searchQuery: SearchQuery): SearchResult {
+  const mockData = getMockContent();
+
+  let filteredData = mockData;
+  if (searchQuery.query) {
+    const query = searchQuery.query.toLowerCase();
+    filteredData = mockData.filter(
+      (item) =>
+        item.title.toLowerCase().includes(query) ||
+        item.description?.toLowerCase().includes(query) ||
+        item.speaker.toLowerCase().includes(query)
+    );
+  }
+
+  return {
+    content: filteredData,
+    total: filteredData.length,
+    page: searchQuery.page,
+    hasMore: false,
+    facets: {
+      speakers: [],
+      categories: [],
+      languages: [],
+      contentTypes: []
+    }
+  };
+}
+
+// Force cache refresh (useful for development)
+export function clearContentCache(): void {
+  contentCache = null;
+  console.log("🗑️ Content cache cleared");
 }

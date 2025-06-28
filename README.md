@@ -53,9 +53,15 @@ graph TB
    npm run seed
    ```
 
-4. (Future) Frontend setup:
-   - Navigate to `packages/app` (TBD)
-   - Install dependencies and start development server
+4. Frontend setup:
+
+   ```bash
+   cd packages/app
+   npm install
+   npm run dev
+   ```
+
+   The app should now be running at `http://localhost:5173` (or another port if 5173 is in use).
 
 ## Documentation
 

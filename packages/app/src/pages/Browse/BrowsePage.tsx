@@ -1,5 +1,5 @@
-import { useState, useEffect, useId } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useId, useState, useEffect } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
   Search,
@@ -7,18 +7,14 @@ import {
   List,
   SlidersHorizontal,
   Play,
-  Heart,
-  Download,
-  Share,
   Clock,
   User
 } from "lucide-react";
 import { Button } from "@/components/common/Button";
-import { Loading } from "@/components/common/Loading";
 import { usePlayerStore } from "@/store";
 import type { DhammaContent, ContentFilters } from "@/types/content";
 import { getContent, searchContent } from "@/services/content";
-import { getFallbackContent } from "@/services/fallback";
+
 import { formatDuration } from "@/utils";
 import { cn } from "@/utils";
 
@@ -42,7 +38,7 @@ function ContentCard({ content }: { content: DhammaContent }) {
         <span
           className={cn(
             "inline-flex items-center px-2 py-1 rounded-full text-xs font-medium",
-            content.contentType === "audio" &&
+            content.contentType === "sermon" &&
               "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
             content.contentType === "video" &&
               "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
@@ -59,10 +55,13 @@ function ContentCard({ content }: { content: DhammaContent }) {
         {content.title}
       </h3>
 
-      <p className="text-sm text-muted-foreground mb-3 flex items-center">
+      <Link
+        to={`/speakers/${encodeURIComponent(content.speaker)}`}
+        className="text-sm text-muted-foreground mb-3 flex items-center hover:text-foreground transition-colors"
+      >
         <User className="h-4 w-4 mr-1" />
         {content.speaker || "Unknown Speaker"}
-      </p>
+      </Link>
 
       <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
         {content.description}
@@ -91,18 +90,6 @@ function ContentCard({ content }: { content: DhammaContent }) {
           <Play className="h-4 w-4 mr-2" />
           {isCurrentContent && isPlaying ? "Now Playing" : "Play"}
         </Button>
-
-        <Button variant="ghost" size="icon-sm">
-          <Heart className="h-4 w-4" />
-        </Button>
-
-        <Button variant="ghost" size="icon-sm">
-          <Download className="h-4 w-4" />
-        </Button>
-
-        <Button variant="ghost" size="icon-sm">
-          <Share className="h-4 w-4" />
-        </Button>
       </div>
     </div>
   );
@@ -111,9 +98,11 @@ function ContentCard({ content }: { content: DhammaContent }) {
 export default function BrowsePage() {
   const languageSelectId = useId();
   const [searchParams] = useSearchParams();
-  const [searchQuery, setSearchQuery] = useState("");
+
+  const [searchQuery, setSearchQuery] = useState(() => {
+    return searchParams.get("q") || "";
+  });
   const [filters, setFilters] = useState<ContentFilters>({
-    contentType: [],
     speakers: [],
     categories: [],
     languages: [],
@@ -124,6 +113,14 @@ export default function BrowsePage() {
     "relevance" | "date" | "title" | "rating" | "duration"
   >("relevance");
   const [showFilters, setShowFilters] = useState(false);
+
+  // Update search query when URL params change
+  useEffect(() => {
+    const queryParam = searchParams.get("q");
+    if (queryParam && queryParam !== searchQuery) {
+      setSearchQuery(queryParam);
+    }
+  }, [searchParams, searchQuery]);
 
   // Use React Query for content fetching with fallback
   const {
@@ -142,7 +139,7 @@ export default function BrowsePage() {
             sortBy,
             sortOrder: "desc",
             page: 1,
-            limit: 50
+            limit: 1000 // Get all results, no pagination
           });
           return {
             items: searchResult.content,
@@ -152,35 +149,22 @@ export default function BrowsePage() {
           // Use general content fetching for browsing
           const mappedSortBy =
             sortBy === "relevance"
-              ? "avgRating"
+              ? "createdAt"
               : sortBy === "date"
                 ? "createdAt"
                 : sortBy === "title"
                   ? "title"
-                  : sortBy === "rating"
-                    ? "avgRating"
-                    : "downloadCount";
+                  : "createdAt";
 
-          const result = await getContent(
-            filters,
-            1,
-            50,
-            mappedSortBy as
-              | "createdAt"
-              | "title"
-              | "avgRating"
-              | "downloadCount",
-            "desc"
-          );
+          const result = await getContent(filters, mappedSortBy, "desc");
           return result;
         }
       } catch (error) {
         console.error("Error fetching content:", error);
         // Return fallback content on error
-        const fallbackItems = getFallbackContent();
         return {
-          items: fallbackItems,
-          total: fallbackItems.length
+          items: [],
+          total: 0
         };
       }
     },
@@ -190,27 +174,6 @@ export default function BrowsePage() {
 
   const results = contentData?.items || [];
   const totalResults = contentData?.total || 0;
-
-  // Handle URL parameters for content type filtering
-  useEffect(() => {
-    const typeFromUrl = searchParams.get("type") as
-      | DhammaContent["contentType"]
-      | null;
-    if (
-      typeFromUrl &&
-      ["audio", "video", "ebook", "other"].includes(typeFromUrl)
-    ) {
-      const initialFilters: ContentFilters = {
-        contentType: [typeFromUrl],
-        speakers: [],
-        categories: [],
-        languages: [],
-        difficulty: []
-      };
-      setFilters(initialFilters);
-      setShowFilters(true);
-    }
-  }, [searchParams]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
@@ -257,7 +220,7 @@ export default function BrowsePage() {
                   Content Type
                 </h4>
                 <div className="space-y-2">
-                  {(["audio", "video", "ebook"] as const).map((type) => (
+                  {(["sermon", "video", "ebook"] as const).map((type) => (
                     <label key={type} className="flex items-center">
                       <input
                         type="checkbox"
@@ -266,7 +229,7 @@ export default function BrowsePage() {
                           const newTypes = e.target.checked
                             ? [...(filters.contentType || []), type]
                             : (filters.contentType || []).filter(
-                                (t) => t !== type
+                                (t: DhammaContent["contentType"]) => t !== type
                               );
                           setFilters({ ...filters, contentType: newTypes });
                         }}
@@ -294,7 +257,8 @@ export default function BrowsePage() {
                             const newLevels = e.target.checked
                               ? [...(filters.difficulty || []), level]
                               : (filters.difficulty || []).filter(
-                                  (l) => l !== level
+                                  (l: DhammaContent["difficulty"]) =>
+                                    l !== level
                                 );
                             setFilters({ ...filters, difficulty: newLevels });
                           }}
@@ -403,8 +367,28 @@ export default function BrowsePage() {
       {/* Results */}
       <div className="mb-8">
         {isLoading ? (
-          <div className="flex items-center justify-center py-12">
-            <Loading size="lg" message="Searching content..." />
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 6 }, (_, i) => (
+                <div
+                  key={`content-skeleton-${Date.now()}-${i}`}
+                  className="animate-pulse"
+                >
+                  <div className="bg-card border border-border rounded-lg p-4">
+                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-16 mb-3"></div>
+                    <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
+                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-3"></div>
+                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full mb-4"></div>
+                    <div className="flex items-center space-x-4 mb-4">
+                      <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-16"></div>
+                      <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
+                      <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-12"></div>
+                    </div>
+                    <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         ) : results.length > 0 ? (
           <div
@@ -414,7 +398,7 @@ export default function BrowsePage() {
                 : "space-y-4"
             )}
           >
-            {results.map((content) => (
+            {results.map((content: DhammaContent) => (
               <ContentCard key={content.id} content={content} />
             ))}
           </div>

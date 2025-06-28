@@ -1,11 +1,9 @@
 // Custom React hooks for the application
 import { useState, useEffect, useCallback, useRef } from "react";
 import { usePlayerStore } from "@/store";
-import type { DhammaContent } from "@/types";
+import type { DhammaContent, SearchQuery } from "@/types";
 import { debounce } from "@/utils";
-
-// Export the main useAuth from the dedicated file
-export { useAuth } from "./useAuth";
+import { searchContent } from "@/services/content";
 
 // Player hook for controlling playback
 export function usePlayer() {
@@ -111,9 +109,8 @@ export function useSearch() {
   const [results, setResults] = useState<DhammaContent[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  const debouncedSearch = useCallback(
-    debounce((...args: unknown[]) => {
-      const query = args[0] as string;
+  const debouncedSearchRef = useRef(
+    debounce(async (query: string) => {
       if (!query.trim()) {
         setResults([]);
         setIsLoading(false);
@@ -123,35 +120,21 @@ export function useSearch() {
       setIsLoading(true);
       setError(null);
 
-      // Create async function inside
-      const performSearch = async () => {
-        try {
-          // TODO: Implement actual search service call
-          console.log("Searching for:", query);
-
-          // Simulate search delay
-          await new Promise((resolve) => setTimeout(resolve, 500));
-
-          // Mock results for now
-          setResults([]);
-        } catch (err) {
-          setError(err instanceof Error ? err.message : "Search failed");
-        } finally {
-          setIsLoading(false);
-        }
-      };
-
-      performSearch();
-    }, 300),
-    []
+      try {
+        const searchParams: Partial<SearchQuery> = { query };
+        const searchResult = await searchContent(searchParams as SearchQuery);
+        setResults(searchResult.content);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Search failed");
+      } finally {
+        setIsLoading(false);
+      }
+    }, 300)
   );
 
-  const search = useCallback(
-    (query: string) => {
-      debouncedSearch(query);
-    },
-    [debouncedSearch]
-  );
+  const search = useCallback((query: string) => {
+    debouncedSearchRef.current(query);
+  }, []);
 
   const clearResults = useCallback(() => {
     setResults([]);
@@ -261,11 +244,7 @@ export function useOnlineStatus(): boolean {
 }
 
 // Keyboard shortcut hook
-export function useKeyboardShortcut(
-  key: string,
-  callback: () => void,
-  deps: React.DependencyList = []
-): void {
+export function useKeyboardShortcut(key: string, callback: () => void): void {
   const callbackRef = useRef(callback);
 
   useEffect(() => {
@@ -282,7 +261,7 @@ export function useKeyboardShortcut(
 
     document.addEventListener("keydown", handleKeyPress);
     return () => document.removeEventListener("keydown", handleKeyPress);
-  }, [key, ...deps]);
+  }, [key]);
 }
 
 // Window size hook
