@@ -7,6 +7,9 @@
   "main": "src/index.ts",
   "scripts": {
     "seed": "tsx src/index.ts",
+    "migrate:speakers": "tsx src/migrate-speakers.ts",
+    "deploy:indexes": "firebase deploy --only firestore:indexes --project dhammastream-app",
+    "deploy:rules": "firebase deploy --only firestore:rules --project dhammastream-app",
     "update:firestore": "firebase deploy --only firestore:indexes,firestore:rules --project dhammastream-app"
   },
   "dependencies": {

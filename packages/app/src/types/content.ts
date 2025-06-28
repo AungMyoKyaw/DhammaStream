@@ -75,4 +75,20 @@ export interface Speaker {
   id: string;
   name: string;
   bio?: string;
+  profileImageUrl?: string;
+  contentTypes: DhammaContent["contentType"][];
+  contentRefs: {
+    ebooks: string[];
+    sermons: string[];
+    videos: string[];
+  };
+  contentCounts: {
+    ebooks: number;
+    sermons: number;
+    videos: number;
+    total: number;
+  };
+  featured?: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }

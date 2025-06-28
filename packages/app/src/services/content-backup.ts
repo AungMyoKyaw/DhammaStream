@@ -1,4 +1,4 @@
-// Enhanced Content service with dedicated speakers collection support
+// Main Content service for DhammaStream
 import type {
   DhammaContent,
   SearchQuery,
@@ -9,23 +9,23 @@ import type {
 } from "@/types";
 import { db } from "../firebase";
 import {
-  doc,
-  getDoc,
   collection,
   getDocs,
   query,
   orderBy,
+  doc,
+  getDoc,
   limit as firestoreLimit,
   type QueryDocumentSnapshot
 } from "firebase/firestore";
 
-// In-memory cache for all content and speakers
+// In-memory cache for all content
 interface ContentCache {
   ebooks: DhammaContent[];
   sermons: DhammaContent[];
   videos: DhammaContent[];
-  speakers: Speaker[];
   lastFetch: number;
+  speakers: Speaker[];
 }
 
 let contentCache: ContentCache | null = null;
@@ -44,34 +44,11 @@ function convertFirestoreDoc(
     createdAt: data.createdAt?.toDate() || new Date(),
     dateRecorded: data.dateRecorded?.toDate(),
     scrapedDate: data.scrapedDate?.toDate(),
-    updatedAt: data.updatedAt?.toDate(),
     downloadCount: data.downloadCount || 0,
     avgRating: data.avgRating || 0,
     reviewCount: data.reviewCount || 0,
     featured: data.featured || false
   } as DhammaContent;
-}
-
-// Helper function to convert Firestore document to Speaker
-function convertFirestoreSpeakerDoc(doc: QueryDocumentSnapshot): Speaker {
-  const data = doc.data();
-  return {
-    id: doc.id,
-    name: data.name,
-    bio: data.bio,
-    profileImageUrl: data.profileImageUrl,
-    contentTypes: data.contentTypes || [],
-    contentRefs: data.contentRefs || { ebooks: [], sermons: [], videos: [] },
-    contentCounts: data.contentCounts || {
-      ebooks: 0,
-      sermons: 0,
-      videos: 0,
-      total: 0
-    },
-    featured: data.featured || false,
-    createdAt: data.createdAt?.toDate() || new Date(),
-    updatedAt: data.updatedAt?.toDate() || new Date()
-  };
 }
 
 // Get collection name for content type
@@ -98,105 +75,6 @@ async function checkFirebaseConnection(): Promise<boolean> {
     console.error("Firebase connection check failed:", error);
     return false;
   }
-}
-
-// Check if speakers collection exists and has data
-async function checkSpeakersCollection(): Promise<boolean> {
-  try {
-    const speakersQuery = query(collection(db, "speakers"), firestoreLimit(1));
-    const snapshot = await getDocs(speakersQuery);
-    return snapshot.size > 0;
-  } catch (error) {
-    console.error("Speakers collection check failed:", error);
-    return false;
-  }
-}
-
-// Load speakers from the dedicated speakers collection
-async function loadSpeakersFromCollection(): Promise<Speaker[]> {
-  try {
-    console.log("📚 Loading speakers from dedicated collection...");
-    const speakersQuery = query(
-      collection(db, "speakers"),
-      orderBy("name", "asc")
-    );
-    const snapshot = await getDocs(speakersQuery);
-
-    const speakers: Speaker[] = [];
-    snapshot.forEach((doc) => {
-      speakers.push(convertFirestoreSpeakerDoc(doc));
-    });
-
-    console.log(`✅ Loaded ${speakers.length} speakers from collection`);
-    return speakers;
-  } catch (error) {
-    console.error("❌ Error loading speakers from collection:", error);
-    return [];
-  }
-}
-
-// Fallback: Extract speakers from content collections (legacy method)
-async function extractSpeakersFromContent(): Promise<Speaker[]> {
-  console.log("🔄 Extracting speakers from content collections (fallback)...");
-
-  const contentCollections = ["ebooks", "sermons", "videos"];
-  const speakerMap = new Map<
-    string,
-    { name: string; contentTypes: Set<string> }
-  >();
-
-  for (const collectionName of contentCollections) {
-    try {
-      const q = query(collection(db, collectionName));
-      const snapshot = await getDocs(q);
-
-      snapshot.forEach((doc) => {
-        const data = doc.data();
-        if (data.speaker) {
-          const speakerName = data.speaker.trim();
-          const speakerId = speakerName.toLowerCase().replace(/\s+/g, "-");
-
-          if (!speakerMap.has(speakerId)) {
-            speakerMap.set(speakerId, {
-              name: speakerName,
-              contentTypes: new Set()
-            });
-          }
-
-          const contentType =
-            collectionName === "ebooks"
-              ? "ebook"
-              : collectionName === "sermons"
-                ? "sermon"
-                : "video";
-          speakerMap.get(speakerId)?.contentTypes.add(contentType);
-        }
-      });
-    } catch (error) {
-      console.error(
-        `❌ Error extracting speakers from ${collectionName}:`,
-        error
-      );
-    }
-  }
-
-  const speakers: Speaker[] = Array.from(speakerMap.entries()).map(
-    ([id, info]) => ({
-      id,
-      name: info.name,
-      contentTypes: Array.from(
-        info.contentTypes
-      ) as DhammaContent["contentType"][],
-      contentRefs: { ebooks: [], sermons: [], videos: [] },
-      contentCounts: { ebooks: 0, sermons: 0, videos: 0, total: 0 },
-      featured: false,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    })
-  );
-
-  console.log(`✅ Extracted ${speakers.length} speakers from content`);
-  return speakers;
 }
 
 // Load all content into cache
@@ -256,23 +134,29 @@ async function loadAllContent(): Promise<ContentCache> {
     }
   }
 
-  // Load speakers - try dedicated collection first, fallback to content extraction
-  const hasSpeakersCollection = await checkSpeakersCollection();
-  if (hasSpeakersCollection) {
-    cache.speakers = await loadSpeakersFromCollection();
-  } else {
-    cache.speakers = await extractSpeakersFromContent();
-  }
+  // Generate speakers list
+  const allContent = [...cache.ebooks, ...cache.sermons, ...cache.videos];
+  const speakerNames = new Set<string>();
+  allContent.forEach((content) => {
+    if (content.speaker) {
+      speakerNames.add(content.speaker);
+    }
+  });
 
-  const allContentCount =
-    cache.ebooks.length + cache.sermons.length + cache.videos.length;
+  cache.speakers = Array.from(speakerNames)
+    .sort()
+    .map((name) => ({
+      id: name.toLowerCase().replace(/\s+/g, "-"),
+      name
+    }));
+
   console.log(
-    `🎯 Cache loaded: ${allContentCount} items, ${cache.speakers.length} speakers`
+    `🎯 Cache loaded: ${allContent.length} items, ${cache.speakers.length} speakers`
   );
   return cache;
 }
 
-// Get or refresh content cache
+// Get or refresh cache
 async function getContentCache(): Promise<ContentCache> {
   if (!contentCache || Date.now() - contentCache.lastFetch > CACHE_DURATION) {
     contentCache = await loadAllContent();
@@ -281,7 +165,6 @@ async function getContentCache(): Promise<ContentCache> {
 }
 
 // EXPORTED FUNCTIONS
-
 export async function getContentById(
   id: string,
   contentType: DhammaContent["contentType"]
@@ -356,163 +239,33 @@ export async function getContent(
       );
     }
 
-    // Apply sorting
+    // Sort content
     allContent.sort((a, b) => {
+      let comparison = 0;
       if (sortBy === "title") {
-        const comparison = a.title.localeCompare(b.title);
-        return sortOrder === "asc" ? comparison : -comparison;
+        comparison = a.title.localeCompare(b.title);
       } else {
-        const aTime = a.createdAt.getTime();
-        const bTime = b.createdAt.getTime();
-        return sortOrder === "asc" ? aTime - bTime : bTime - aTime;
+        comparison = a.createdAt.getTime() - b.createdAt.getTime();
       }
+      return sortOrder === "desc" ? -comparison : comparison;
     });
 
     return {
       items: allContent,
       total: allContent.length,
-      hasMore: false,
       page: 1,
-      limit: allContent.length
+      limit: allContent.length,
+      hasMore: false
     };
   } catch (error) {
     console.error("Error fetching content:", error);
     return {
-      items: getMockContent(),
+      items: [],
       total: 0,
-      hasMore: false,
       page: 1,
-      limit: 20
+      limit: 0,
+      hasMore: false
     };
-  }
-}
-
-export async function getFeaturedContent(limit = 10): Promise<DhammaContent[]> {
-  try {
-    const cache = await getContentCache();
-    const allContent = [...cache.ebooks, ...cache.sermons, ...cache.videos];
-    return allContent.filter((content) => content.featured).slice(0, limit);
-  } catch (error) {
-    console.error("Error fetching featured content:", error);
-    return getMockContent()
-      .filter((content) => content.featured)
-      .slice(0, limit);
-  }
-}
-
-export async function getSpeakers(
-  contentType?: DhammaContent["contentType"]
-): Promise<Speaker[]> {
-  try {
-    const cache = await getContentCache();
-
-    if (contentType) {
-      // Filter speakers by content type
-      return cache.speakers.filter((speaker) =>
-        speaker.contentTypes.includes(contentType)
-      );
-    }
-
-    return cache.speakers;
-  } catch (error) {
-    console.error("Error fetching speakers:", error);
-    return getMockSpeakers();
-  }
-}
-
-export async function getSpeakerById(
-  speakerId: string
-): Promise<Speaker | null> {
-  try {
-    // First try the speakers collection
-    const hasSpeakersCollection = await checkSpeakersCollection();
-    if (hasSpeakersCollection) {
-      const speakerRef = doc(db, "speakers", speakerId);
-      const speakerSnap = await getDoc(speakerRef);
-
-      if (speakerSnap.exists()) {
-        return convertFirestoreSpeakerDoc(speakerSnap as QueryDocumentSnapshot);
-      }
-    }
-
-    // Fallback to cache
-    const speakers = await getSpeakers();
-    return speakers.find((speaker) => speaker.id === speakerId) || null;
-  } catch (error) {
-    console.error("Error fetching speaker by ID:", error);
-    return null;
-  }
-}
-
-export async function getContentBySpeaker(
-  speakerName: string,
-  contentType: DhammaContent["contentType"]
-): Promise<DhammaContent[]> {
-  try {
-    // First try using speaker's contentRefs if available
-    const speaker = await getSpeakerById(
-      speakerName.toLowerCase().replace(/\s+/g, "-")
-    );
-
-    if (speaker?.contentRefs) {
-      const contentIds =
-        speaker.contentRefs[
-          contentType === "ebook"
-            ? "ebooks"
-            : contentType === "sermon"
-              ? "sermons"
-              : "videos"
-        ];
-
-      if (contentIds.length > 0) {
-        // Get content by IDs
-        const collectionName = getCollectionName(contentType);
-        const content: DhammaContent[] = [];
-
-        // Fetch content documents by ID (in batches if needed)
-        for (const contentId of contentIds.slice(0, 50)) {
-          // Limit to 50 for performance
-          try {
-            const docRef = doc(db, collectionName, contentId);
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-              content.push(
-                convertFirestoreDoc(
-                  docSnap as QueryDocumentSnapshot,
-                  contentType
-                )
-              );
-            }
-          } catch (error) {
-            console.error(`Error fetching content ${contentId}:`, error);
-          }
-        }
-
-        // Sort by creation date, newest first
-        content.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-        return content;
-      }
-    }
-
-    // Fallback to cache filtering
-    const cache = await getContentCache();
-    let contentArray: DhammaContent[] = [];
-
-    if (contentType === "ebook") contentArray = cache.ebooks;
-    else if (contentType === "sermon") contentArray = cache.sermons;
-    else if (contentType === "video") contentArray = cache.videos;
-
-    const content = contentArray.filter((item) =>
-      item.speaker.toLowerCase().includes(speakerName.toLowerCase())
-    );
-
-    // Sort by creation date, newest first
-    content.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-
-    return content;
-  } catch (error) {
-    console.error("Error fetching content by speaker:", error);
-    return getMockContentBySpeaker(speakerName, contentType);
   }
 }
 
@@ -521,53 +274,54 @@ export async function searchContent(
 ): Promise<SearchResult> {
   try {
     const cache = await getContentCache();
-    let allContent = [...cache.ebooks, ...cache.sermons, ...cache.videos];
+    const contentTypes = searchQuery.filters?.contentType || [
+      "ebook",
+      "sermon",
+      "video"
+    ];
+    let allContent: DhammaContent[] = [];
 
-    // Apply text search
-    if (searchQuery.query) {
-      const query = searchQuery.query.toLowerCase();
-      allContent = allContent.filter(
-        (item) =>
-          item.title.toLowerCase().includes(query) ||
-          item.description?.toLowerCase().includes(query) ||
-          item.speaker.toLowerCase().includes(query) ||
-          item.tags.toLowerCase().includes(query)
-      );
+    // Collect content
+    contentTypes.forEach((type) => {
+      if (type === "ebook") allContent = [...allContent, ...cache.ebooks];
+      else if (type === "sermon")
+        allContent = [...allContent, ...cache.sermons];
+      else if (type === "video") allContent = [...allContent, ...cache.videos];
+    });
+
+    // Apply search filter
+    if (searchQuery.query?.trim()) {
+      const searchLower = searchQuery.query.toLowerCase();
+      allContent = allContent.filter((content) => {
+        return (
+          content.title.toLowerCase().includes(searchLower) ||
+          content.description?.toLowerCase().includes(searchLower) ||
+          content.speaker.toLowerCase().includes(searchLower) ||
+          content.tags.toLowerCase().includes(searchLower) ||
+          content.category.toLowerCase().includes(searchLower)
+        );
+      });
     }
 
-    // Apply filters
-    if (searchQuery.filters.contentType?.length) {
-      allContent = allContent.filter((item) =>
-        searchQuery.filters.contentType?.includes(item.contentType)
-      );
-    }
-
-    if (searchQuery.filters.speakers?.length) {
-      allContent = allContent.filter((item) =>
-        searchQuery.filters.speakers?.some((speaker) =>
-          item.speaker.toLowerCase().includes(speaker.toLowerCase())
+    // Apply other filters
+    if (searchQuery.filters?.speakers?.length) {
+      allContent = allContent.filter((content) =>
+        searchQuery.filters?.speakers?.some((speaker) =>
+          content.speaker.toLowerCase().includes(speaker.toLowerCase())
         )
       );
     }
 
-    // Apply sorting
-    if (searchQuery.sortBy === "title") {
-      allContent.sort((a, b) => {
-        const comparison = a.title.localeCompare(b.title);
-        return searchQuery.sortOrder === "asc" ? comparison : -comparison;
-      });
-    } else if (searchQuery.sortBy === "date") {
-      allContent.sort((a, b) => {
-        const aTime = a.createdAt.getTime();
-        const bTime = b.createdAt.getTime();
-        return searchQuery.sortOrder === "asc" ? aTime - bTime : bTime - aTime;
-      });
-    }
+    // Sort results
+    allContent.sort((a, b) => {
+      const comparison = a.createdAt.getTime() - b.createdAt.getTime();
+      return searchQuery.sortOrder === "desc" ? -comparison : comparison;
+    });
 
     return {
       content: allContent,
       total: allContent.length,
-      page: searchQuery.page,
+      page: searchQuery.page || 1,
       hasMore: false,
       facets: {
         speakers: [],
@@ -593,7 +347,108 @@ export async function searchContent(
   }
 }
 
-// Mock data functions (for fallback)
+export async function getFeaturedContent(limit = 10): Promise<DhammaContent[]> {
+  try {
+    const result = await getContent({ featured: true }, "createdAt", "desc");
+    return result.items.slice(0, limit);
+  } catch (error) {
+    console.error("Error fetching featured content:", error);
+    return getMockContent()
+      .filter((c) => c.featured)
+      .slice(0, limit);
+  }
+}
+
+export async function getRandomContent(
+  contentType?: DhammaContent["contentType"],
+  limit = 5
+): Promise<DhammaContent[]> {
+  try {
+    const filters: ContentFilters = contentType
+      ? { contentType: [contentType] }
+      : {};
+    const result = await getContent(filters);
+
+    // Shuffle and return limited results
+    const shuffled = [...result.items].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, limit);
+  } catch (error) {
+    console.error("Error fetching random content:", error);
+    return getMockContent().slice(0, limit);
+  }
+}
+
+export async function getSpeakers(
+  contentType?: DhammaContent["contentType"]
+): Promise<Speaker[]> {
+  try {
+    const cache = await getContentCache();
+
+    if (contentType) {
+      let contentArray: DhammaContent[] = [];
+      if (contentType === "ebook") contentArray = cache.ebooks;
+      else if (contentType === "sermon") contentArray = cache.sermons;
+      else if (contentType === "video") contentArray = cache.videos;
+
+      const speakerNames = new Set<string>();
+      contentArray.forEach((content) => {
+        if (content.speaker) speakerNames.add(content.speaker);
+      });
+
+      return Array.from(speakerNames)
+        .sort()
+        .map((name) => ({
+          id: name.toLowerCase().replace(/\s+/g, "-"),
+          name
+        }));
+    }
+
+    return cache.speakers;
+  } catch (error) {
+    console.error("Error fetching speakers:", error);
+    return getMockSpeakers();
+  }
+}
+
+export async function getSpeakerById(
+  speakerId: string
+): Promise<Speaker | null> {
+  try {
+    const speakers = await getSpeakers();
+    return speakers.find((speaker) => speaker.id === speakerId) || null;
+  } catch (error) {
+    console.error("Error fetching speaker by ID:", error);
+    return null;
+  }
+}
+
+export async function getContentBySpeaker(
+  speakerName: string,
+  contentType: DhammaContent["contentType"]
+): Promise<DhammaContent[]> {
+  try {
+    const cache = await getContentCache();
+    let contentArray: DhammaContent[] = [];
+
+    if (contentType === "ebook") contentArray = cache.ebooks;
+    else if (contentType === "sermon") contentArray = cache.sermons;
+    else if (contentType === "video") contentArray = cache.videos;
+
+    const content = contentArray.filter((item) =>
+      item.speaker.toLowerCase().includes(speakerName.toLowerCase())
+    );
+
+    // Sort by creation date, newest first
+    content.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+    return content;
+  } catch (error) {
+    console.error("Error fetching content by speaker:", error);
+    return getMockContentBySpeaker(speakerName, contentType);
+  }
+}
+
+// Mock data functions
 function getMockContent(
   contentType?: DhammaContent["contentType"]
 ): DhammaContent[] {
@@ -651,37 +506,59 @@ function getMockContent(
       avgRating: 4.7,
       reviewCount: 45,
       featured: false
+    },
+    {
+      id: "mock-sermon-2",
+      title: "Walking Meditation Practice",
+      speaker: "Ajahn Brahm",
+      contentType: "sermon",
+      fileUrl: "https://example.com/audio2.mp3",
+      language: "English",
+      category: "Meditation",
+      tags: "walking meditation, mindfulness, practice",
+      description:
+        "Learn the art of walking meditation and how to maintain mindfulness while moving.",
+      createdAt: new Date("2024-01-12"),
+      durationEstimate: 1200,
+      downloadCount: 789,
+      avgRating: 4.6,
+      reviewCount: 67,
+      featured: false
+    },
+    {
+      id: "mock-video-2",
+      title: "Loving-Kindness Meditation Guide",
+      speaker: "Sharon Salzberg",
+      contentType: "video",
+      fileUrl: "https://example.com/video2.mp4",
+      language: "English",
+      category: "Meditation",
+      tags: "loving-kindness, metta, compassion",
+      description:
+        "A step-by-step guide to practicing loving-kindness meditation for self and others.",
+      createdAt: new Date("2024-01-08"),
+      durationEstimate: 2100,
+      downloadCount: 1100,
+      avgRating: 4.8,
+      reviewCount: 89,
+      featured: true
     }
   ];
 
-  if (!contentType) return allMockData;
-  return allMockData.filter((item) => item.contentType === contentType);
+  if (contentType) {
+    return allMockData.filter((item) => item.contentType === contentType);
+  }
+
+  return allMockData;
 }
 
 function getMockSpeakers(): Speaker[] {
   return [
-    {
-      id: "venerable-thich-nhat-hanh",
-      name: "Venerable Thich Nhat Hanh",
-      bio: "Venerable Thich Nhat Hanh is a respected Buddhist teacher and spiritual guide, sharing wisdom through dharma teachings, meditation guidance, and spiritual discourses.",
-      contentTypes: ["sermon", "video", "ebook"],
-      contentRefs: { ebooks: [], sermons: [], videos: [] },
-      contentCounts: { ebooks: 5, sermons: 25, videos: 10, total: 40 },
-      featured: true,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    },
-    {
-      id: "bhante-henepola-gunaratana",
-      name: "Bhante Henepola Gunaratana",
-      bio: "Bhante Henepola Gunaratana is a respected Buddhist teacher and spiritual guide, sharing wisdom through dharma teachings, meditation guidance, and spiritual discourses.",
-      contentTypes: ["sermon", "video"],
-      contentRefs: { ebooks: [], sermons: [], videos: [] },
-      contentCounts: { ebooks: 0, sermons: 15, videos: 8, total: 23 },
-      featured: false,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    }
+    { id: "venerable-thich-nhat-hanh", name: "Venerable Thich Nhat Hanh" },
+    { id: "bhante-henepola-gunaratana", name: "Bhante Henepola Gunaratana" },
+    { id: "ajahn-chah", name: "Ajahn Chah" },
+    { id: "ajahn-brahm", name: "Ajahn Brahm" },
+    { id: "sharon-salzberg", name: "Sharon Salzberg" }
   ];
 }
 
@@ -697,9 +574,4 @@ function getMockContentBySpeaker(
         content.contentType === contentType
     )
     .slice(0, 10);
-}
-
-// Clear cache function (useful for development)
-export function clearContentCache(): void {
-  contentCache = null;
 }

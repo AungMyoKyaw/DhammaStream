@@ -4,7 +4,7 @@ service cloud.firestore {
 
     // Content collections - public read, script-only write
     match /{collection}/{document} {
-      allow read: if collection in ['sermons', 'videos', 'ebooks'];
+      allow read: if collection in ['sermons', 'videos', 'ebooks', 'speakers'];
       allow write: if false; // Only admin scripts can write using Firebase Admin SDK
     }
 
