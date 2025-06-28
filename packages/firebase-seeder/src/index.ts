@@ -3,11 +3,9 @@ import { open } from "sqlite";
 import sqlite3 from "sqlite3";
 import path from "node:path";
 import fs from "node:fs/promises";
+import serviceAccount from "../serviceAccountKey.json";
 
-// Load service account key JSON and initialize app
-const serviceAccount = require(
-  path.resolve(__dirname, "../serviceAccountKey.json")
-);
+// Initialize app with service account credentials
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
