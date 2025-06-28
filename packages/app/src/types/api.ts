@@ -21,17 +21,6 @@ export interface ApiError {
   details?: Record<string, unknown>;
 }
 
-// Firebase service types
-export interface FirebaseConfig {
-  apiKey: string;
-  authDomain: string;
-  projectId: string;
-  storageBucket: string;
-  messagingSenderId: string;
-  appId: string;
-  measurementId?: string;
-}
-
 // Service worker and PWA types
 export interface ServiceWorkerMessage {
   type: "CACHE_UPDATE" | "OFFLINE_MODE" | "SYNC_STATUS" | "PUSH_NOTIFICATION";

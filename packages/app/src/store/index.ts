@@ -1,7 +1,34 @@
 // Global state management using Zustand
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
-import type { DhammaContent, User, PlayerState, PlayerAction } from "@/types";
+import type { DhammaContent, PlayerState } from "@/types";
+
+interface PlayerOptions {
+  autoplay?: boolean;
+  volume?: number;
+  playbackSpeed?: number;
+  startTime?: number;
+}
+
+type PlayerAction =
+  | { type: "PLAY"; content?: DhammaContent; options?: PlayerOptions }
+  | { type: "PAUSE" }
+  | { type: "STOP" }
+  | { type: "SEEK"; time: number }
+  | { type: "SET_VOLUME"; volume: number }
+  | { type: "SET_SPEED"; speed: number }
+  | { type: "NEXT" }
+  | { type: "PREVIOUS" }
+  | { type: "TOGGLE_REPEAT" }
+  | { type: "TOGGLE_SHUFFLE" }
+  | { type: "SET_PLAYLIST"; playlist: DhammaContent[]; index?: number }
+  | { type: "ADD_TO_QUEUE"; content: DhammaContent }
+  | { type: "REMOVE_FROM_QUEUE"; contentId: string }
+  | { type: "CLEAR_QUEUE" }
+  | { type: "SET_ERROR"; error: string | null }
+  | { type: "CLEAR_ERROR" }
+  | { type: "SET_DURATION"; duration: number }
+  | { type: "SET_CURRENT_TIME"; time: number };
 
 // Player store
 interface PlayerStore extends PlayerState {
@@ -152,6 +179,14 @@ export const usePlayerStore = create<PlayerStore>()(
           set({ error: null });
           break;
 
+        case "SET_DURATION":
+          set({ duration: action.duration });
+          break;
+
+        case "SET_CURRENT_TIME":
+          set({ currentTime: action.time });
+          break;
+
         default:
           break;
       }
@@ -178,10 +213,6 @@ interface AppStore {
   theme: "light" | "dark" | "system";
   isOffline: boolean;
 
-  // User state
-  user: User | null;
-  isAuthenticated: boolean;
-
   // Content state
   featuredContent: DhammaContent[];
 
@@ -189,7 +220,6 @@ interface AppStore {
   setSidebarOpen: (open: boolean) => void;
   setTheme: (theme: "light" | "dark" | "system") => void;
   setOfflineStatus: (isOffline: boolean) => void;
-  setUser: (user: User | null) => void;
   setFeaturedContent: (content: DhammaContent[]) => void;
 }
 
@@ -199,19 +229,12 @@ export const useAppStore = create<AppStore>()(
     sidebarOpen: false,
     theme: "system",
     isOffline: false,
-    user: null,
-    isAuthenticated: false,
     featuredContent: [],
 
     // Actions
     setSidebarOpen: (open: boolean) => set({ sidebarOpen: open }),
     setTheme: (theme: "light" | "dark" | "system") => set({ theme }),
     setOfflineStatus: (isOffline: boolean) => set({ isOffline }),
-    setUser: (user: User | null) =>
-      set({
-        user,
-        isAuthenticated: !!user
-      }),
     setFeaturedContent: (featuredContent: DhammaContent[]) =>
       set({ featuredContent })
   }))

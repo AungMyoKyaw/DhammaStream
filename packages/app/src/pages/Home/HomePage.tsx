@@ -1,15 +1,14 @@
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { Play, Heart, Download, Share, Clock, User } from "lucide-react";
+import { Play, Clock, User } from "lucide-react";
 import { Button } from "@/components/common/Button";
 import { Loading } from "@/components/common/Loading";
+import { DevStatus } from "@/components/common/DevStatus";
 import { usePlayerStore } from "@/store";
 import type { DhammaContent } from "@/types/content";
 import { formatDuration } from "@/utils";
 import { cn } from "@/utils";
 import { getRandomContent } from "@/services/content";
-// Removed fallback mock data import
 
 function ContentCard({ content }: { content: DhammaContent }) {
   const { dispatch, currentContent, isPlaying } = usePlayerStore();
@@ -30,7 +29,7 @@ function ContentCard({ content }: { content: DhammaContent }) {
         <span
           className={cn(
             "inline-flex items-center px-2 py-1 rounded-full text-xs font-medium",
-            content.contentType === "audio" &&
+            content.contentType === "sermon" &&
               "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
             content.contentType === "video" &&
               "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
@@ -47,10 +46,13 @@ function ContentCard({ content }: { content: DhammaContent }) {
         {content.title}
       </h3>
 
-      <p className="text-sm text-muted-foreground mb-3 flex items-center">
+      <Link
+        to={`/speakers/${encodeURIComponent(content.speaker)}`}
+        className="text-sm text-muted-foreground mb-3 flex items-center hover:text-foreground transition-colors"
+      >
         <User className="h-4 w-4 mr-1" />
         {content.speaker || "Unknown Speaker"}
-      </p>
+      </Link>
 
       <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
         {content.description}
@@ -79,18 +81,6 @@ function ContentCard({ content }: { content: DhammaContent }) {
           <Play className="h-4 w-4 mr-2" />
           {isCurrentContent && isPlaying ? "Now Playing" : "Play"}
         </Button>
-
-        <Button variant="ghost" size="icon-sm">
-          <Heart className="h-4 w-4" />
-        </Button>
-
-        <Button variant="ghost" size="icon-sm">
-          <Download className="h-4 w-4" />
-        </Button>
-
-        <Button variant="ghost" size="icon-sm">
-          <Share className="h-4 w-4" />
-        </Button>
       </div>
     </div>
   );
@@ -98,21 +88,17 @@ function ContentCard({ content }: { content: DhammaContent }) {
 
 export default function HomePage() {
   // Use React Query for data fetching with fallback
-  const { data: featuredContent = [], isLoading: featuredLoading } = useQuery({
+  const {
+    data: featuredContent = [],
+    isLoading: featuredLoading,
+    error: featuredError,
+    isError
+  } = useQuery({
     queryKey: ["random-content"],
-    queryFn: () => getRandomContent(undefined, 6),
-    staleTime: 5 * 60 * 1000 // 5 minutes
-  });
-
-  const [randomMonk] = useState(() => {
-    const monks = [
-      "Bhante Henepola Gunaratana",
-      "Ajahn Chah",
-      "Jack Kornfield",
-      "Thich Nhat Hanh",
-      "Ajahn Sumedho"
-    ];
-    return monks[Math.floor(Math.random() * monks.length)];
+    queryFn: () => getRandomContent(),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000)
   });
 
   const isLoading = featuredLoading;
@@ -125,8 +111,40 @@ export default function HomePage() {
     );
   }
 
+  if (isError) {
+    console.error("Error loading featured content:", featuredError);
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="text-center py-12">
+          <h2 className="text-2xl font-bold text-foreground mb-4">
+            Unable to Load Content
+          </h2>
+          <p className="text-muted-foreground mb-6">
+            We're having trouble connecting to our content library. This might
+            be due to:
+          </p>
+          <ul className="text-left max-w-md mx-auto mb-6 space-y-2 text-sm text-muted-foreground">
+            <li>• Firebase configuration not set up</li>
+            <li>• Network connectivity issues</li>
+            <li>• Database permissions</li>
+          </ul>
+          <p className="text-sm text-muted-foreground mb-4">
+            For development: Make sure to configure your Firebase credentials in
+            the environment variables.
+          </p>
+          <Button onClick={() => window.location.reload()} variant="outline">
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 space-y-8">
+      {/* Development Status */}
+      <DevStatus />
+
       {/* Welcome Section */}
       <section className="text-center py-8">
         <h1 className="text-4xl font-bold text-foreground mb-4">
@@ -139,15 +157,6 @@ export default function HomePage() {
       </section>
 
       {/* Random Monk Spotlight */}
-      <section className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg p-6 text-white">
-        <h2 className="text-2xl font-bold mb-2">Teacher Spotlight</h2>
-        <p className="text-blue-100 mb-4">
-          Featured teacher: <span className="font-semibold">{randomMonk}</span>
-        </p>
-        <Button variant="secondary" size="sm">
-          Explore Teachings
-        </Button>
-      </section>
 
       {/* Featured Content */}
       <section>
@@ -161,9 +170,17 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {featuredContent.map((content) => (
-            <ContentCard key={content.id} content={content} />
-          ))}
+          {featuredContent.length > 0 ? (
+            featuredContent.map((content) => (
+              <ContentCard key={content.id} content={content} />
+            ))
+          ) : (
+            <div className="col-span-full text-center py-8">
+              <p className="text-muted-foreground">
+                No content available at the moment. Please check back later.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -179,7 +196,7 @@ export default function HomePage() {
           <p className="text-sm text-muted-foreground mb-4">
             Listen to dharma talks and guided meditations
           </p>
-          <Link to="/browse?type=audio">
+          <Link to="/audios">
             <Button variant="outline" size="sm" className="w-full">
               Browse Audio
             </Button>
@@ -196,7 +213,7 @@ export default function HomePage() {
           <p className="text-sm text-muted-foreground mb-4">
             Watch dharma talks and meditation instructions
           </p>
-          <Link to="/browse?type=video">
+          <Link to="/videos">
             <Button variant="outline" size="sm" className="w-full">
               Browse Videos
             </Button>
@@ -211,7 +228,7 @@ export default function HomePage() {
           <p className="text-sm text-muted-foreground mb-4">
             Read dharma texts and teachings
           </p>
-          <Link to="/browse?type=ebook">
+          <Link to="/pdfs">
             <Button variant="outline" size="sm" className="w-full">
               Browse Books
             </Button>

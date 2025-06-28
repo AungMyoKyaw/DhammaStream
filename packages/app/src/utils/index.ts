@@ -60,22 +60,24 @@ export function generateId(): string {
 }
 
 // Debounce function
-export function debounce<T extends (...args: unknown[]) => unknown>(
-  func: T,
+export function debounce<Args extends unknown[]>(
+  func: (...args: Args) => unknown,
   wait: number
-): (...args: Parameters<T>) => void {
-  let timeout: NodeJS.Timeout;
-  return (...args: Parameters<T>) => {
+): (...args: Args) => void {
+  let timeout: any;
+  return (...args: Args) => {
     clearTimeout(timeout);
     timeout = setTimeout(() => func(...args), wait);
   };
 }
 
+export type DebounceFunction<T extends unknown[]> = (...args: T) => void;
+
 // Throttle function
 export function throttle<T extends (...args: unknown[]) => unknown>(
   func: T,
   limit: number
-): (...args: Parameters<T>) => void {
+): (...args: Parameters<typeof func>) => void {
   let inThrottle: boolean;
   return (...args: Parameters<T>) => {
     if (!inThrottle) {
@@ -221,3 +223,6 @@ export async function copyToClipboard(text: string): Promise<boolean> {
     }
   }
 }
+
+// Export diagnostics utilities
+export * from "./firestore-diagnostics";

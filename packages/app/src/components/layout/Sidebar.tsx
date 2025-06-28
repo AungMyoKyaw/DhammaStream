@@ -1,10 +1,6 @@
 import {
   Home,
   Search,
-  Heart,
-  Settings,
-  Download,
-  Clock,
   BookOpen,
   Headphones,
   Video,
@@ -12,31 +8,22 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/common/Button";
 import { useAppStore } from "@/store";
-import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/utils";
 import { NavLink } from "react-router-dom";
 
 const mainNavItems = [
   { icon: Home, label: "Home", path: "/" },
-  { icon: Search, label: "Browse", path: "/browse" },
-  { icon: Clock, label: "Recently Played", path: "/recent" }
+  { icon: Search, label: "Browse", path: "/browse" }
 ];
 
-const libraryItems = [
-  { icon: Heart, label: "Favorites", path: "/favorites" },
-  { icon: Download, label: "Downloads", path: "/downloads" },
-  { icon: Clock, label: "Listening History", path: "/history" }
-];
-
-const contentTypes = [
-  { icon: Headphones, label: "Audio Dharma", path: "/browse?type=audio" },
-  { icon: Video, label: "Video Teachings", path: "/browse?type=video" },
-  { icon: BookOpen, label: "E-books", path: "/browse?type=ebook" }
+const browseItems = [
+  { icon: Headphones, label: "Audio Dharma", path: "/audios" },
+  { icon: Video, label: "Video Teachings", path: "/videos" },
+  { icon: BookOpen, label: "E-books", path: "/pdfs" }
 ];
 
 export function Sidebar() {
   const { sidebarOpen, setSidebarOpen } = useAppStore();
-  const { user } = useAuth();
 
   return (
     <>
@@ -86,7 +73,7 @@ export function Sidebar() {
 
           {/* Navigation */}
           <nav className="flex-1 overflow-y-auto p-4 space-y-6">
-            {/* Main Navigation */}
+            {/* Discover Section */}
             <div>
               <h3 className="mb-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 Discover
@@ -113,40 +100,13 @@ export function Sidebar() {
               </ul>
             </div>
 
-            {/* Content Types */}
-            <div>
-              <h3 className="mb-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Content Types
-              </h3>
-              <ul className="space-y-1">
-                {contentTypes.map((item) => (
-                  <li key={item.path}>
-                    <NavLink
-                      to={item.path}
-                      className={({ isActive }) =>
-                        cn(
-                          "flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors text-sm font-medium",
-                          isActive
-                            ? "bg-primary text-primary-foreground"
-                            : "text-muted-foreground hover:text-foreground hover:bg-accent"
-                        )
-                      }
-                    >
-                      <item.icon className="h-5 w-5" />
-                      <span>{item.label}</span>
-                    </NavLink>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Browse Content Types */}
+            {/* Browse Section */}
             <div>
               <h3 className="mb-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 Browse
               </h3>
               <ul className="space-y-1">
-                {contentTypes.map((item) => (
+                {browseItems.map((item) => (
                   <li key={item.path}>
                     <NavLink
                       to={item.path}
@@ -166,68 +126,7 @@ export function Sidebar() {
                 ))}
               </ul>
             </div>
-
-            {/* Your Library */}
-            {user && (
-              <div>
-                <h3 className="mb-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Your Library
-                </h3>
-                <ul className="space-y-1">
-                  {libraryItems.map((item) => (
-                    <li key={item.path}>
-                      <NavLink
-                        to={item.path}
-                        className={({ isActive }) =>
-                          cn(
-                            "flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors text-sm font-medium",
-                            isActive
-                              ? "bg-primary text-primary-foreground"
-                              : "text-muted-foreground hover:text-foreground hover:bg-accent"
-                          )
-                        }
-                      >
-                        <item.icon className="h-5 w-5" />
-                        <span>{item.label}</span>
-                      </NavLink>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
           </nav>
-
-          {/* Footer */}
-          <div className="p-4 border-t border-border">
-            {user ? (
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center">
-                  <span className="text-white text-xs font-medium">
-                    {user.displayName?.[0] || user.email[0].toUpperCase()}
-                  </span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground truncate">
-                    {user.displayName || "User"}
-                  </p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {user.email}
-                  </p>
-                </div>
-                <NavLink to="/profile">
-                  <Button variant="ghost" size="icon-sm">
-                    <Settings className="h-4 w-4" />
-                  </Button>
-                </NavLink>
-              </div>
-            ) : (
-              <NavLink to="/auth/login" className="w-full">
-                <Button className="w-full" size="sm">
-                  Sign In
-                </Button>
-              </NavLink>
-            )}
-          </div>
         </div>
       </aside>
     </>
