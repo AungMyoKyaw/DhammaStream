@@ -34,7 +34,6 @@ graph TB
 ## Getting Started
 
 1. Install global prerequisites:
-
    - Node.js v16+ and npm
    - Firebase CLI (`npm install -g firebase-tools`)
 
