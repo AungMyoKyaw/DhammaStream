@@ -13,8 +13,8 @@ if (!DATABASE_URL) {
 const pool = new Pool({
   connectionString: DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false, // Use with caution; set to true in production for security
-  },
+    rejectUnauthorized: false // Use with caution; set to true in production for security
+  }
 });
 
 async function setupDatabase() {
@@ -24,7 +24,7 @@ async function setupDatabase() {
     {
       query: `CREATE TABLE IF NOT EXISTS speakers (
         id SERIAL PRIMARY KEY,
-        name TEXT NOT NULL UNIQUE,
+        name TEXT UNIQUE DEFAULT 'Unknown Speaker',
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );`,
       description: "Create speakers table"
@@ -32,19 +32,19 @@ async function setupDatabase() {
     {
       query: `CREATE TABLE IF NOT EXISTS dhamma_content (
         id INT PRIMARY KEY,
-        title TEXT NOT NULL,
-        speaker_id INT REFERENCES speakers(id),
-        content_type TEXT NOT NULL,
-        file_url TEXT NOT NULL,
-        file_size_estimate INT,
-        duration_estimate INT,
-        language TEXT NOT NULL,
-        category TEXT,
-        tags TEXT[],
-        description TEXT,
-        date_recorded TIMESTAMP WITH TIME ZONE,
-        source_page TEXT,
-        scraped_date TIMESTAMP WITH TIME ZONE,
+        title TEXT DEFAULT 'Untitled',
+        speaker_id INT REFERENCES speakers(id) DEFAULT NULL,
+        content_type TEXT DEFAULT 'other',
+        file_url TEXT DEFAULT '',
+        file_size_estimate INT DEFAULT 0,
+        duration_estimate INT DEFAULT 0,
+        language TEXT DEFAULT 'en',
+        category TEXT DEFAULT 'Uncategorized',
+        tags TEXT[] DEFAULT ARRAY[]::TEXT[],
+        description TEXT DEFAULT '',
+        date_recorded TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        source_page TEXT DEFAULT '',
+        scraped_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );`,
       description: "Create dhamma_content table"

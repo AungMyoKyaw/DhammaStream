@@ -14,10 +14,8 @@ mkdir supabase-node-demo
 cd supabase-node-demo
 npm init -y
 
-
 Install Dependencies:Install the Supabase JavaScript client and the PostgreSQL client (pg):
 npm install @supabase/supabase-js pg
-
 
 Create a .env File:Store your Supabase credentials securely in a .env file:
 SUPABASE_URL=https://your-project-url.supabase.co
@@ -29,8 +27,6 @@ Replace your-project-url, your-anon-key, and [YOUR_PASSWORD] with the values fro
 Install dotenv:To load environment variables, install dotenv:
 npm install dotenv
 
-
-
 Step 2: Programmatically Creating a Table
 Since supabase-js does not support direct table creation, we use the pg library to execute an SQL query. The query includes IF NOT EXISTS to prevent errors if the table already exists.
 
@@ -40,14 +36,13 @@ const { Pool } = require('pg');
 
 // Configure PostgreSQL client
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false } // Required for Supabase
+connectionString: process.env.DATABASE_URL,
+ssl: { rejectUnauthorized: false } // Required for Supabase
 });
 
 async function createTable() {
-    try {
-        const query = `
-            CREATE TABLE IF NOT EXISTS products (
+try {
+const query = `             CREATE TABLE IF NOT EXISTS products (
                 id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
                 name TEXT NOT NULL UNIQUE,
                 description TEXT,
@@ -55,24 +50,22 @@ async function createTable() {
                 created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
             );
         `;
-        await pool.query(query);
-        console.log('Table "products" created successfully or already exists.');
-    } catch (error) {
-        console.error('Error creating table:', error.message);
-        throw error;
-    } finally {
-        await pool.end();
-    }
+await pool.query(query);
+console.log('Table "products" created successfully or already exists.');
+} catch (error) {
+console.error('Error creating table:', error.message);
+throw error;
+} finally {
+await pool.end();
+}
 }
 
 createTable();
-
 
 Run the script:
 node create-table.js
 
 This script connects to your Supabase database and creates a products table with columns for ID, name, description, price, and creation timestamp. The IF NOT EXISTS clause ensures no error occurs if the table already exists. The name column is marked UNIQUE to prevent duplicate product names, which will be used to check for existing data during insertion.
-
 
 Note: Ensure the database user (typically postgres) has CREATE permissions. Supabase’s default postgres role has these permissions.
 Step 3: Populating Data with supabase-js
@@ -86,11 +79,11 @@ const { createClient } = require('@supabase/supabase-js');
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
 async function insertData() {
-    const productsToInsert = [
-        { name: 'Laptop', description: 'High-performance laptop', price: 999.99 },
-        { name: 'Smartphone', description: 'Latest model smartphone', price: 699.99 },
-        { name: 'Headphones', description: 'Noise-cancelling headphones', price: 149.99 }
-    ];
+const productsToInsert = [
+{ name: 'Laptop', description: 'High-performance laptop', price: 999.99 },
+{ name: 'Smartphone', description: 'Latest model smartphone', price: 699.99 },
+{ name: 'Headphones', description: 'Noise-cancelling headphones', price: 149.99 }
+];
 
     try {
         // Check for existing products by name
@@ -127,10 +120,10 @@ async function insertData() {
         console.error('Error inserting data:', error.message);
         throw error;
     }
+
 }
 
 insertData();
-
 
 Run the script:
 node insert-data.js
@@ -143,8 +136,6 @@ Filters out products that already exist to avoid duplicates (leveraging the UNIQ
 Inserts only new products and logs the inserted records.
 Handles errors, such as RLS restrictions or constraint violations.
 
-
-
 Step 4: Configuring Row Level Security (RLS) Programmatically
 Supabase enables RLS by default on new tables, which may restrict access unless policies are defined. To allow public read and insert operations programmatically, use the pg library to create RLS policies.
 
@@ -153,23 +144,23 @@ require('dotenv').config();
 const { Pool } = require('pg');
 
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
+connectionString: process.env.DATABASE_URL,
+ssl: { rejectUnauthorized: false }
 });
 
 async function configureRLS() {
-    try {
-        const queries = [
-            // Enable RLS on the products table
-            `ALTER TABLE products ENABLE ROW LEVEL SECURITY;`,
-            // Drop existing policies to avoid conflicts
-            `DROP POLICY IF EXISTS "Allow public select" ON products;`,
-            `DROP POLICY IF EXISTS "Allow public insert" ON products;`,
-            // Create policy for public read access
-            `CREATE POLICY "Allow public select" ON products FOR SELECT USING (true);`,
-            // Create policy for public insert access
-            `CREATE POLICY "Allow public insert" ON products FOR INSERT WITH CHECK (true);`
-        ];
+try {
+const queries = [
+// Enable RLS on the products table
+`ALTER TABLE products ENABLE ROW LEVEL SECURITY;`,
+// Drop existing policies to avoid conflicts
+`DROP POLICY IF EXISTS "Allow public select" ON products;`,
+`DROP POLICY IF EXISTS "Allow public insert" ON products;`,
+// Create policy for public read access
+`CREATE POLICY "Allow public select" ON products FOR SELECT USING (true);`,
+// Create policy for public insert access
+`CREATE POLICY "Allow public insert" ON products FOR INSERT WITH CHECK (true);`
+];
 
         for (const query of queries) {
             await pool.query(query);
@@ -183,10 +174,10 @@ async function configureRLS() {
     } finally {
         await pool.end();
     }
+
 }
 
 configureRLS();
-
 
 Run the script:
 node configure-rls.js
@@ -197,8 +188,6 @@ Enables RLS on the products table (if not already enabled).
 Drops existing policies to avoid conflicts.
 Creates policies to allow public SELECT and INSERT operations.
 Uses IF EXISTS to handle cases where policies don’t exist.
-
-
 
 Note: In production, create more restrictive RLS policies based on user authentication (e.g., auth.uid()). The above policies are for testing purposes.
 Step 5: Verifying Data
@@ -211,10 +200,10 @@ const { createClient } = require('@supabase/supabase-js');
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
 async function fetchData() {
-    try {
-        const { data, error } = await supabase
-            .from('products')
-            .select('*');
+try {
+const { data, error } = await supabase
+.from('products')
+.select('\*');
 
         if (error) {
             throw error;
@@ -230,16 +219,15 @@ async function fetchData() {
         console.error('Error fetching data:', error.message);
         throw error;
     }
+
 }
 
 fetchData();
-
 
 Run the script:
 node fetch-data.js
 
 This script retrieves and logs all rows in the products table, with error handling for cases like RLS restrictions or an empty table.
-
 
 Step 6: Running the Full Workflow
 To set up and populate the table, run the scripts in sequence:
