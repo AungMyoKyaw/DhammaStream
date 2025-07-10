@@ -4,17 +4,20 @@
   "description": "Seeder script to migrate data from SQLite to Supabase",
   "main": "src/index.ts",
   "scripts": {
-    "start": "tsx src/index.ts"
+    "start": "tsx src/index.ts",
+    "create-tables": "tsx src/create-tables.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.50.3",
     "better-sqlite3": "^12.2.0",
-    "dotenv": "^17.0.1"
+    "dotenv": "^17.0.1",
+    "pg": "^8.16.3"
   },
   "devDependencies": {
-    "tsx": "^4.20.3",
-    "typescript": "^5.8.3",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^24.0.10",
-    "@types/better-sqlite3": "^7.6.13"
+    "@types/pg": "^8.11.6",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
   }
 }
