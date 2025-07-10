@@ -77,7 +77,18 @@ async function seedSpeakers() {
   }
   console.log(`Seeding ${names.length} unique speakers...`);
 
-  const records = [...new Set(names.map((name) => name.replace(/[^a-zA-Z0-9\s]/g, "").trim().substring(0, 255)))].filter(name => name.trim() !== '').map(name => ({ name }));
+  const records = [
+    ...new Set(
+      names.map((name) =>
+        name
+          .replace(/[^a-zA-Z0-9\s]/g, "")
+          .trim()
+          .substring(0, 255)
+      )
+    )
+  ]
+    .filter((name) => name.trim() !== "")
+    .map((name) => ({ name }));
   try {
     // Upsert to avoid duplicates
     for (let i = 0; i < records.length; i += 50) {
@@ -99,7 +110,6 @@ async function seedSpeakers() {
       }
     }
 
-    
     console.log(`Seeded ${names.length} speakers.`);
   } catch (err) {
     console.error("Error seeding speakers:", err);
@@ -237,8 +247,6 @@ async function seedContent() {
   console.log(`Skipped: ${skippedCount}`);
   console.log(`Errors: ${errorCount}`);
 }
-
-
 
 main().catch((err) => {
   console.error("Unexpected error:", err);
