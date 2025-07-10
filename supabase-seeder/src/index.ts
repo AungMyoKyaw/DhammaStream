@@ -8,7 +8,7 @@ const {
   SUPABASE_URL,
   SUPABASE_KEY,
   SQLITE_DB_PATH,
-  BATCH_SIZE = "1000",
+  BATCH_SIZE = "100",
   RETRY_ATTEMPTS = "3"
 } = process.env;
 
@@ -77,31 +77,29 @@ async function seedSpeakers() {
   }
   console.log(`Seeding ${names.length} unique speakers...`);
 
-  const records = names.map((name) => ({ name }));
+  const records = [...new Set(names.map((name) => name.replace(/[^a-zA-Z0-9\s]/g, "").trim().substring(0, 255)))].filter(name => name.trim() !== '').map(name => ({ name }));
   try {
     // Upsert to avoid duplicates
-    const { error: upsertError } = await supabase
-      .from("speakers")
-      .upsert(records, { onConflict: ["name"] });
-    if (upsertError) {
-      console.error("Upsert error:", JSON.stringify(upsertError, null, 2));
-      throw upsertError;
-    }
-
-    // Fetch back IDs in batches
-    const batchSize = 100;
-    for (let i = 0; i < names.length; i += batchSize) {
-      const batchNames = names.slice(i, i + batchSize);
-      const { data: inserted, error: selectError } = await supabase
+    for (let i = 0; i < records.length; i += 50) {
+      const batch = records.slice(i, i + 50);
+      const { data: upsertedData, error: upsertError } = await supabase
         .from("speakers")
-        .select("id, name")
-        .in("name", batchNames);
-      if (selectError || !inserted) throw selectError;
+        .upsert(batch, { onConflict: "name" })
+        .select();
 
-      inserted.forEach((row: { id: number; name: string }) => {
-        if (row.name) speakerMap.set(row.name, row.id);
-      });
+      if (upsertError) {
+        console.error("Upsert error:", JSON.stringify(upsertError, null, 2));
+        throw upsertError;
+      }
+
+      if (upsertedData) {
+        upsertedData.forEach((row: { id: number; name: string }) => {
+          if (row.name) speakerMap.set(row.name, row.id);
+        });
+      }
     }
+
+    
     console.log(`Seeded ${names.length} speakers.`);
   } catch (err) {
     console.error("Error seeding speakers:", err);
@@ -230,6 +228,7 @@ async function seedContent() {
     console.log(
       `Progress: processed=${processed}/${total}, inserted=${insertedCount}, skipped=${skippedCount}, errors=${errorCount}`
     );
+    await sleep(1000);
   }
 
   console.log("--- Summary ---");
