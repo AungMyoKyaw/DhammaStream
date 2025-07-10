@@ -1,4 +1,3 @@
-// @ts-nocheck
 import dotenv from "dotenv";
 import Database from "better-sqlite3";
 import { createClient } from "@supabase/supabase-js";
@@ -42,7 +41,7 @@ type DhammaRow = {
   file_url: string;
   file_size_estimate: number | null;
   duration_estimate: number | null;
-  language: string;
+  language: string | null;
   category: string | null;
   tags: string | null;
   description: string | null;
@@ -62,7 +61,7 @@ async function main() {
 
 function extractUniqueSpeakers(): Set<string> {
   const stmt = db.prepare(
-    'SELECT DISTINCT speaker FROM dhamma_content WHERE speaker IS NOT NULL AND speaker != ""'
+    "SELECT DISTINCT speaker FROM dhamma_content WHERE speaker IS NOT NULL AND speaker != ''"
   );
   const rows: Array<{ speaker: string }> = stmt.all();
   const set = new Set<string>();
@@ -84,19 +83,26 @@ async function seedSpeakers() {
     const { error: upsertError } = await supabase
       .from("speakers")
       .upsert(records, { onConflict: ["name"] });
-    if (upsertError) throw upsertError;
+    if (upsertError) {
+      console.error("Upsert error:", JSON.stringify(upsertError, null, 2));
+      throw upsertError;
+    }
 
-    // Fetch back IDs
-    const { data: inserted, error: selectError } = await supabase
-      .from<{ id: number; name: string }>("speakers")
-      .select("id, name")
-      .in("name", names);
-    if (selectError || !inserted) throw selectError;
+    // Fetch back IDs in batches
+    const batchSize = 100;
+    for (let i = 0; i < names.length; i += batchSize) {
+      const batchNames = names.slice(i, i + batchSize);
+      const { data: inserted, error: selectError } = await supabase
+        .from("speakers")
+        .select("id, name")
+        .in("name", batchNames);
+      if (selectError || !inserted) throw selectError;
 
-    inserted.forEach((row: { id: number; name: string }) => {
-      if (row.name) speakerMap.set(row.name, row.id);
-    });
-    console.log(`Seeded ${inserted.length} speakers.`);
+      inserted.forEach((row: { id: number; name: string }) => {
+        if (row.name) speakerMap.set(row.name, row.id);
+      });
+    }
+    console.log(`Seeded ${names.length} speakers.`);
   } catch (err) {
     console.error("Error seeding speakers:", err);
     process.exit(1);
@@ -118,6 +124,7 @@ async function seedContent() {
   let skippedCount = 0;
   let errorCount = 0;
   const validTypes = ["audio", "video", "ebook", "other"];
+  const validLanguages = ["English", "Myanmar", "Pali"];
 
   while (offset < total) {
     const rows: DhammaRow[] = selectStmt.all(batchSize, offset);
@@ -149,6 +156,12 @@ async function seedContent() {
         skippedCount++;
         return;
       }
+
+      // Validate language
+      let language = row.language;
+      if (!language || !validLanguages.includes(language)) {
+        language = "Myanmar"; // Default to Myanmar
+      }
       // Transform tags to array
       const tagsArray = row.tags
         ? row.tags
@@ -169,7 +182,7 @@ async function seedContent() {
         file_url: row.file_url,
         file_size_estimate: row.file_size_estimate,
         duration_estimate: row.duration_estimate,
-        language: row.language || "Myanmar",
+        language: language,
         category: row.category,
         tags: tagsArray,
         description: row.description,
@@ -190,20 +203,24 @@ async function seedContent() {
       let attempt = 0;
       while (attempt < retryAttempts) {
         attempt++;
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from("dhamma_content")
-          .insert(toInsert);
+          .upsert(toInsert, { onConflict: "id" });
+
         if (!error) {
-          insertedCount += toInsert.length;
-          break;
+          insertedCount += toInsert.length; // Note: This counts all upserted rows
+          break; // Exit retry loop on success
         }
+
         console.error(
-          `Batch insert failed at offset=${offset}, attempt=${attempt}/${retryAttempts}:`,
+          `Batch upsert failed at offset=${offset}, attempt=${attempt}/${retryAttempts}:`,
           error
         );
-        if (attempt < retryAttempts) await sleep(1000 * attempt);
-        else {
+
+        if (attempt >= retryAttempts) {
           errorCount += toInsert.length;
+        } else {
+          await sleep(1000 * attempt);
         }
       }
     }
@@ -221,6 +238,8 @@ async function seedContent() {
   console.log(`Skipped: ${skippedCount}`);
   console.log(`Errors: ${errorCount}`);
 }
+
+
 
 main().catch((err) => {
   console.error("Unexpected error:", err);
