@@ -24,30 +24,68 @@ async function setupDatabase() {
     {
       query: `CREATE TABLE IF NOT EXISTS speakers (
         id SERIAL PRIMARY KEY,
-        name TEXT UNIQUE DEFAULT 'Unknown Speaker',
+        name TEXT NOT NULL UNIQUE,
+        bio TEXT,
+        photo_url TEXT,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );`,
       description: "Create speakers table"
     },
     {
+      query: `CREATE TABLE IF NOT EXISTS categories (
+        id SERIAL PRIMARY KEY,
+        name TEXT NOT NULL UNIQUE
+      );`,
+      description: "Create categories table"
+    },
+    {
+      query: `CREATE TABLE IF NOT EXISTS tags (
+        id SERIAL PRIMARY KEY,
+        name TEXT NOT NULL UNIQUE
+      );`,
+      description: "Create tags table"
+    },
+    {
       query: `CREATE TABLE IF NOT EXISTS dhamma_content (
-        id INT PRIMARY KEY,
-        title TEXT DEFAULT 'Untitled',
-        speaker_id INT REFERENCES speakers(id) DEFAULT NULL,
-        content_type TEXT DEFAULT 'other',
-        file_url TEXT DEFAULT '',
-        file_size_estimate INT DEFAULT 0,
-        duration_estimate INT DEFAULT 0,
-        language TEXT DEFAULT 'en',
-        category TEXT DEFAULT 'Uncategorized',
-        tags TEXT[] DEFAULT ARRAY[]::TEXT[],
-        description TEXT DEFAULT '',
-        date_recorded TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-        source_page TEXT DEFAULT '',
-        scraped_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        id SERIAL PRIMARY KEY,
+        title TEXT NOT NULL,
+        speaker_id INT REFERENCES speakers(id),
+        content_type TEXT CHECK(content_type IN ('audio', 'video', 'ebook', 'other')),
+        file_url TEXT NOT NULL UNIQUE,
+        file_size_estimate INT,
+        duration_estimate INT,
+        language TEXT DEFAULT 'Myanmar',
+        category_id INT REFERENCES categories(id),
+        description TEXT,
+        date_recorded DATE,
+        source_page TEXT,
+        scraped_date TIMESTAMP WITH TIME ZONE,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );`,
       description: "Create dhamma_content table"
+    },
+    {
+      query: `CREATE TABLE IF NOT EXISTS dhamma_content_tags (
+        content_id INT REFERENCES dhamma_content(id),
+        tag_id INT REFERENCES tags(id),
+        PRIMARY KEY (content_id, tag_id)
+      );`,
+      description: "Create dhamma_content_tags table"
+    },
+    {
+      query: `CREATE TABLE IF NOT EXISTS featured_entities (
+        id SERIAL PRIMARY KEY,
+        entity_type TEXT NOT NULL,
+        entity_id INT NOT NULL,
+        featured_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        expires_at TIMESTAMP WITH TIME ZONE,
+        context TEXT
+      );`,
+      description: "Create featured_entities table"
+    },
+    {
+      query: `CREATE INDEX IF NOT EXISTS idx_featured_entities_entity_type_id ON featured_entities(entity_type, entity_id);`,
+      description: "Create index on featured_entities (entity_type, entity_id)"
     }
   ];
 
@@ -58,7 +96,10 @@ async function setupDatabase() {
         await client.query(query);
         console.log(`Successfully executed: ${description}`);
       } catch (err) {
-        console.error(`Error executing ${description}:`, err.message);
+        console.error(
+          `Error executing ${description}:`,
+          (err as Error).message
+        );
         throw err;
       }
     }
@@ -67,7 +108,7 @@ async function setupDatabase() {
     console.error("Setup failed:", error);
     process.exit(1);
   } finally {
-    await client.release();
+    client.release();
     await pool.end();
   }
 }
