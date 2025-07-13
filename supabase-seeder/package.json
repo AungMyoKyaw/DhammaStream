@@ -2,9 +2,9 @@
   "name": "supabase-seeder",
   "version": "1.0.0",
   "description": "Seeder script to migrate data from SQLite to Supabase",
-  "main": "src/index.ts",
+  "main": "src/seed-supabase.ts",
   "scripts": {
-    "start": "tsx src/index.ts",
+    "seed-supabase": "tsx src/seed-supabase.ts",
     "create-tables": "tsx src/create-tables.ts",
     "migrate:supabase-schema": "tsx src/migrate-to-supabase-schema.ts"
   },
