@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/static";
 import { ContentCard } from "@/components/content/content-card";
 import { FileX } from "lucide-react";
 import type { DhammaContent } from "@/lib/types";
@@ -8,7 +8,7 @@ export default async function CategoriesPage() {
   let error: Error | null = null;
 
   try {
-    const supabase = await createClient();
+    const supabase = createStaticClient();
     const { data, error: fetchError } = await supabase
       .from("dhamma_content")
       .select(
@@ -60,26 +60,28 @@ export default async function CategoriesPage() {
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">All Categories</h1>
-        <p className="text-muted-foreground mt-2">
+    <div className="container mx-auto py-10">
+      <div className="mb-10 text-center">
+        <h1 className="text-4xl font-extrabold tracking-tight text-primary mb-2">
+          All Categories
+        </h1>
+        <p className="text-muted-foreground text-lg">
           Explore content organized by topics and themes
         </p>
       </div>
 
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            Found {content.length} result{content.length === 1 ? "" : "s"}
-          </p>
-        </div>
+      <div className="flex items-center justify-between mb-6">
+        <p className="text-sm text-muted-foreground">
+          Found {content.length} result{content.length === 1 ? "" : "s"}
+        </p>
+      </div>
 
-        <div className="space-y-4">
-          {content.map((item) => (
-            <ContentCard key={item.id} content={item} />
-          ))}
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {content.map((item) => (
+          <div key={item.id} className="group">
+            <ContentCard content={item} />
+          </div>
+        ))}
       </div>
     </div>
   );

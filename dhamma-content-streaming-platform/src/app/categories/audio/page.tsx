@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/static";
 import { ContentCard } from "@/components/content/content-card";
 import { FileX } from "lucide-react";
 import type { DhammaContent } from "@/lib/types";
@@ -8,20 +8,41 @@ export default async function AudioCategoryPage() {
   let error: Error | null = null;
 
   try {
-    const supabase = await createClient();
+    const supabase = createStaticClient();
     const { data, error: fetchError } = await supabase
       .from("dhamma_content")
       .select(
-        `
-        *,
-        speaker:speakers(id, name),
-        category:categories(id, name)
-      `
+        `id, title, description, content_type, language, file_url, duration_estimate, created_at, speaker:speakers(id, name, created_at), category:categories(id, name)`
       )
       .eq("content_type", "audio")
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })
+      .limit(50);
 
-    content = data || [];
+    type RawContent = Omit<DhammaContent, "speaker" | "category"> & {
+      speaker: { id: number; name: string }[] | { id: number; name: string };
+      category: { id: number; name: string }[] | { id: number; name: string };
+    };
+    content = (data || []).map((item: RawContent) => {
+      const speakerArr = Array.isArray(item.speaker)
+        ? item.speaker
+        : [item.speaker];
+      const categoryArr = Array.isArray(item.category)
+        ? item.category
+        : [item.category];
+      return {
+        ...item,
+        speaker: speakerArr[0] && {
+          id: speakerArr[0].id,
+          name: speakerArr[0].name,
+          created_at:
+            (speakerArr[0] as { created_at?: string }).created_at ?? ""
+        },
+        category: categoryArr[0] && {
+          id: categoryArr[0].id,
+          name: categoryArr[0].name
+        }
+      };
+    });
     error = fetchError;
   } catch (dbError) {
     console.warn("Database connection failed, using fallback data:", dbError);

@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/static";
 import { ContentCard } from "@/components/content/content-card";
 import { FileX } from "lucide-react";
 import type { DhammaContent } from "@/lib/types";
@@ -8,7 +8,7 @@ export default async function VideoCategoryPage() {
   let error: Error | null = null;
 
   try {
-    const supabase = await createClient();
+    const supabase = createStaticClient();
     const { data, error: fetchError } = await supabase
       .from("dhamma_content")
       .select(

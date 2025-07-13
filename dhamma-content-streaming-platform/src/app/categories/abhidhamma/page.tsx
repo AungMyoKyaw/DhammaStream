@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/static";
 import { ContentCard } from "@/components/content/content-card";
 import { FileX } from "lucide-react";
 import type { DhammaContent } from "@/lib/types";
@@ -8,7 +8,7 @@ export default async function AbhidhammaCategoryPage() {
   let error: Error | null = null;
 
   try {
-    const supabase = await createClient();
+    const supabase = createStaticClient();
     const { data, error: fetchError } = await supabase
       .from("dhamma_content")
       .select(
@@ -18,8 +18,9 @@ export default async function AbhidhammaCategoryPage() {
         category:categories(id, name)
       `
       )
-      .or(`title.ilike.%abhidhamma%,description.ilike.%abhidhamma%`)
-      .order("created_at", { ascending: false });
+      .eq("category_id", 1)
+      .order("created_at", { ascending: false })
+      .range(0, 19); // Pagination: first 20 results
 
     content = data || [];
     error = fetchError;
