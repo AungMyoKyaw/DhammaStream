@@ -34,19 +34,24 @@ export function Navigation() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-lg transition-shadow duration-300">
-      <div className="container flex h-16 items-center justify-between">
+      <div className="container flex h-16 min-w-0 items-center justify-between gap-x-8">
         {/* Brand/Logo */}
-        <Link href="/" className="flex items-center space-x-3 group">
-          <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-primary to-accent flex items-center justify-center shadow-md group-hover:scale-105 group-hover:shadow-xl transition-transform duration-200">
-            <Play className="h-5 w-5 text-primary-foreground" />
-          </div>
-          <span className="font-extrabold text-xl tracking-tight text-primary group-hover:text-primary/80 transition-colors duration-200">
-            DhammaStream
-          </span>
-        </Link>
+        <div className="flex items-center min-w-0">
+          <Link href="/" className="flex items-center space-x-3 group min-w-0">
+            <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-primary to-accent flex items-center justify-center shadow-md group-hover:scale-105 group-hover:shadow-xl transition-transform duration-200">
+              <Play className="h-5 w-5 text-primary-foreground" />
+            </div>
+            <span className="font-extrabold text-xl tracking-tight text-primary group-hover:text-primary/80 transition-colors duration-200 truncate">
+              DhammaStream
+            </span>
+          </Link>
+        </div>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-2">
+        {/* Desktop Navigation - centered, flex-1 for perfect alignment */}
+        <nav
+          className="hidden md:flex flex-1 items-center justify-center min-w-0"
+          aria-label="Main navigation"
+        >
           <NavigationMenu>
             <NavigationMenuList>
               <NavigationMenuItem>
@@ -68,9 +73,12 @@ export function Navigation() {
                     isActive("/speakers") && "bg-primary/20 text-primary"
                   )}
                 >
-                  <Link href="/speakers">
-                    <Users className="mr-2 h-5 w-5" />
-                    Speakers
+                  <Link
+                    href="/speakers"
+                    className="flex flex-row items-center gap-2"
+                  >
+                    <Users className="h-5 w-5" aria-hidden="true" />
+                    <span className="leading-none">Speakers</span>
                   </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
@@ -148,8 +156,8 @@ export function Navigation() {
           </NavigationMenu>
         </nav>
 
-        {/* Mobile Menu Button & Search */}
-        <div className="flex items-center gap-2">
+        {/* Mobile Menu Button & Search - right aligned */}
+        <div className="flex items-center gap-2 min-w-0">
           {/* Theme Toggle - Always visible */}
           <ThemeToggle />
 
@@ -158,9 +166,9 @@ export function Navigation() {
             asChild
             variant="outline"
             size="sm"
-            className="hidden sm:flex h-9 w-40 lg:w-64 rounded-lg shadow-sm transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/20 focus:text-primary"
+            className="hidden sm:flex h-9 w-40 lg:w-64 rounded-lg shadow-sm transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/20 focus:text-primary focus-visible:ring-2 focus-visible:ring-primary/80"
           >
-            <Link href="/search">
+            <Link href="/search" aria-label="Search content">
               <Search className="mr-2 h-4 w-4" />
               Search content...
             </Link>
@@ -171,7 +179,7 @@ export function Navigation() {
             asChild
             variant="outline"
             size="sm"
-            className="sm:hidden h-9 w-9 rounded-lg shadow-sm transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/20 focus:text-primary"
+            className="sm:hidden h-9 w-9 rounded-lg shadow-sm transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/20 focus:text-primary focus-visible:ring-2 focus-visible:ring-primary/80"
           >
             <Link href="/search" aria-label="Search content">
               <Search className="h-4 w-4" />
@@ -182,7 +190,7 @@ export function Navigation() {
           <Button
             variant="outline"
             size="sm"
-            className="md:hidden h-9 w-9 rounded-lg shadow-sm transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/20 focus:text-primary"
+            className="md:hidden h-9 w-9 rounded-lg shadow-sm transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/20 focus:text-primary focus-visible:ring-2 focus-visible:ring-primary/80"
             onClick={toggleMobileMenu}
             aria-controls="mobile-navigation"
             aria-expanded={isMobileMenuOpen}
@@ -203,14 +211,15 @@ export function Navigation() {
           id="mobile-navigation"
           className="md:hidden border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 animate-in slide-in-from-top-5 duration-200"
         >
-          <nav className="container py-4">
+          <nav className="container py-4" aria-label="Mobile navigation">
             <div className="flex flex-col space-y-3">
               <Link
                 href="/content"
                 className={cn(
-                  "flex items-center rounded-lg px-4 py-3 text-base font-semibold transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/20 focus:text-primary",
+                  "flex items-center rounded-lg px-4 py-3 text-base font-semibold transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/20 focus:text-primary focus-visible:ring-2 focus-visible:ring-primary/80",
                   isActive("/content") && "bg-primary/20 text-primary"
                 )}
+                tabIndex={0}
               >
                 <BookOpen className="mr-3 h-5 w-5" />
                 Browse Content
@@ -219,9 +228,10 @@ export function Navigation() {
               <Link
                 href="/speakers"
                 className={cn(
-                  "flex items-center rounded-lg px-4 py-3 text-base font-semibold transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/20 focus:text-primary",
+                  "flex items-center rounded-lg px-4 py-3 text-base font-semibold transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/20 focus:text-primary focus-visible:ring-2 focus-visible:ring-primary/80",
                   isActive("/speakers") && "bg-primary/20 text-primary"
                 )}
+                tabIndex={0}
               >
                 <Users className="mr-3 h-5 w-5" />
                 Speakers
@@ -235,25 +245,29 @@ export function Navigation() {
                 <div className="flex flex-col space-y-2 ml-4">
                   <Link
                     href="/categories/audio"
-                    className="flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/20 focus:text-primary"
+                    className="flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/20 focus:text-primary focus-visible:ring-2 focus-visible:ring-primary/80"
+                    tabIndex={0}
                   >
                     Audio
                   </Link>
                   <Link
                     href="/categories/video"
-                    className="flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/20 focus:text-primary"
+                    className="flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/20 focus:text-primary focus-visible:ring-2 focus-visible:ring-primary/80"
+                    tabIndex={0}
                   >
                     Video
                   </Link>
                   <Link
                     href="/categories/ebook"
-                    className="flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/20 focus:text-primary"
+                    className="flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/20 focus:text-primary focus-visible:ring-2 focus-visible:ring-primary/80"
+                    tabIndex={0}
                   >
                     Ebooks
                   </Link>
                   <Link
                     href="/categories"
-                    className="flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/20 focus:text-primary border-t pt-3 mt-2"
+                    className="flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/20 focus:text-primary border-t pt-3 mt-2 focus-visible:ring-2 focus-visible:ring-primary/80"
+                    tabIndex={0}
                   >
                     All Categories
                   </Link>
