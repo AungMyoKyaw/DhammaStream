@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
@@ -12,12 +13,24 @@ import {
   NavigationMenuTrigger
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
-import { Search, Play, Users, BookOpen } from "lucide-react";
+import { Search, Play, Users, BookOpen, Menu, X } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export function Navigation() {
   const pathname = usePathname();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const isActive = (path: string) => pathname === path;
+
+  // Handle mobile menu toggle
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]); // This is correct - we want to close the menu when pathname changes
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-lg transition-shadow duration-300">
@@ -32,7 +45,7 @@ export function Navigation() {
           </span>
         </Link>
 
-        {/* Navigation */}
+        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-2">
           <NavigationMenu>
             <NavigationMenuList>
@@ -135,21 +148,121 @@ export function Navigation() {
           </NavigationMenu>
         </nav>
 
-        {/* Search Button */}
-        <div className="flex items-center">
+        {/* Mobile Menu Button & Search */}
+        <div className="flex items-center gap-2">
+          {/* Theme Toggle - Always visible */}
+          <ThemeToggle />
+
+          {/* Search Button - Hidden on mobile, replaced with compact version */}
           <Button
             asChild
             variant="outline"
             size="sm"
-            className="h-9 w-40 lg:w-64 rounded-lg shadow-sm transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/20 focus:text-primary"
+            className="hidden sm:flex h-9 w-40 lg:w-64 rounded-lg shadow-sm transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/20 focus:text-primary"
           >
             <Link href="/search">
               <Search className="mr-2 h-4 w-4" />
               Search content...
             </Link>
           </Button>
+
+          {/* Mobile Search Button - Compact version for mobile */}
+          <Button
+            asChild
+            variant="outline"
+            size="sm"
+            className="sm:hidden h-9 w-9 rounded-lg shadow-sm transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/20 focus:text-primary"
+          >
+            <Link href="/search" aria-label="Search content">
+              <Search className="h-4 w-4" />
+            </Link>
+          </Button>
+
+          {/* Mobile Menu Button */}
+          <Button
+            variant="outline"
+            size="sm"
+            className="md:hidden h-9 w-9 rounded-lg shadow-sm transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/20 focus:text-primary"
+            onClick={toggleMobileMenu}
+            aria-controls="mobile-navigation"
+            aria-expanded={isMobileMenuOpen}
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+          >
+            {isMobileMenuOpen ? (
+              <X className="h-4 w-4" />
+            ) : (
+              <Menu className="h-4 w-4" />
+            )}
+          </Button>
         </div>
       </div>
+
+      {/* Mobile Navigation Menu */}
+      {isMobileMenuOpen && (
+        <div
+          id="mobile-navigation"
+          className="md:hidden border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 animate-in slide-in-from-top-5 duration-200"
+        >
+          <nav className="container py-4">
+            <div className="flex flex-col space-y-3">
+              <Link
+                href="/content"
+                className={cn(
+                  "flex items-center rounded-lg px-4 py-3 text-base font-semibold transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/20 focus:text-primary",
+                  isActive("/content") && "bg-primary/20 text-primary"
+                )}
+              >
+                <BookOpen className="mr-3 h-5 w-5" />
+                Browse Content
+              </Link>
+
+              <Link
+                href="/speakers"
+                className={cn(
+                  "flex items-center rounded-lg px-4 py-3 text-base font-semibold transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/20 focus:text-primary",
+                  isActive("/speakers") && "bg-primary/20 text-primary"
+                )}
+              >
+                <Users className="mr-3 h-5 w-5" />
+                Speakers
+              </Link>
+
+              {/* Categories in mobile menu */}
+              <div className="px-4 py-2">
+                <h3 className="text-sm font-semibold text-muted-foreground mb-3">
+                  Categories
+                </h3>
+                <div className="flex flex-col space-y-2 ml-4">
+                  <Link
+                    href="/categories/audio"
+                    className="flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/20 focus:text-primary"
+                  >
+                    Audio
+                  </Link>
+                  <Link
+                    href="/categories/video"
+                    className="flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/20 focus:text-primary"
+                  >
+                    Video
+                  </Link>
+                  <Link
+                    href="/categories/ebook"
+                    className="flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/20 focus:text-primary"
+                  >
+                    Ebooks
+                  </Link>
+                  <Link
+                    href="/categories"
+                    className="flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/20 focus:text-primary border-t pt-3 mt-2"
+                  >
+                    All Categories
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </nav>
+        </div>
+      )}
     </header>
   );
 }

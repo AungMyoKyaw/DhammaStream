@@ -76,101 +76,129 @@ export function ContentCard({ content }: ContentCardProps) {
   };
 
   return (
-    <Card className="rounded-xl shadow-sm hover:shadow-lg transition-all duration-200 hover:scale-[1.025] bg-card/95">
-      <CardContent className="p-6">
-        <div className="flex gap-4">
-          {/* Content Type Icon */}
+    <Card className="group rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] bg-card/90 border border-border/50 hover:border-border backdrop-blur-sm overflow-hidden">
+      <CardContent className="p-6 relative">
+        {/* Subtle gradient overlay for depth */}
+        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-background/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+        <div className="flex gap-4 relative z-10">
+          {/* Enhanced Content Type Icon */}
           <div className="flex-shrink-0">
             <div
-              className={`w-14 h-14 rounded-xl flex items-center justify-center ${getContentTypeColor(content.content_type)} shadow-md transition-transform duration-200 group-hover:scale-110`}
+              className={`w-16 h-16 rounded-2xl flex items-center justify-center ${getContentTypeColor(content.content_type)} shadow-lg transition-all duration-300 group-hover:scale-105 group-hover:rotate-2 relative overflow-hidden`}
             >
-              {getContentTypeIcon(content.content_type)}
+              {/* Icon background glow */}
+              <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-50" />
+              <div className="relative z-10">
+                {getContentTypeIcon(content.content_type)}
+              </div>
             </div>
           </div>
 
-          {/* Content Details */}
+          {/* Enhanced Content Details */}
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1 min-w-0">
                 <CardHeader className="p-0">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Badge variant="secondary" className="capitalize">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Badge
+                      variant="secondary"
+                      className="capitalize bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 transition-colors"
+                    >
                       {content.content_type}
                     </Badge>
-                    <Badge variant="outline">{content.language}</Badge>
+                    <Badge
+                      variant="outline"
+                      className="bg-background/50 hover:bg-muted transition-colors"
+                    >
+                      {content.language}
+                    </Badge>
                     {content.category && (
-                      <Badge variant="outline">{content.category.name}</Badge>
+                      <Badge
+                        variant="outline"
+                        className="bg-background/50 hover:bg-muted transition-colors"
+                      >
+                        {content.category.name}
+                      </Badge>
                     )}
                   </div>
 
-                  <CardTitle className="text-lg leading-tight">
+                  <CardTitle className="text-lg leading-tight group-hover:text-primary transition-colors duration-200">
                     <Link
                       href={`/content/${content.id}`}
-                      className="hover:text-primary transition-colors font-semibold"
+                      className="font-semibold hover:underline decoration-2 underline-offset-2"
                     >
                       {content.title}
                     </Link>
                   </CardTitle>
 
                   {content.description && (
-                    <CardDescription className="line-clamp-2 mt-2">
+                    <CardDescription className="line-clamp-2 mt-2 text-muted-foreground/80 group-hover:text-muted-foreground transition-colors">
                       {content.description}
                     </CardDescription>
                   )}
                 </CardHeader>
 
-                {/* Speaker Info */}
+                {/* Enhanced Speaker Info */}
                 {content.speaker && (
-                  <div className="flex items-center gap-2 mt-3">
-                    <Avatar className="h-6 w-6">
-                      <AvatarFallback className="text-xs">
+                  <div className="flex items-center gap-2 mt-4">
+                    <Avatar className="h-7 w-7 border-2 border-background shadow-sm transition-transform group-hover:scale-105">
+                      <AvatarFallback className="text-xs font-medium bg-gradient-to-br from-primary/20 to-primary/10 text-primary">
                         {content.speaker.name.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
                     <Link
                       href={`/speakers/${content.speaker.id}`}
-                      className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                      className="text-sm text-muted-foreground hover:text-primary transition-colors font-medium"
                     >
                       {content.speaker.name}
                     </Link>
                   </div>
                 )}
 
-                {/* Metadata */}
-                <div className="flex flex-wrap items-center gap-4 mt-3 text-xs text-muted-foreground">
+                {/* Enhanced Metadata */}
+                <div className="flex flex-wrap items-center gap-4 mt-4 text-xs text-muted-foreground/70">
                   {content.duration_estimate && (
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1.5 bg-background/50 px-2 py-1 rounded-lg transition-colors hover:bg-muted/50">
                       <Clock className="h-3 w-3" />
-                      {formatDuration(content.duration_estimate)}
+                      <span className="font-medium">
+                        {formatDuration(content.duration_estimate)}
+                      </span>
                     </div>
                   )}
 
                   {content.file_size_estimate && (
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1.5 bg-background/50 px-2 py-1 rounded-lg transition-colors hover:bg-muted/50">
                       <FileText className="h-3 w-3" />
-                      {formatFileSize(content.file_size_estimate)}
+                      <span className="font-medium">
+                        {formatFileSize(content.file_size_estimate)}
+                      </span>
                     </div>
                   )}
 
                   {content.date_recorded && (
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1.5 bg-background/50 px-2 py-1 rounded-lg transition-colors hover:bg-muted/50">
                       <Calendar className="h-3 w-3" />
-                      {formatDate(content.date_recorded)}
+                      <span className="font-medium">
+                        {formatDate(content.date_recorded)}
+                      </span>
                     </div>
                   )}
                 </div>
               </div>
 
-              {/* Action Button */}
-              <div className="flex-shrink-0">
+              {/* Enhanced Action Button */}
+              <div className="flex-shrink-0 flex flex-col gap-2">
                 <Button
                   asChild
                   size="sm"
-                  className="rounded-lg shadow transition-all duration-200 hover:bg-primary/80 hover:scale-105 focus:scale-95"
+                  className="rounded-xl shadow-md transition-all duration-200 hover:shadow-lg hover:scale-105 focus:scale-95 bg-primary hover:bg-primary/90 active:scale-95 min-w-[4rem]"
                 >
                   <Link href={`/content/${content.id}`}>
-                    <Play className="h-3 w-3 mr-1" />
-                    {content.content_type === "ebook" ? "Read" : "Play"}
+                    <Play className="h-3.5 w-3.5 mr-1.5" />
+                    <span className="font-medium">
+                      {content.content_type === "ebook" ? "Read" : "Play"}
+                    </span>
                   </Link>
                 </Button>
               </div>
