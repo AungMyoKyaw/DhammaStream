@@ -9,9 +9,13 @@ interface ContentListProps {
   readonly searchParams: {
     readonly [key: string]: string | string[] | undefined;
   };
+  readonly view?: "grid" | "list";
 }
 
-export async function ContentList({ searchParams }: ContentListProps) {
+export async function ContentList({
+  searchParams,
+  view = "grid"
+}: ContentListProps) {
   let content: DhammaContent[] = [];
   let error: Error | null = null;
 
@@ -137,14 +141,20 @@ export async function ContentList({ searchParams }: ContentListProps) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
           Found {content.length} result{content.length === 1 ? "" : "s"}
         </p>
       </div>
 
-      <div className="space-y-4">
+      <div
+        className={
+          view === "grid"
+            ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+            : "space-y-4"
+        }
+      >
         {content.map((item) => (
           <ContentCard key={item.id} content={item} />
         ))}

@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { ContentList } from "@/components/content/content-list";
 import { ContentFilters } from "@/components/content/content-filters";
 import { ContentSearch } from "@/components/content/content-search";
+import { ContentListSkeleton } from "@/components/content/content-loading";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -47,32 +48,6 @@ export default async function ContentPage({
           </Suspense>
         </div>
       </div>
-    </div>
-  );
-}
-
-function ContentListSkeleton() {
-  const skeletonItems = Array.from(
-    { length: 6 },
-    (_, i) => `skeleton-${Date.now()}-${i}`
-  );
-
-  return (
-    <div className="space-y-4">
-      {skeletonItems.map((id) => (
-        <Card key={id}>
-          <CardContent className="p-6">
-            <div className="flex space-x-4">
-              <Skeleton className="h-20 w-20 rounded" />
-              <div className="flex-1 space-y-2">
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-3 w-1/2" />
-                <Skeleton className="h-3 w-1/4" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
     </div>
   );
 }
