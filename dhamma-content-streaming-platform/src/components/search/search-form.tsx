@@ -180,7 +180,6 @@ export function SearchForm() {
                 <Label>Categories</Label>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {[
-                    "meditation",
                     "sutta-study",
                     "dhamma-talks",
                     "guided-meditation",

@@ -92,22 +92,6 @@ export async function ContentList({ searchParams }: ContentListProps) {
         category: { id: 1, name: "Core Teachings" }
       },
       {
-        id: 19631,
-        title: "Meditation Practice Guide",
-        description: "A practical guide to mindfulness meditation.",
-        content_type: "video",
-        language: "English",
-        file_url: "https://example.com/sample-video.mp4",
-        duration_estimate: 2400,
-        created_at: new Date().toISOString(),
-        speaker: {
-          id: 2,
-          name: "Meditation Guide",
-          created_at: new Date().toISOString()
-        },
-        category: { id: 2, name: "Meditation" }
-      },
-      {
         id: 19632,
         title: "Buddhist Philosophy eBook",
         description:

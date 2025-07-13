@@ -76,13 +76,13 @@ export function ContentCard({ content }: ContentCardProps) {
   };
 
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card className="rounded-xl shadow-sm hover:shadow-lg transition-all duration-200 hover:scale-[1.025] bg-card/95">
       <CardContent className="p-6">
         <div className="flex gap-4">
           {/* Content Type Icon */}
           <div className="flex-shrink-0">
             <div
-              className={`w-12 h-12 rounded-lg flex items-center justify-center ${getContentTypeColor(content.content_type)}`}
+              className={`w-14 h-14 rounded-xl flex items-center justify-center ${getContentTypeColor(content.content_type)} shadow-md transition-transform duration-200 group-hover:scale-110`}
             >
               {getContentTypeIcon(content.content_type)}
             </div>
@@ -106,7 +106,7 @@ export function ContentCard({ content }: ContentCardProps) {
                   <CardTitle className="text-lg leading-tight">
                     <Link
                       href={`/content/${content.id}`}
-                      className="hover:text-primary transition-colors"
+                      className="hover:text-primary transition-colors font-semibold"
                     >
                       {content.title}
                     </Link>
@@ -163,7 +163,11 @@ export function ContentCard({ content }: ContentCardProps) {
 
               {/* Action Button */}
               <div className="flex-shrink-0">
-                <Button asChild size="sm">
+                <Button
+                  asChild
+                  size="sm"
+                  className="rounded-lg shadow transition-all duration-200 hover:bg-primary/80 hover:scale-105 focus:scale-95"
+                >
                   <Link href={`/content/${content.id}`}>
                     <Play className="h-3 w-3 mr-1" />
                     {content.content_type === "ebook" ? "Read" : "Play"}

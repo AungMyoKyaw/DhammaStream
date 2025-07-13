@@ -22,29 +22,65 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
-      <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
-        <div className="container px-4 md:px-6">
-          <div className="flex flex-col items-center space-y-4 text-center">
-            <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
+      <section className="w-full py-16 md:py-32 lg:py-40 xl:py-56 bg-gradient-to-br from-primary/5 via-accent/5 to-background relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none select-none opacity-30">
+          <svg
+            width="100%"
+            height="100%"
+            viewBox="0 0 1440 320"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-full h-full"
+          >
+            <title>Soft Buddhist-themed gradient background</title>
+            <path
+              fill="url(#grad)"
+              fillOpacity="1"
+              d="M0,160L60,165.3C120,171,240,181,360,186.7C480,192,600,192,720,186.7C840,181,960,171,1080,154.7C1200,139,1320,117,1380,106.7L1440,96L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"
+            ></path>
+            <defs>
+              <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#e0c3fc" />
+                <stop offset="100%" stopColor="#8ec5fc" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div className="container px-4 md:px-6 relative z-10">
+          <div className="flex flex-col items-center space-y-6 text-center">
+            <div className="space-y-3">
+              <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl text-primary drop-shadow-lg">
                 Discover Buddhist Wisdom
               </h1>
-              <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
+              <p className="mx-auto max-w-[700px] text-lg md:text-2xl text-muted-foreground dark:text-gray-300 font-medium">
                 Stream thousands of Dhamma talks, videos, and ebooks from
-                renowned teachers. Find peace and wisdom through authentic
-                Buddhist content.
+                renowned teachers.
+                <br />
+                Find peace and wisdom through authentic Buddhist content.
               </p>
+              <span className="block text-base text-accent font-semibold mt-2">
+                Your journey to enlightenment starts here.
+              </span>
             </div>
-            <div className="space-x-4">
-              <Button asChild size="lg">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mt-4">
+              <Button
+                asChild
+                size="lg"
+                className="rounded-xl shadow-lg transition-transform duration-200 hover:scale-105 hover:bg-primary/80 focus:scale-95"
+              >
                 <Link href="/content">
-                  <Play className="mr-2 h-4 w-4" />
+                  <Play className="mr-2 h-5 w-5" />
                   Start Exploring
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg">
+              <Button
+                asChild
+                variant="outline"
+                size="lg"
+                className="rounded-xl shadow-lg transition-transform duration-200 hover:scale-105 hover:border-primary focus:scale-95"
+              >
                 <Link href="/speakers">
-                  <Users className="mr-2 h-4 w-4" />
+                  <Users className="mr-2 h-5 w-5" />
                   Browse Teachers
                 </Link>
               </Button>
