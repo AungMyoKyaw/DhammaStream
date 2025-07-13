@@ -12,7 +12,7 @@ This toolkit provides:
 ## Prerequisites
 
 - Node.js (>= 16) and npm
-- A Supabase project with the following tables (see [`docs/Database_Documentation.md`](../docs/Database_Documentation.md)):
+- A Supabase project with the following tables:
   - `speakers`, `categories`, `tags`, `dhamma_content`, `dhamma_content_tags`, `featured_entities`
 - Environment variables configured in a `.env` file (see `.env.example`)
 
@@ -92,7 +92,7 @@ Set the following environment variables in your `.env` file:
 ## Troubleshooting
 
 - Ensure your Supabase key has service-role privileges to insert data.
-- Confirm your Supabase tables match the expected schema (see `src/create-tables.ts` and `docs/Database_Documentation.md`).
+- Confirm your Supabase tables match the expected schema (see `src/create-tables.ts`).
 - Check network connectivity and retry if necessary.
 - Review logs for skipped or errored records.
 - For schema issues, re-run the migration and table creation scripts.
@@ -109,7 +109,6 @@ Set the following environment variables in your `.env` file:
 
 - [Supabase Seeding Best Practices](https://supabase.com/docs/guides/local-development/seeding-your-database)
 - [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started)
-- [`docs/Database_Documentation.md`](../docs/Database_Documentation.md)
 
 ## License
 
