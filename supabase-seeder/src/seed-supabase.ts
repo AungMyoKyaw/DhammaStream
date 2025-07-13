@@ -1,6 +1,108 @@
+// Utility to seed tags from tag_map.json
+async function seedTags() {
+  const tagMapPath = path.resolve(__dirname, "../../data/tag_map.json");
+  if (!fs.existsSync(tagMapPath)) {
+    console.warn("tag_map.json not found, skipping tag seeding.");
+    return;
+  }
+  const tagMapRaw = fs.readFileSync(tagMapPath, "utf-8");
+  const tagMap = JSON.parse(tagMapRaw);
+  const tags = Object.entries(tagMap).map(([name, id]) => ({
+    id: Number(id),
+    name
+  }));
+  if (tags.length === 0) {
+    console.warn("tag_map.json is empty, skipping tag seeding.");
+    return;
+  }
+  for (const tag of tags) {
+    const { error } = await supabase.from("tags").upsert(
+      [
+        {
+          id: tag.id,
+          name: tag.name
+        }
+      ],
+      { onConflict: "id" }
+    );
+    if (error) {
+      console.error(
+        `Failed to upsert tag id=${tag.id}, name=${tag.name}:`,
+        error
+      );
+    }
+  }
+  console.log(`Seeded ${tags.length} tags.`);
+}
+// Utility to seed categories from category_map.json
+async function seedCategories() {
+  const categoryMapPath = path.resolve(
+    __dirname,
+    "../../data/category_map.json"
+  );
+  const categoryMapRaw = fs.readFileSync(categoryMapPath, "utf-8");
+  const categoryMap = JSON.parse(categoryMapRaw);
+  // Convert to array of { id, name }
+  const categories = Object.entries(categoryMap).map(([name, id]) => ({
+    id: Number(id),
+    name
+  }));
+  // Upsert all categories
+  for (const category of categories) {
+    const { error } = await supabase.from("categories").upsert(
+      [
+        {
+          id: category.id,
+          name: category.name
+        }
+      ],
+      { onConflict: "id" }
+    );
+    if (error) {
+      console.error(
+        `Failed to upsert category id=${category.id}, name=${category.name}:`,
+        error
+      );
+    }
+  }
+  console.log(`Seeded ${categories.length} categories.`);
+}
 import dotenv from "dotenv";
 import Database from "better-sqlite3";
 import { createClient } from "@supabase/supabase-js";
+import { setupDatabase } from "./create-tables";
+import fs from "fs";
+import path from "path";
+// Utility to seed speakers from speaker_map.json
+async function seedSpeakers() {
+  const speakerMapPath = path.resolve(__dirname, "../../data/speaker_map.json");
+  const speakerMapRaw = fs.readFileSync(speakerMapPath, "utf-8");
+  const speakerMap = JSON.parse(speakerMapRaw);
+  // Convert to array of { id, name }
+  const speakers = Object.entries(speakerMap).map(([name, id]) => ({
+    id: Number(id),
+    name
+  }));
+  // Upsert all speakers
+  for (const speaker of speakers) {
+    const { error } = await supabase.from("speakers").upsert(
+      [
+        {
+          id: speaker.id,
+          name: speaker.name
+        }
+      ],
+      { onConflict: "id" }
+    );
+    if (error) {
+      console.error(
+        `Failed to upsert speaker id=${speaker.id}, name=${speaker.name}:`,
+        error
+      );
+    }
+  }
+  console.log(`Seeded ${speakers.length} speakers.`);
+}
 
 dotenv.config();
 
@@ -25,9 +127,6 @@ const retryAttempts = parseInt(RETRY_ATTEMPTS, 10);
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 const db = new Database(SQLITE_DB_PATH, { readonly: true });
 
-// Map to hold speaker name to speaker_id
-const speakerMap = new Map<string, number>();
-
 // Utility sleep function
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -36,14 +135,13 @@ function sleep(ms: number) {
 type DhammaRow = {
   id: number;
   title: string;
-  speaker: string | null;
+  speaker_id: number | null;
   content_type: string;
   file_url: string;
   file_size_estimate: number | null;
   duration_estimate: number | null;
   language: string | null;
-  category: string | null;
-  tags: string | null;
+  category_id: number | null;
   description: string | null;
   date_recorded: string | null;
   source_page: string | null;
@@ -51,70 +149,19 @@ type DhammaRow = {
   created_at: string;
 };
 
-async function main() {
-  console.log("Starting seeder...");
+async function seedSupabase() {
+  console.log("Ensuring tables exist...");
+  await setupDatabase();
+  console.log("Seeding categories...");
+  await seedCategories();
+  console.log("Seeding speakers...");
   await seedSpeakers();
+  console.log("Seeding tags...");
+  await seedTags();
+  console.log("Starting seeder...");
   await seedContent();
   console.log("Seeding completed.");
   process.exit(0);
-}
-
-function extractUniqueSpeakers(): Set<string> {
-  const stmt = db.prepare(
-    "SELECT DISTINCT speaker FROM dhamma_content WHERE speaker IS NOT NULL AND speaker != ''"
-  );
-  const rows: Array<{ speaker: string }> = stmt.all();
-  const set = new Set<string>();
-  rows.forEach((r) => set.add(r.speaker));
-  return set;
-}
-
-async function seedSpeakers() {
-  const names = Array.from(extractUniqueSpeakers());
-  if (names.length === 0) {
-    console.log("No speaker data to seed.");
-    return;
-  }
-  console.log(`Seeding ${names.length} unique speakers...`);
-
-  const records = [
-    ...new Set(
-      names.map((name) =>
-        name
-          .replace(/[^a-zA-Z0-9\s]/g, "")
-          .trim()
-          .substring(0, 255)
-      )
-    )
-  ]
-    .filter((name) => name.trim() !== "")
-    .map((name) => ({ name }));
-  try {
-    // Upsert to avoid duplicates
-    for (let i = 0; i < records.length; i += 50) {
-      const batch = records.slice(i, i + 50);
-      const { data: upsertedData, error: upsertError } = await supabase
-        .from("speakers")
-        .upsert(batch, { onConflict: "name" })
-        .select();
-
-      if (upsertError) {
-        console.error("Upsert error:", JSON.stringify(upsertError, null, 2));
-        throw upsertError;
-      }
-
-      if (upsertedData) {
-        upsertedData.forEach((row: { id: number; name: string }) => {
-          if (row.name) speakerMap.set(row.name, row.id);
-        });
-      }
-    }
-
-    console.log(`Seeded ${names.length} speakers.`);
-  } catch (err) {
-    console.error("Error seeding speakers:", err);
-    process.exit(1);
-  }
 }
 
 async function seedContent() {
@@ -145,8 +192,7 @@ async function seedContent() {
       file_size_estimate: number | null;
       duration_estimate: number | null;
       language: string;
-      category: string | null;
-      tags: string[];
+      category_id: number | null;
       description: string | null;
       date_recorded: string | null;
       source_page: string | null;
@@ -170,33 +216,20 @@ async function seedContent() {
       if (!language || !validLanguages.includes(language)) {
         language = "Myanmar"; // Default to Myanmar
       }
-      // Transform tags to array
-      const tagsArray = row.tags
-        ? row.tags
-            .split(",")
-            .map((t) => t.trim())
-            .filter(Boolean)
-        : [];
-      // Map speaker to speaker_id
-      const speakerId: number | null = row.speaker
-        ? (speakerMap.get(row.speaker) ?? null)
-        : null;
-
       toInsert.push({
         id: row.id,
         title: row.title,
-        speaker_id: speakerId,
+        speaker_id: row.speaker_id ?? null,
         content_type: row.content_type,
         file_url: row.file_url,
         file_size_estimate: row.file_size_estimate,
         duration_estimate: row.duration_estimate,
         language: language,
-        category: row.category,
-        tags: tagsArray,
+        category_id: row.category_id ?? null,
         description: row.description,
         date_recorded: row.date_recorded
-          ? new Date(row.date_recorded).toISOString()
-          : null,
+          ? new Date(row.date_recorded).toISOString().slice(0, 10)
+          : null, // DATE type expects YYYY-MM-DD
         source_page: row.source_page,
         scraped_date: row.scraped_date
           ? new Date(row.scraped_date).toISOString()
@@ -211,7 +244,8 @@ async function seedContent() {
       let attempt = 0;
       while (attempt < retryAttempts) {
         attempt++;
-        const { data, error } = await supabase
+
+        const { error } = await supabase
           .from("dhamma_content")
           .upsert(toInsert, { onConflict: "id" });
 
@@ -248,7 +282,7 @@ async function seedContent() {
   console.log(`Errors: ${errorCount}`);
 }
 
-main().catch((err) => {
+seedSupabase().catch((err) => {
   console.error("Unexpected error:", err);
   process.exit(1);
 });

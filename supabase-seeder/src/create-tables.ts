@@ -17,7 +17,7 @@ const pool = new Pool({
   }
 });
 
-async function setupDatabase() {
+export async function setupDatabase() {
   console.log("Starting table creation...");
 
   const queries = [
@@ -113,4 +113,7 @@ async function setupDatabase() {
   }
 }
 
-setupDatabase();
+// Only run setupDatabase if this file is executed directly
+if (require.main === module) {
+  setupDatabase();
+}

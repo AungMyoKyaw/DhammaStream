@@ -225,15 +225,29 @@ if (require.main === module) {
       .prepare("SELECT * FROM dhamma_content")
       .all() as ContentRow[];
     for (const row of contentRows) {
-      // Map speaker and category
-      const speaker_id =
-        row.speaker && speakerMap2.get(row.speaker.trim())
-          ? Number(speakerMap2.get(row.speaker.trim()))
-          : null;
-      const category_id =
-        row.category && categoryMap2.get(row.category.trim())
-          ? Number(categoryMap2.get(row.category.trim()))
-          : null;
+      // Map speaker and category with robust error handling
+      let speaker_id: number | null = null;
+      if (row.speaker) {
+        const mapped = speakerMap2.get(row.speaker.trim());
+        if (mapped) {
+          speaker_id = Number(mapped);
+        } else {
+          console.warn(
+            `Warning: Speaker not found in mapping: '${row.speaker}' (title: '${row.title}')`
+          );
+        }
+      }
+      let category_id: number | null = null;
+      if (row.category) {
+        const mapped = categoryMap2.get(row.category.trim());
+        if (mapped) {
+          category_id = Number(mapped);
+        } else {
+          console.warn(
+            `Warning: Category not found in mapping: '${row.category}' (title: '${row.title}')`
+          );
+        }
+      }
       // Insert dhamma_content
       const info = insertContent.run(
         row.title,
@@ -259,7 +273,13 @@ if (require.main === module) {
           .filter(Boolean)
           .forEach((tag: string) => {
             const tag_id = tagMap2.get(tag);
-            if (tag_id) insertContentTag.run(content_id, Number(tag_id));
+            if (tag_id) {
+              insertContentTag.run(content_id, Number(tag_id));
+            } else {
+              console.warn(
+                `Warning: Tag not found in mapping: '${tag}' (title: '${row.title}')`
+              );
+            }
           });
       }
     }
