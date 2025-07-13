@@ -17,7 +17,7 @@ export function Footer() {
                 DhammaStream
               </span>
             </Link>
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            <p className="text-sm text-foreground leading-relaxed">
               Your gateway to authentic Buddhist wisdom. Stream thousands of
               Dhamma talks, videos, and ebooks from renowned teachers.
             </p>
@@ -30,7 +30,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/content"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
+                  className="text-foreground/80 hover:text-primary transition-colors duration-200"
                 >
                   Browse All Content
                 </Link>
@@ -38,7 +38,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/categories/audio"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
+                  className="text-foreground/80 hover:text-primary transition-colors duration-200"
                 >
                   Audio Teachings
                 </Link>
@@ -46,7 +46,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/categories/video"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
+                  className="text-foreground/80 hover:text-primary transition-colors duration-200"
                 >
                   Video Content
                 </Link>
@@ -54,7 +54,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/categories/ebook"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
+                  className="text-foreground/80 hover:text-primary transition-colors duration-200"
                 >
                   Digital Books
                 </Link>
@@ -69,7 +69,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/categories/abhidhamma"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
+                  className="text-foreground/80 hover:text-primary transition-colors duration-200"
                 >
                   Abhidhamma
                 </Link>
@@ -77,7 +77,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/categories/meditation"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
+                  className="text-foreground/80 hover:text-primary transition-colors duration-200"
                 >
                   Meditation
                 </Link>
@@ -85,7 +85,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/categories/suttas"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
+                  className="text-foreground/80 hover:text-primary transition-colors duration-200"
                 >
                   Suttas
                 </Link>
@@ -93,7 +93,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/speakers"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
+                  className="text-foreground/80 hover:text-primary transition-colors duration-200"
                 >
                   Teachers
                 </Link>
@@ -108,7 +108,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/search"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
+                  className="text-foreground/80 hover:text-primary transition-colors duration-200"
                 >
                   Search Content
                 </Link>
@@ -116,7 +116,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/categories"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
+                  className="text-foreground/80 hover:text-primary transition-colors duration-200"
                 >
                   All Categories
                 </Link>
@@ -128,12 +128,12 @@ export function Footer() {
         <Separator className="my-8" />
 
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-foreground/80">
             © {new Date().getFullYear()} DhammaStream. Made with{" "}
             <Heart className="inline h-4 w-4 text-red-500 fill-current" /> for
             the Dharma community.
           </p>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-foreground/80">
             May all beings be happy and free from suffering.
           </p>
         </div>
