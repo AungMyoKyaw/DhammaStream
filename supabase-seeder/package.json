@@ -5,7 +5,8 @@
   "main": "src/index.ts",
   "scripts": {
     "start": "tsx src/index.ts",
-    "create-tables": "tsx src/create-tables.ts"
+    "create-tables": "tsx src/create-tables.ts",
+    "migrate:supabase-schema": "tsx src/migrate-to-supabase-schema.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.50.3",

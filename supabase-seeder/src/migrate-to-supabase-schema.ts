@@ -53,6 +53,15 @@ function createSupabaseSchema(dbPath: string) {
       FOREIGN KEY (content_id) REFERENCES dhamma_content(id),
       FOREIGN KEY (tag_id) REFERENCES tags(id)
     );
+    CREATE TABLE featured_entities (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      entity_type TEXT NOT NULL,
+      entity_id INTEGER NOT NULL,
+      featured_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      expires_at DATETIME,
+      context TEXT
+    );
+    CREATE INDEX idx_featured_entities_entity_type_id ON featured_entities(entity_type, entity_id);
   `);
   db.close();
 }
