@@ -67,9 +67,29 @@ Many-to-many relationship between dhamma_content and tags.
 | tag_id      | INTEGER              | REFERENCES tags(id)           | Linked tag     |
 | PRIMARY KEY | (content_id, tag_id) | Composite primary key         |
 
+### 6. featured_entities
+
+Generic table for tracking featured speakers, content, or other entities.
+
+| Column      | Type      | Constraints   | Description                                  |
+| ----------- | --------- | ------------- | -------------------------------------------- |
+| id          | SERIAL    | PRIMARY KEY   | Unique feature record ID                     |
+| entity_type | TEXT      | NOT NULL      | Type of entity ('speaker', 'content', etc.)  |
+| entity_id   | INTEGER   | NOT NULL      | ID of the entity (references relevant table) |
+| featured_at | TIMESTAMP | DEFAULT now() | When the entity was featured                 |
+| expires_at  | TIMESTAMP |               | When the feature expires (optional)          |
+| context     | TEXT      |               | Context or reason for featuring (optional)   |
+
+**Notes:**
+
+- `entity_type` should be constrained to known types (e.g., 'speaker', 'content') via application logic or a CHECK constraint.
+- `entity_id` refers to the primary key of the relevant table, depending on `entity_type`.
+- Foreign key constraints cannot be enforced at the DB level for polymorphic associations; integrity must be managed in application logic.
+
 ## Indexes
 
 - Indexes should be created on foreign keys and frequently queried columns (e.g., content_type, language, speaker_id, category_id).
+- For `featured_entities`, consider an index on (`entity_type`, `entity_id`) for efficient lookups.
 
 ## Example ER Diagram
 
@@ -77,6 +97,10 @@ Many-to-many relationship between dhamma_content and tags.
 speakers (1) ────< dhamma_content >──── (M) categories
                         |
                         >──── (M:N) dhamma_content_tags <──── (M) tags
+
+featured_entities
+    |-- entity_type = 'speaker' --> speakers
+    |-- entity_type = 'content' --> dhamma_content
 ```
 
 ## Notes
@@ -84,6 +108,20 @@ speakers (1) ────< dhamma_content >──── (M) categories
 - This schema is designed for Supabase/PostgreSQL and follows normalization best practices.
 - You may add additional fields (e.g., for audit trails, user tracking) as needed.
 - Use UUIDs instead of SERIAL for distributed systems if required.
+- The `featured_entities` table provides a flexible, scalable way to feature any entity (speaker, content, etc.) in one place. This is useful for future extensibility and centralized management, but requires application-level enforcement of data integrity.
+
+### Pros and Cons of the Generic Feature Table
+
+**Pros:**
+
+- Highly flexible and scalable for any entity type.
+- Centralized management of all featured items.
+- Can store additional metadata (e.g., when/why featured, expiration).
+
+**Cons:**
+
+- No strict foreign key constraints; integrity must be managed in application logic.
+- Slightly more complex queries (must filter by `entity_type` and join to the correct table).
 
 ---
 
