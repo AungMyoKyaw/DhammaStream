@@ -40,7 +40,7 @@ export function Navigation() {
           <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-primary to-accent flex items-center justify-center shadow-md group-hover:scale-105 group-hover:shadow-xl transition-transform duration-200">
             <Play className="h-5 w-5 text-primary-foreground" />
           </div>
-          <span className="font-extrabold text-xl tracking-tight text-primary group-hover:text-accent transition-colors duration-200">
+          <span className="font-extrabold text-xl tracking-tight text-primary group-hover:text-primary/80 transition-colors duration-200">
             DhammaStream
           </span>
         </Link>
