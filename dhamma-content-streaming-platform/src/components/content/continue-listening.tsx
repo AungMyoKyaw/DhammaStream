@@ -72,7 +72,6 @@ export function ContinueListening() {
 
   useEffect(() => {
     loadRecentContent();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const removeItem = (contentId: number) => {
