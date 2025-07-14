@@ -1,4 +1,5 @@
 import { Inter } from "next/font/google";
+import type { Viewport } from "next";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Navigation } from "@/components/navigation";
@@ -17,7 +18,6 @@ export const metadata = {
   description:
     "Stream, browse, and discover Dhamma content including audio talks, videos, and ebooks",
   manifest: "/manifest.json",
-  themeColor: "#1a1a2e",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -29,6 +29,10 @@ export const metadata = {
     "apple-mobile-web-app-status-bar-style": "default",
     "apple-mobile-web-app-title": "DhammaStream"
   }
+};
+
+export const viewport: Viewport = {
+  themeColor: "#1a1a2e"
 };
 
 export default function RootLayout({
