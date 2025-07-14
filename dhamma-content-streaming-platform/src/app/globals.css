@@ -152,4 +152,165 @@
   .container {
     @apply mx-auto px-4 sm:px-6 lg:px-8;
   }
+
+  /* Micro-interactions and animations */
+  .hover-lift {
+    @apply transition-transform duration-200 hover:scale-105;
+  }
+
+  .hover-glow {
+    @apply transition-shadow duration-300 hover:shadow-lg hover:shadow-primary/20;
+  }
+
+  .smooth-focus {
+    @apply transition-all duration-200 focus:ring-2 focus:ring-primary/50 focus:ring-offset-2;
+  }
+
+  .bounce-subtle {
+    animation: bounce-subtle 0.6s ease-out;
+  }
+
+  .slide-in {
+    animation: slide-in 0.3s ease-out;
+  }
+
+  .fade-in {
+    animation: fade-in 0.5s ease-out;
+  }
+
+  .pulse-success {
+    animation: pulse-success 1s ease-out;
+  }
+
+  /* Custom animations */
+  @keyframes bounce-subtle {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-4px);
+    }
+  }
+
+  @keyframes slide-in {
+    from {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes pulse-success {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  /* Improved scrollbar styling */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 2px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground));
+  }
+
+  /* Loading states */
+  .loading-shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--muted)) 25%,
+      hsl(var(--muted-foreground) / 0.1) 50%,
+      hsl(var(--muted)) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  /* Enhanced card hover effects */
+  .card-interactive {
+    @apply transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1;
+  }
+
+  /* Button loading state */
+  .button-loading {
+    @apply relative overflow-hidden;
+  }
+
+  .button-loading::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    animation: button-loading 1.5s infinite;
+  }
+
+  @keyframes button-loading {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
 }

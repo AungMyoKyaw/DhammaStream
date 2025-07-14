@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ContentPlayer } from "@/components/content/content-player";
-import { RelatedContent } from "@/components/content/related-content";
+import { ContentRecommendations } from "@/components/content/content-recommendations";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import {
   Card,
   CardContent,
@@ -131,6 +132,28 @@ export default async function ContentPage({ params }: ContentPageProps) {
 
   return (
     <div className="container mx-auto py-8">
+      {/* Breadcrumb Navigation */}
+      <div className="mb-6">
+        <Breadcrumb
+          items={[
+            {
+              label: "Browse Content",
+              href: "/content"
+            },
+            {
+              label: typedContent.category?.name || "Content",
+              href: typedContent.category
+                ? `/categories/${typedContent.category.name.toLowerCase()}`
+                : "/content"
+            },
+            {
+              label: typedContent.title,
+              current: true
+            }
+          ]}
+        />
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
@@ -263,10 +286,10 @@ export default async function ContentPage({ params }: ContentPageProps) {
 
         {/* Sidebar */}
         <div className="lg:col-span-1">
-          <RelatedContent
-            contentId={typedContent.id}
-            speakerId={typedContent.speaker_id}
-            categoryId={typedContent.category_id}
+          <ContentRecommendations
+            speakerId={typedContent.speaker?.id}
+            categoryId={typedContent.category?.id}
+            currentContent={typedContent}
           />
         </div>
       </div>
