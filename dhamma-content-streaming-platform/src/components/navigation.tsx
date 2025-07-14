@@ -13,7 +13,7 @@ import {
   NavigationMenuTrigger
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
-import { Search, Play, Users, BookOpen, Menu, X } from "lucide-react";
+import { Search, Play, Users, BookOpen, Menu, X, Bookmark } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export function Navigation() {
@@ -63,6 +63,23 @@ export function Navigation() {
                   )}
                 >
                   <Link href="/content">Browse Content</Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuLink
+                  asChild
+                  className={cn(
+                    "group inline-flex h-10 w-max items-center justify-center rounded-lg px-5 py-2 text-base font-semibold transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/20 focus:text-primary focus:outline-none data-[active]:bg-primary/20 data-[state=open]:bg-primary/20",
+                    isActive("/bookmarks") && "bg-primary/20 text-primary"
+                  )}
+                >
+                  <Link
+                    href="/bookmarks"
+                    className="flex flex-row items-center gap-2"
+                  >
+                    <Bookmark className="h-5 w-5" aria-hidden="true" />
+                    <span className="leading-none">Bookmarks</span>
+                  </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
               <NavigationMenuItem>
@@ -223,6 +240,18 @@ export function Navigation() {
               >
                 <BookOpen className="mr-3 h-5 w-5" />
                 Browse Content
+              </Link>
+
+              <Link
+                href="/bookmarks"
+                className={cn(
+                  "flex items-center rounded-lg px-4 py-3 text-base font-semibold transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/20 focus:text-primary focus-visible:ring-2 focus-visible:ring-primary/80",
+                  isActive("/bookmarks") && "bg-primary/20 text-primary"
+                )}
+                tabIndex={0}
+              >
+                <Bookmark className="mr-3 h-5 w-5" />
+                Bookmarks
               </Link>
 
               <Link

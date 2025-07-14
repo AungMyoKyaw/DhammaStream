@@ -3,13 +3,16 @@ import { ContentList } from "@/components/content/content-list";
 import { ContentFilters } from "@/components/content/content-filters";
 import { ContentSearch } from "@/components/content/content-search";
 import { ContentListSkeleton } from "@/components/content/content-loading";
+import { ContentRecommendations } from "@/components/content/content-recommendations";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default async function ContentPage({
   searchParams
 }: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  readonly searchParams: Promise<{
+    [key: string]: string | string[] | undefined;
+  }>;
 }) {
   const resolvedSearchParams = await searchParams;
   return (
@@ -46,6 +49,11 @@ export default async function ContentPage({
           <Suspense fallback={<ContentListSkeleton />}>
             <ContentList searchParams={resolvedSearchParams} />
           </Suspense>
+
+          {/* Recommendations */}
+          <div className="mt-12">
+            <ContentRecommendations />
+          </div>
         </div>
       </div>
     </div>

@@ -8,6 +8,8 @@ import {
   CardTitle
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ContinueListening } from "@/components/content/continue-listening";
+import { ContentRecommendations } from "@/components/content/content-recommendations";
 import {
   Play,
   Users,
@@ -86,6 +88,20 @@ export default function Home() {
               </Button>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Continue Listening Section */}
+      <section className="w-full py-8 md:py-12 bg-muted/20">
+        <div className="container px-4 md:px-6 mx-auto">
+          <ContinueListening />
+        </div>
+      </section>
+
+      {/* Recommendations Section */}
+      <section className="w-full py-12 md:py-16">
+        <div className="container px-4 md:px-6 mx-auto">
+          <ContentRecommendations />
         </div>
       </section>
 
