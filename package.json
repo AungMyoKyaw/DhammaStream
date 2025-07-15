@@ -1,8 +1,0 @@
-{
-  "devDependencies": {
-    "tsx": "^4.20.3"
-  },
-  "scripts": {
-    "migrate:supabase-schema": "tsx supabase-seeder/src/migrate-to-supabase-schema.ts"
-  }
-}
