@@ -118,29 +118,34 @@ export default function PaginationControls({
 
       {/* Page numbers */}
       <div className="flex space-x-1">
-        {pageNumbers.map((page) => (
-          <span key={`page-${page}`}>
-            {page === "..." ? (
-              <span className="px-3 py-2 text-sm font-medium text-gray-700">
-                ...
-              </span>
-            ) : (
-              <button
-                type="button"
-                onClick={() => handlePageChange(Number(page))}
-                className={`px-3 py-2 text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 ${
-                  currentPage === page
-                    ? "bg-orange-600 text-white border border-orange-600"
-                    : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
-                }`}
-                aria-current={currentPage === page ? "page" : undefined}
-                aria-label={`Go to page ${page}`}
-              >
-                {page}
-              </button>
-            )}
-          </span>
-        ))}
+        {pageNumbers.map((page, index) => {
+          // Create unique keys for ellipsis elements by using their position
+          const key = page === "..." ? `ellipsis-${index}` : `page-${page}`;
+
+          return (
+            <span key={key}>
+              {page === "..." ? (
+                <span className="px-3 py-2 text-sm font-medium text-gray-700">
+                  ...
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => handlePageChange(Number(page))}
+                  className={`px-3 py-2 text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 ${
+                    currentPage === page
+                      ? "bg-orange-600 text-white border border-orange-600"
+                      : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
+                  }`}
+                  aria-current={currentPage === page ? "page" : undefined}
+                  aria-label={`Go to page ${page}`}
+                >
+                  {page}
+                </button>
+              )}
+            </span>
+          );
+        })}
       </div>
 
       {/* Next button */}
