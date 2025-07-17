@@ -165,5 +165,67 @@ export const queries = {
       )
       .order("created_at", { ascending: false })
       .limit(limit);
+  },
+
+  // Paginated speakers with optional search
+  getSpeakersWithPagination: async (
+    page: number = 1,
+    pageSize: number = 12,
+    searchQuery?: string
+  ) => {
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    let query = supabase.from("speakers").select("*", { count: "exact" });
+
+    if (searchQuery?.trim()) {
+      query = query.ilike("name", `%${searchQuery.trim()}%`);
+    }
+
+    return query.order("name").range(from, to);
+  },
+
+  // Get all content by speaker with pagination and search
+  getContentBySpeakerWithPagination: async (
+    speakerId: number,
+    page: number = 1,
+    pageSize: number = 12,
+    searchQuery?: string
+  ) => {
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    let query = supabase
+      .from("dhamma_content")
+      .select(
+        `
+        *,
+        speakers (*),
+        categories (*)
+      `,
+        { count: "exact" }
+      )
+      .eq("speaker_id", speakerId);
+
+    if (searchQuery?.trim()) {
+      query = query.ilike("title", `%${searchQuery.trim()}%`);
+    }
+
+    return query.order("created_at", { ascending: false }).range(from, to);
+  },
+
+  // Get content by speaker (all content types) - non-paginated for quick overview
+  getContentBySpeaker: (speakerId: number) => {
+    return supabase
+      .from("dhamma_content")
+      .select(
+        `
+        *,
+        speakers (*),
+        categories (*)
+      `
+      )
+      .eq("speaker_id", speakerId)
+      .order("created_at", { ascending: false });
   }
 };

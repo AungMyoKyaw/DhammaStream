@@ -45,24 +45,15 @@ export default function ContentViewPage({
         return;
       }
       try {
-        const { data: allContent, error: fetchError } =
-          await queries.getContentByType("video");
-        if (fetchError) throw fetchError;
-        let foundContent = allContent?.find((c) => c.id === contentId);
-        if (!foundContent) {
-          const { data: audioContent } =
-            await queries.getContentByType("audio");
-          foundContent = audioContent?.find((c) => c.id === contentId);
-        }
-        if (!foundContent) {
-          const { data: ebookContent } =
-            await queries.getContentByType("ebook");
-          foundContent = ebookContent?.find((c) => c.id === contentId);
-        }
-        if (!foundContent) {
+        const { data: foundContent, error: fetchError } =
+          await queries.getContentById(contentId);
+        if (fetchError) {
+          console.error("Error fetching content:", fetchError);
           setError("Content not found");
-        } else {
+        } else if (foundContent) {
           setContent(foundContent);
+        } else {
+          setError("Content not found");
         }
       } catch (err) {
         console.error("Error fetching content:", err);
