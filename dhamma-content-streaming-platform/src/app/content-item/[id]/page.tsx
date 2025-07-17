@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { queries } from "@/lib/supabase";
-import { savePosition, getPosition } from "@/lib/resume-playback";
+import { savePosition } from "@/lib/resume-playback";
 import type { DhammaContentWithRelations } from "@/types/database";
 
 // Dynamically import React Player to avoid SSR issues
@@ -20,7 +20,7 @@ const ReactPlayer = dynamic(() => import("react-player"), {
       </div>
     </div>
   )
-}) as any; // Type as any to avoid React Player type conflicts
+});
 
 export default function ContentViewPage({
   params
@@ -34,7 +34,6 @@ export default function ContentViewPage({
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [playerReady, setPlayerReady] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const contentId = parseInt(id);
 
@@ -45,33 +44,21 @@ export default function ContentViewPage({
         setLoading(false);
         return;
       }
-
       try {
-        // Get all content and find the specific one (since we don't have a getContentById function)
         const { data: allContent, error: fetchError } =
           await queries.getContentByType("video");
-
-        if (fetchError) {
-          throw fetchError;
-        }
-
-        // Try to find in video content first
+        if (fetchError) throw fetchError;
         let foundContent = allContent?.find((c) => c.id === contentId);
-
-        // If not found in video, try audio
         if (!foundContent) {
           const { data: audioContent } =
             await queries.getContentByType("audio");
           foundContent = audioContent?.find((c) => c.id === contentId);
         }
-
-        // If not found in audio, try ebook
         if (!foundContent) {
           const { data: ebookContent } =
             await queries.getContentByType("ebook");
           foundContent = ebookContent?.find((c) => c.id === contentId);
         }
-
         if (!foundContent) {
           setError("Content not found");
         } else {
@@ -84,46 +71,16 @@ export default function ContentViewPage({
         setLoading(false);
       }
     }
-
-    if (contentId) {
-      fetchContent();
-    }
+    if (contentId) fetchContent();
   }, [contentId]);
 
-  // Load saved position when player is ready
-  useEffect(() => {
-    if (
-      content &&
-      playerReady &&
-      (content.content_type === "video" || content.content_type === "audio")
-    ) {
-      const savedPosition = getPosition(content.id);
-      if (savedPosition && savedPosition > 0) {
-        setCurrentTime(savedPosition);
-      }
-    }
-  }, [content, playerReady]);
+  // Extracted labels for clarity and type safety
+  let contentTypeLabel = "Books";
+  if (content && content.content_type === "video") contentTypeLabel = "Videos";
+  else if (content && content.content_type === "audio")
+    contentTypeLabel = "Audio";
 
-  const handleProgress = (state: { playedSeconds: number }) => {
-    if (
-      content &&
-      (content.content_type === "video" || content.content_type === "audio")
-    ) {
-      // Save position every 5 seconds
-      if (Math.floor(state.playedSeconds) % 5 === 0) {
-        savePosition(content.id, state.playedSeconds);
-      }
-    }
-  };
-
-  const handleSeek = (seconds: number) => {
-    setCurrentTime(seconds);
-  };
-
-  const handleReady = () => {
-    setPlayerReady(true);
-  };
-
+  // Main return and JSX
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 flex items-center justify-center">
@@ -149,7 +106,6 @@ export default function ContentViewPage({
             </div>
           </div>
         </header>
-
         <div className="max-w-4xl mx-auto px-4 py-16 text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
             Content Not Found
@@ -231,11 +187,7 @@ export default function ContentViewPage({
             href={`/browse/${content.content_type}`}
             className="hover:text-orange-600"
           >
-            {content.content_type === "video"
-              ? "Videos"
-              : content.content_type === "audio"
-                ? "Audio"
-                : "Books"}
+            {contentTypeLabel}
           </Link>
           <span className="mx-2">›</span>
           <span className="text-gray-900">{content.title}</span>
@@ -253,14 +205,28 @@ export default function ContentViewPage({
               content.file_url && (
                 <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
                   <ReactPlayer
-                    url={content.file_url}
+                    src={content.file_url}
                     width="100%"
                     height={content.content_type === "video" ? "400px" : "80px"}
                     controls
-                    onReady={handleReady}
-                    onProgress={handleProgress}
-                    onSeek={handleSeek}
-                    progressInterval={1000}
+                    onTimeUpdate={(e) => {
+                      const target = e.target as HTMLMediaElement;
+                      if (
+                        content &&
+                        (content.content_type === "video" ||
+                          content.content_type === "audio") &&
+                        target &&
+                        Math.floor(target.currentTime) % 5 === 0
+                      ) {
+                        savePosition(content.id, target.currentTime);
+                      }
+                    }}
+                    onSeeking={(e) => {
+                      const target = e.target as HTMLMediaElement;
+                      if (target) {
+                        setCurrentTime(target.currentTime);
+                      }
+                    }}
                   />
 
                   {/* Resume Message */}
@@ -292,7 +258,7 @@ export default function ContentViewPage({
                       rel="noopener noreferrer"
                       className="inline-block bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
                     >
-                      Open Book →
+                      Open Book
                     </a>
                   ) : (
                     <p className="text-gray-600">Book file not available</p>
@@ -377,7 +343,7 @@ export default function ContentViewPage({
                         {content.speaker.name}
                       </h4>
                       <p className="text-sm text-gray-600">
-                        View all teachings →
+                        View all teachings
                       </p>
                     </div>
                   </div>
@@ -395,12 +361,7 @@ export default function ContentViewPage({
                   href={`/browse/${content.content_type}`}
                   className="w-full bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors text-center block"
                 >
-                  More{" "}
-                  {content.content_type === "video"
-                    ? "Videos"
-                    : content.content_type === "audio"
-                      ? "Audio"
-                      : "Books"}
+                  More {contentTypeLabel}
                 </Link>
 
                 {content.speaker && (
@@ -426,4 +387,5 @@ export default function ContentViewPage({
       </div>
     </div>
   );
+  // End of file
 }
