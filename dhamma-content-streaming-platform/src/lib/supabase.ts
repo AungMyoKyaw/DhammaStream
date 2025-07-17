@@ -84,7 +84,7 @@ export const queries = {
       .single();
   },
 
-  // Search content
+  // Search content (title only, no description)
   searchContent: (query: string) => {
     return supabase
       .from("dhamma_content")
@@ -95,8 +95,61 @@ export const queries = {
         categories (*)
       `
       )
-      .or(`title.ilike.%${query}%,description.ilike.%${query}%`)
+      .ilike("title", `%${query}%`)
       .order("created_at", { ascending: false });
+  },
+
+  // Paginated content by type with optional search
+  getContentByTypeWithPagination: async (
+    contentType: "audio" | "video" | "ebook" | "other",
+    page: number = 1,
+    pageSize: number = 12,
+    searchQuery?: string
+  ) => {
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    let query = supabase
+      .from("dhamma_content")
+      .select(
+        `
+        *,
+        speakers (*),
+        categories (*)
+      `,
+        { count: "exact" }
+      )
+      .eq("content_type", contentType);
+
+    if (searchQuery?.trim()) {
+      query = query.ilike("title", `%${searchQuery.trim()}%`);
+    }
+
+    return query.order("created_at", { ascending: false }).range(from, to);
+  },
+
+  // Search across all content types with pagination
+  searchAllContentWithPagination: async (
+    searchQuery: string,
+    page: number = 1,
+    pageSize: number = 12
+  ) => {
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    return supabase
+      .from("dhamma_content")
+      .select(
+        `
+        *,
+        speakers (*),
+        categories (*)
+      `,
+        { count: "exact" }
+      )
+      .ilike("title", `%${searchQuery.trim()}%`)
+      .order("created_at", { ascending: false })
+      .range(from, to);
   },
 
   // Get recent content
