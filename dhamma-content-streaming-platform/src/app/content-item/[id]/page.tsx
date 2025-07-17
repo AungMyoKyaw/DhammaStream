@@ -1,26 +1,15 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
+import { useEffect, useState, use, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import dynamic from "next/dynamic";
 import { queries } from "@/lib/supabase";
-import { savePosition } from "@/lib/resume-playback";
+import { savePosition, getPosition } from "@/lib/resume-playback";
 import type { DhammaContentWithRelations } from "@/types/database";
-
-// Dynamically import React Player to avoid SSR issues
-const ReactPlayer = dynamic(() => import("react-player"), {
-  ssr: false,
-  loading: () => (
-    <div className="aspect-video bg-gray-200 rounded flex items-center justify-center">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600 mx-auto mb-2"></div>
-        <p className="text-gray-600">Loading player...</p>
-      </div>
-    </div>
-  )
-});
+import DynamicPlyrPlayer, {
+  type PlyrPlayerRef
+} from "@/components/DynamicPlyrPlayer";
 
 export default function ContentViewPage({
   params
@@ -29,6 +18,7 @@ export default function ContentViewPage({
 }) {
   const router = useRouter();
   const { id } = use(params);
+  const playerRef = useRef<PlyrPlayerRef>(null);
   const [content, setContent] = useState<DhammaContentWithRelations | null>(
     null
   );
@@ -195,28 +185,34 @@ export default function ContentViewPage({
               content.content_type === "audio") &&
               content.file_url && (
                 <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-                  <ReactPlayer
+                  <DynamicPlyrPlayer
+                    ref={playerRef}
                     src={content.file_url}
+                    type={content.content_type}
                     width="100%"
                     height={content.content_type === "video" ? "400px" : "80px"}
-                    controls
-                    onTimeUpdate={(e) => {
-                      const target = e.target as HTMLMediaElement;
+                    onReady={(player) => {
+                      // Restore playback position when player is ready
+                      const savedPosition = getPosition(content.id);
+                      if (savedPosition && savedPosition > 5) {
+                        // Only restore if more than 5 seconds in
+                        player.currentTime = savedPosition;
+                        setCurrentTime(savedPosition);
+                      }
+                    }}
+                    onTimeUpdate={(currentTime) => {
+                      // Save position every 5 seconds
                       if (
                         content &&
                         (content.content_type === "video" ||
                           content.content_type === "audio") &&
-                        target &&
-                        Math.floor(target.currentTime) % 5 === 0
+                        Math.floor(currentTime) % 5 === 0
                       ) {
-                        savePosition(content.id, target.currentTime);
+                        savePosition(content.id, currentTime);
                       }
                     }}
-                    onSeeking={(e) => {
-                      const target = e.target as HTMLMediaElement;
-                      if (target) {
-                        setCurrentTime(target.currentTime);
-                      }
+                    onSeeking={(currentTime) => {
+                      setCurrentTime(currentTime);
                     }}
                   />
 
