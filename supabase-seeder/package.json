@@ -7,7 +7,8 @@
     "seed-supabase": "tsx src/seed-supabase.ts",
     "create-tables": "tsx src/create-tables.ts",
     "migrate:supabase-schema": "tsx src/migrate-to-supabase-schema.ts",
-    "create-indexes": "tsx src/create-indexes.ts"
+    "create-indexes": "tsx src/create-indexes.ts",
+    "enable-rls": "tsx src/enable-rls.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.50.3",
