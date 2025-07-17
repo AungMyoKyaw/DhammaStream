@@ -2,14 +2,45 @@ import { queries } from "@/lib/supabase";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import SearchInput from "@/components/SearchInput";
+import PaginationControls from "@/components/PaginationControls";
 
-export default async function SpeakersPage() {
-  const { data: speakers, error } = await queries.getSpeakers();
+interface SpeakersPageProps {
+  readonly searchParams: Promise<{
+    search?: string;
+    page?: string;
+  }>;
+}
+
+export default async function SpeakersPage({
+  searchParams
+}: SpeakersPageProps) {
+  const params = await searchParams;
+  const search = params.search || "";
+  const page = parseInt(params.page || "1", 10);
+  const pageSize = 12;
+
+  const {
+    data: speakers,
+    error,
+    count
+  } = await queries.getSpeakersWithPagination(page, pageSize, search);
 
   if (error) {
     console.error("Error fetching speakers:", error);
     notFound();
   }
+
+  const totalPages = Math.ceil((count || 0) / pageSize);
+
+  // Helper function for pluralization
+  const getTeacherCountText = (count: number, search: string) => {
+    const teacherText = count !== 1 ? "teachers" : "teacher";
+    if (search) {
+      return `Found ${count} ${teacherText} for "${search}"`;
+    }
+    return `Showing ${count} ${teacherText}`;
+  };
 
   if (!speakers || speakers.length === 0) {
     return (
@@ -29,12 +60,21 @@ export default async function SpeakersPage() {
 
         <div className="max-w-4xl mx-auto px-4 py-16 text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            No Teachers Found
+            {search ? `No teachers found for "${search}"` : "No Teachers Found"}
           </h2>
           <p className="text-gray-600 mb-8">
-            We're currently building our collection of Buddhist teachers and
-            speakers.
+            {search
+              ? "Try a different search term or browse all teachers."
+              : "We're currently building our collection of Buddhist teachers and speakers."}
           </p>
+          {search && (
+            <Link
+              href="/speakers"
+              className="inline-block bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors mr-4"
+            >
+              View All Teachers
+            </Link>
+          )}
           <Link
             href="/"
             className="inline-block bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors"
@@ -90,9 +130,22 @@ export default async function SpeakersPage() {
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
             Buddhist Teachers & Speakers
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
             Discover wisdom from renowned Buddhist teachers, meditation masters,
             and spiritual guides from around the world.
+          </p>
+
+          {/* Search Input */}
+          <div className="max-w-lg mx-auto mb-8">
+            <SearchInput
+              placeholder="Search teachers by name..."
+              className="w-full"
+            />
+          </div>
+
+          {/* Results Count */}
+          <p className="text-gray-600 mb-6">
+            {getTeacherCountText(count || 0, search)}
           </p>
         </div>
 
@@ -148,6 +201,15 @@ export default async function SpeakersPage() {
               </div>
             </Link>
           ))}
+        </div>
+
+        {/* Pagination */}
+        <div className="mt-12">
+          <PaginationControls
+            currentPage={page}
+            totalPages={totalPages}
+            className="justify-center"
+          />
         </div>
 
         {/* Back to Home */}

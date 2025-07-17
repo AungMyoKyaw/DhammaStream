@@ -2,23 +2,36 @@ import { queries } from "@/lib/supabase";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import SearchInput from "@/components/SearchInput";
+import PaginationControls from "@/components/PaginationControls";
+
+interface SpeakerDetailPageProps {
+  readonly params: Promise<{ id: string }>;
+  readonly searchParams: Promise<{
+    search?: string;
+    page?: string;
+  }>;
+}
 
 export default async function SpeakerDetailPage({
-  params
-}: {
-  params: Promise<{ id: string }>;
-}) {
+  params,
+  searchParams
+}: SpeakerDetailPageProps) {
   const { id } = await params;
+  const searchParamsData = await searchParams;
+  const search = searchParamsData.search || "";
+  const page = parseInt(searchParamsData.page || "1", 10);
+  const pageSize = 12;
   const speakerId = parseInt(id);
 
   if (Number.isNaN(speakerId)) {
     notFound();
   }
 
-  // Get speaker data and their content
+  // Get speaker data and their content with pagination
   const [speakerResult, contentResult] = await Promise.all([
     queries.getSpeakers(),
-    queries.getContentByType("video") // We'll filter by speaker after
+    queries.getContentBySpeakerWithPagination(speakerId, page, pageSize, search)
   ]);
 
   if (speakerResult.error || contentResult.error) {
@@ -35,21 +48,62 @@ export default async function SpeakerDetailPage({
     notFound();
   }
 
-  // Filter content by this speaker
-  const speakerContent =
-    contentResult.data?.filter((content) => content.speaker_id === speakerId) ||
-    [];
+  const speakerContent = contentResult.data || [];
+  const totalCount = contentResult.count || 0;
+  const totalPages = Math.ceil(totalCount / pageSize);
 
-  // Categorize content by type
-  const videoContent = speakerContent.filter(
-    (content) => content.content_type === "video"
-  );
-  const audioContent = speakerContent.filter(
-    (content) => content.content_type === "audio"
-  );
-  const ebookContent = speakerContent.filter(
-    (content) => content.content_type === "ebook"
-  );
+  // Helper functions
+  const getItemCountText = (count: number, search: string) => {
+    const itemText = count !== 1 ? "items" : "item";
+    if (search) {
+      return `Found ${count} ${itemText} for "${search}"`;
+    }
+    return `Showing ${count} ${itemText}`;
+  };
+
+  const getContentTypeIcon = (contentType: string) => {
+    switch (contentType) {
+      case "video":
+        return "📹";
+      case "audio":
+        return "🎧";
+      default:
+        return "📚";
+    }
+  };
+
+  const getContentTypeStyles = (contentType: string) => {
+    switch (contentType) {
+      case "video":
+        return "bg-red-100 text-red-800";
+      case "audio":
+        return "bg-blue-100 text-blue-800";
+      default:
+        return "bg-green-100 text-green-800";
+    }
+  };
+
+  const getContentAspectRatio = (contentType: string) => {
+    switch (contentType) {
+      case "video":
+        return "aspect-video";
+      case "ebook":
+        return "aspect-[3/4]";
+      default:
+        return "aspect-square";
+    }
+  };
+
+  const getContentActionText = (contentType: string) => {
+    switch (contentType) {
+      case "video":
+        return "Watch Video";
+      case "audio":
+        return "Listen Now";
+      default:
+        return "Read Book";
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50">
@@ -149,136 +203,122 @@ export default async function SpeakerDetailPage({
 
         {/* Content Sections */}
         <div className="space-y-8">
-          {/* Video Content */}
-          {videoContent.length > 0 && (
-            <section>
-              <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                <span className="text-red-600 mr-3">📹</span>
-                Video Teachings ({videoContent.length})
+          {/* All Content - Unified List */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+              <h3 className="text-2xl font-bold text-gray-900">
+                All Content from {speaker.name}
               </h3>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {videoContent.map((content) => (
-                  <Link
-                    key={content.id}
-                    href={`/content-item/${content.id}`}
-                    className="group"
-                  >
-                    <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 border border-orange-100">
-                      <div className="aspect-video bg-gray-200 rounded mb-4 flex items-center justify-center">
-                        <span className="text-4xl">📹</span>
-                      </div>
-                      <h4 className="font-semibold text-gray-900 mb-2 group-hover:text-orange-600 transition-colors">
-                        {content.title}
-                      </h4>
-                      {content.description && (
-                        <p className="text-gray-600 text-sm line-clamp-3">
-                          {content.description}
-                        </p>
-                      )}
-                      <div className="mt-4 text-orange-600 text-sm font-medium">
-                        Watch Video →
-                      </div>
-                    </div>
-                  </Link>
-                ))}
+              <div className="max-w-md">
+                <SearchInput
+                  placeholder="Search this teacher's content..."
+                  className="w-full"
+                />
               </div>
-            </section>
-          )}
+            </div>
 
-          {/* Audio Content */}
-          {audioContent.length > 0 && (
-            <section>
-              <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                <span className="text-blue-600 mr-3">🎧</span>
-                Audio Teachings ({audioContent.length})
-              </h3>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {audioContent.map((content) => (
-                  <Link
-                    key={content.id}
-                    href={`/content-item/${content.id}`}
-                    className="group"
-                  >
-                    <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 border border-orange-100">
-                      <div className="aspect-square bg-gray-200 rounded mb-4 flex items-center justify-center">
-                        <span className="text-4xl">🎧</span>
-                      </div>
-                      <h4 className="font-semibold text-gray-900 mb-2 group-hover:text-orange-600 transition-colors">
-                        {content.title}
-                      </h4>
-                      {content.description && (
-                        <p className="text-gray-600 text-sm line-clamp-3">
-                          {content.description}
-                        </p>
-                      )}
-                      <div className="mt-4 text-orange-600 text-sm font-medium">
-                        Listen Now →
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </section>
-          )}
+            {/* Results Count */}
+            <p className="text-gray-600 mb-6">
+              {getItemCountText(totalCount, search)}
+            </p>
 
-          {/* Ebook Content */}
-          {ebookContent.length > 0 && (
-            <section>
-              <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                <span className="text-green-600 mr-3">📚</span>
-                Digital Books ({ebookContent.length})
-              </h3>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {ebookContent.map((content) => (
-                  <Link
-                    key={content.id}
-                    href={`/content-item/${content.id}`}
-                    className="group"
-                  >
-                    <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 border border-orange-100">
-                      <div className="aspect-[3/4] bg-gray-200 rounded mb-4 flex items-center justify-center">
-                        <span className="text-4xl">📚</span>
-                      </div>
-                      <h4 className="font-semibold text-gray-900 mb-2 group-hover:text-orange-600 transition-colors">
-                        {content.title}
-                      </h4>
-                      {content.description && (
-                        <p className="text-gray-600 text-sm line-clamp-3">
-                          {content.description}
-                        </p>
-                      )}
-                      <div className="mt-4 text-orange-600 text-sm font-medium">
-                        Read Book →
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </section>
-          )}
+            {/* Content Grid - Display all content types together */}
+            {speakerContent.length > 0 ? (
+              <>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                  {speakerContent.map((content) => (
+                    <Link
+                      key={content.id}
+                      href={`/content-item/${content.id}`}
+                      className="group"
+                    >
+                      <div className="bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow p-6 border border-gray-200">
+                        {/* Content Type Icon and Aspect Ratio */}
+                        <div
+                          className={`${getContentAspectRatio(content.content_type)} bg-gray-200 rounded mb-4 flex items-center justify-center`}
+                        >
+                          <span className="text-4xl">
+                            {getContentTypeIcon(content.content_type)}
+                          </span>
+                        </div>
 
-          {/* No Content Message */}
-          {videoContent.length === 0 &&
-            audioContent.length === 0 &&
-            ebookContent.length === 0 && (
-              <div className="bg-white rounded-lg shadow-md p-12 text-center">
-                <span className="text-6xl mb-4 block">🙏</span>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                  Coming Soon
-                </h3>
-                <p className="text-gray-600 mb-6">
-                  We're currently adding content from {speaker.name}. Please
-                  check back soon for teachings, guided meditations, and wisdom
-                  talks.
+                        {/* Content Type Badge */}
+                        <div className="mb-2">
+                          <span
+                            className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${getContentTypeStyles(content.content_type)}`}
+                          >
+                            {content.content_type.charAt(0).toUpperCase() +
+                              content.content_type.slice(1)}
+                          </span>
+                        </div>
+
+                        <h4 className="font-semibold text-gray-900 mb-2 group-hover:text-orange-600 transition-colors">
+                          {content.title}
+                        </h4>
+
+                        {content.description && (
+                          <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+                            {content.description}
+                          </p>
+                        )}
+
+                        <div className="text-orange-600 text-sm font-medium">
+                          {getContentActionText(content.content_type)} →
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+
+                {/* Pagination */}
+                <PaginationControls
+                  currentPage={page}
+                  totalPages={totalPages}
+                  className="justify-center"
+                />
+              </>
+            ) : (
+              <div className="text-center py-12">
+                <span className="text-6xl mb-4 block">🔍</span>
+                <h4 className="text-xl font-bold text-gray-900 mb-2">
+                  No content found
+                </h4>
+                <p className="text-gray-600 mb-4">
+                  {search
+                    ? `No content from ${speaker.name} matches "${search}". Try a different search term.`
+                    : `No content available from ${speaker.name} yet.`}
                 </p>
-                <Link
-                  href="/speakers"
-                  className="inline-block bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors"
-                >
-                  Explore Other Teachers
-                </Link>
+                {search && (
+                  <Link
+                    href={`/speakers/${speakerId}`}
+                    className="inline-block bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors"
+                  >
+                    View All Content from {speaker.name}
+                  </Link>
+                )}
               </div>
             )}
+          </div>
+
+          {/* No Content Message - Show when no content at all */}
+          {totalCount === 0 && (
+            <div className="bg-white rounded-lg shadow-md p-12 text-center">
+              <span className="text-6xl mb-4 block">🙏</span>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                Coming Soon
+              </h3>
+              <p className="text-gray-600 mb-6">
+                We're currently adding content from {speaker.name}. Please check
+                back soon for teachings, guided meditations, and wisdom talks.
+              </p>
+              <Link
+                href="/speakers"
+                className="inline-block bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors"
+              >
+                Explore Other Teachers
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Back to Speakers */}
