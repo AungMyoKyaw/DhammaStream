@@ -44,42 +44,57 @@ export default function PaginationControls({
 
   // Generate page numbers to show
   const getPageNumbers = () => {
-    const pages: (number | string)[] = [];
     const showPages = 5; // Show 5 page numbers at most
 
     if (totalPages <= showPages) {
       // Show all pages if total is small
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    } else {
-      // Show smart pagination
-      if (currentPage <= 3) {
-        // Show first pages
-        for (let i = 1; i <= 4; i++) {
-          pages.push(i);
-        }
-        pages.push("...");
-        pages.push(totalPages);
-      } else if (currentPage >= totalPages - 2) {
-        // Show last pages
-        pages.push(1);
-        pages.push("...");
-        for (let i = totalPages - 3; i <= totalPages; i++) {
-          pages.push(i);
-        }
-      } else {
-        // Show middle pages
-        pages.push(1);
-        pages.push("...");
-        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
-          pages.push(i);
-        }
-        pages.push("...");
-        pages.push(totalPages);
-      }
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
     }
 
+    return getPaginationForLargeSet();
+  };
+
+  const getPaginationForLargeSet = (): (number | string)[] => {
+    if (currentPage <= 3) {
+      return getEarlyPages();
+    }
+
+    if (currentPage >= totalPages - 2) {
+      return getLatePages();
+    }
+
+    return getMiddlePages();
+  };
+
+  const getEarlyPages = () => {
+    const pages: (number | string)[] = [];
+    for (let i = 1; i <= 4; i++) {
+      pages.push(i);
+    }
+    pages.push("...");
+    pages.push(totalPages);
+    return pages;
+  };
+
+  const getLatePages = () => {
+    const pages: (number | string)[] = [];
+    pages.push(1);
+    pages.push("...");
+    for (let i = totalPages - 3; i <= totalPages; i++) {
+      pages.push(i);
+    }
+    return pages;
+  };
+
+  const getMiddlePages = () => {
+    const pages: (number | string)[] = [];
+    pages.push(1);
+    pages.push("...");
+    for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+      pages.push(i);
+    }
+    pages.push("...");
+    pages.push(totalPages);
     return pages;
   };
 

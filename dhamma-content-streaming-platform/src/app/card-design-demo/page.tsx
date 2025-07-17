@@ -91,7 +91,7 @@ const sampleContent: DhammaContentWithRelations[] = [
     source_page: null,
     scraped_date: null,
     created_at: "2024-02-01T00:00:00Z",
-    speaker: null
+    speaker: undefined
   }
 ];
 
