@@ -273,14 +273,6 @@ export default function ContentViewPage({
                 {content.title}
               </h1>
 
-              {content.description && (
-                <div className="prose max-w-none mb-6">
-                  <p className="text-gray-700 leading-relaxed">
-                    {content.description}
-                  </p>
-                </div>
-              )}
-
               {/* Metadata */}
               <div className="border-t pt-4 space-y-3">
                 <div className="flex items-center text-gray-600">
