@@ -45,11 +45,7 @@ export function ContentCardAlternatives({
           )}
 
           {/* Description */}
-          {content.description && (
-            <p className="text-gray-600 mb-4 line-clamp-3">
-              {content.description}
-            </p>
-          )}
+          {/* Description hidden for now */}
 
           {/* Metadata */}
           <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-4">
@@ -178,11 +174,7 @@ export function ContentCardAlternatives({
                 </span>
               </div>
 
-              {content.description && (
-                <p className="text-sm text-gray-600 line-clamp-2 mb-2">
-                  {content.description}
-                </p>
-              )}
+              {/* Description hidden for now */}
             </div>
 
             {/* Action indicator */}

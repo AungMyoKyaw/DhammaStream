@@ -46,12 +46,7 @@ export function CompactContentCard({ content }: CompactContentCardProps) {
               </p>
             )}
 
-            {/* Description - show on larger screens */}
-            {content.description && (
-              <p className="text-sm text-gray-600 line-clamp-2 mb-2 hidden sm:block">
-                {content.description}
-              </p>
-            )}
+            {/* Description hidden for now */}
 
             {/* Additional metadata */}
             <div className="flex flex-wrap gap-3 text-xs text-gray-500 mb-2">
