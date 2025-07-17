@@ -1,13 +1,9 @@
 import { queries } from "@/lib/supabase";
 import Link from "next/link";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import SearchInput from "@/components/SearchInput";
 import PaginationControls from "@/components/PaginationControls";
-import {
-  getDefaultCoverImage,
-  getContentAspectRatio
-} from "@/lib/content-images";
+import CompactContentCard from "@/components/CompactContentCard";
 
 interface Props {
   params: Promise<{ type: string }>;
@@ -169,68 +165,9 @@ export default async function BrowsePage({ params, searchParams }: Props) {
         {/* Content Grid */}
         {content && content.length > 0 ? (
           <>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+            <div className="grid gap-4 mb-8">
               {content.map((item) => (
-                <Link
-                  key={item.id}
-                  href={`/content-item/${item.id}`}
-                  className="group"
-                >
-                  <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-4 border border-orange-100 h-full">
-                    {/* Content Cover Image */}
-                    <div
-                      className={`${getContentAspectRatio(item.content_type as "video" | "audio" | "ebook" | "other")} bg-gray-200 rounded mb-4 overflow-hidden`}
-                    >
-                      <Image
-                        src={getDefaultCoverImage(
-                          item.content_type as
-                            | "video"
-                            | "audio"
-                            | "ebook"
-                            | "other"
-                        )}
-                        alt={`Cover for ${item.title}`}
-                        width={400}
-                        height={400}
-                        className="w-full h-full object-cover"
-                        unoptimized
-                      />
-                    </div>
-
-                    {/* Content Info */}
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-orange-600 transition-colors line-clamp-2">
-                        {item.title}
-                      </h3>
-
-                      {item.speaker?.name && (
-                        <p className="text-sm text-gray-600 mb-2">
-                          by {item.speaker.name}
-                        </p>
-                      )}
-
-                      {/* Duration/Pages if available */}
-                      {item.duration_estimate && (
-                        <div className="text-xs text-gray-500 mb-2">
-                          Duration: {Math.floor(item.duration_estimate / 60)}h{" "}
-                          {item.duration_estimate % 60}m
-                        </div>
-                      )}
-
-                      {/* View Link */}
-                      <div
-                        className={`text-${contentConfig.color}-600 text-sm font-medium group-hover:underline`}
-                      >
-                        {(() => {
-                          if (type === "video") return "Watch Video";
-                          if (type === "audio") return "Listen Now";
-                          return "Read Book";
-                        })()}{" "}
-                        →
-                      </div>
-                    </div>
-                  </div>
-                </Link>
+                <CompactContentCard key={item.id} content={item} />
               ))}
             </div>
 

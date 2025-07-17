@@ -1,6 +1,7 @@
 import { queries } from "@/lib/supabase";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import CompactContentCard from "@/components/CompactContentCard";
 
 interface Props {
   params: Promise<{ type: string }>;
@@ -114,64 +115,9 @@ export default async function ContentTypePage({ params }: Props) {
 
         {/* Content Grid */}
         {content && content.length > 0 ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid gap-4">
             {content.map((item) => (
-              <Link
-                key={item.id}
-                href={`/content-item/${item.id}`}
-                className="group"
-              >
-                <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 border border-orange-100 h-full">
-                  {/* Content Thumbnail */}
-                  <div
-                    className={`
-                    ${type === "video" ? "aspect-video" : type === "ebook" ? "aspect-[3/4]" : "aspect-square"}
-                    bg-gray-200 rounded mb-4 flex items-center justify-center
-                  `}
-                  >
-                    <span className="text-4xl">{contentConfig.icon}</span>
-                  </div>
-
-                  {/* Content Info */}
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-orange-600 transition-colors line-clamp-2">
-                      {item.title}
-                    </h3>
-
-                    {item.speaker?.name && (
-                      <p className="text-sm text-gray-600 mb-2">
-                        by {item.speaker.name}
-                      </p>
-                    )}
-
-                    {item.description && (
-                      <p className="text-gray-600 text-sm line-clamp-3 mb-4">
-                        {item.description}
-                      </p>
-                    )}
-
-                    {/* Duration/Pages if available */}
-                    {item.duration_minutes && (
-                      <div className="text-xs text-gray-500 mb-2">
-                        Duration: {Math.floor(item.duration_minutes / 60)}h{" "}
-                        {item.duration_minutes % 60}m
-                      </div>
-                    )}
-
-                    {/* View Link */}
-                    <div
-                      className={`text-${contentConfig.color}-600 text-sm font-medium group-hover:underline`}
-                    >
-                      {type === "video"
-                        ? "Watch Video"
-                        : type === "audio"
-                          ? "Listen Now"
-                          : "Read Book"}{" "}
-                      →
-                    </div>
-                  </div>
-                </div>
-              </Link>
+              <CompactContentCard key={item.id} content={item} />
             ))}
           </div>
         ) : (

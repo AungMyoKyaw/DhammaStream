@@ -4,6 +4,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import SearchInput from "@/components/SearchInput";
 import PaginationControls from "@/components/PaginationControls";
+import CompactContentCard from "@/components/CompactContentCard";
 
 interface SpeakerDetailPageProps {
   readonly params: Promise<{ id: string }>;
@@ -59,50 +60,6 @@ export default async function SpeakerDetailPage({
       return `Found ${count} ${itemText} for "${search}"`;
     }
     return `Showing ${count} ${itemText}`;
-  };
-
-  const getContentTypeIcon = (contentType: string) => {
-    switch (contentType) {
-      case "video":
-        return "📹";
-      case "audio":
-        return "🎧";
-      default:
-        return "📚";
-    }
-  };
-
-  const getContentTypeStyles = (contentType: string) => {
-    switch (contentType) {
-      case "video":
-        return "bg-red-100 text-red-800";
-      case "audio":
-        return "bg-blue-100 text-blue-800";
-      default:
-        return "bg-green-100 text-green-800";
-    }
-  };
-
-  const getContentAspectRatio = (contentType: string) => {
-    switch (contentType) {
-      case "video":
-        return "aspect-video";
-      case "ebook":
-        return "aspect-[3/4]";
-      default:
-        return "aspect-square";
-    }
-  };
-
-  const getContentActionText = (contentType: string) => {
-    switch (contentType) {
-      case "video":
-        return "Watch Video";
-      case "audio":
-        return "Listen Now";
-      default:
-        return "Read Book";
-    }
   };
 
   return (
@@ -225,48 +182,9 @@ export default async function SpeakerDetailPage({
             {/* Content Grid - Display all content types together */}
             {speakerContent.length > 0 ? (
               <>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <div className="grid gap-4 mb-8">
                   {speakerContent.map((content) => (
-                    <Link
-                      key={content.id}
-                      href={`/content-item/${content.id}`}
-                      className="group"
-                    >
-                      <div className="bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow p-6 border border-gray-200">
-                        {/* Content Type Icon and Aspect Ratio */}
-                        <div
-                          className={`${getContentAspectRatio(content.content_type)} bg-gray-200 rounded mb-4 flex items-center justify-center`}
-                        >
-                          <span className="text-4xl">
-                            {getContentTypeIcon(content.content_type)}
-                          </span>
-                        </div>
-
-                        {/* Content Type Badge */}
-                        <div className="mb-2">
-                          <span
-                            className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${getContentTypeStyles(content.content_type)}`}
-                          >
-                            {content.content_type.charAt(0).toUpperCase() +
-                              content.content_type.slice(1)}
-                          </span>
-                        </div>
-
-                        <h4 className="font-semibold text-gray-900 mb-2 group-hover:text-orange-600 transition-colors">
-                          {content.title}
-                        </h4>
-
-                        {content.description && (
-                          <p className="text-gray-600 text-sm line-clamp-3 mb-4">
-                            {content.description}
-                          </p>
-                        )}
-
-                        <div className="text-orange-600 text-sm font-medium">
-                          {getContentActionText(content.content_type)} →
-                        </div>
-                      </div>
-                    </Link>
+                    <CompactContentCard key={content.id} content={content} />
                   ))}
                 </div>
 

@@ -45,6 +45,30 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
+          {/* New Design Notification */}
+          <div className="bg-orange-100 border border-orange-200 rounded-lg p-4 mb-8">
+            <div className="flex items-center justify-center">
+              <div className="flex-shrink-0">
+                <span className="text-2xl">✨</span>
+              </div>
+              <div className="ml-3 text-left">
+                <p className="text-orange-800 font-medium">
+                  <strong>New Design Update!</strong> We've improved our content
+                  cards for better readability and mobile experience.
+                </p>
+                <p className="text-orange-700 text-sm mt-1">
+                  <Link
+                    href="/browse/audio"
+                    className="underline hover:no-underline"
+                  >
+                    Browse content
+                  </Link>{" "}
+                  to see the new compact design in action.
+                </p>
+              </div>
+            </div>
+          </div>
+
           <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
             Discover the Path to{" "}
             <span className="text-orange-600">Inner Peace</span>
