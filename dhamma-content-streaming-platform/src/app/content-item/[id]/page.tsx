@@ -1,15 +1,13 @@
 "use client";
 
-import { useEffect, useState, use, useRef } from "react";
+import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { queries } from "@/lib/supabase";
-import { savePosition, getPosition } from "@/lib/resume-playback";
+
 import type { DhammaContentWithRelations } from "@/types/database";
-import DynamicPlyrPlayer, {
-  type PlyrPlayerRef
-} from "@/components/DynamicPlyrPlayer";
+import DynamicPlyrPlayer from "@/components/DynamicPlyrPlayer";
 
 export default function ContentViewPage({
   params
@@ -18,13 +16,13 @@ export default function ContentViewPage({
 }) {
   const router = useRouter();
   const { id } = use(params);
-  const playerRef = useRef<PlyrPlayerRef>(null);
+
   const [content, setContent] = useState<DhammaContentWithRelations | null>(
     null
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentTime, setCurrentTime] = useState(0);
+
   const contentId = parseInt(id);
 
   useEffect(() => {
@@ -186,47 +184,11 @@ export default function ContentViewPage({
               content.file_url && (
                 <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
                   <DynamicPlyrPlayer
-                    ref={playerRef}
                     src={content.file_url}
                     type={content.content_type}
                     width="100%"
                     height={content.content_type === "video" ? "400px" : "80px"}
-                    onReady={(player) => {
-                      // Restore playback position when player is ready
-                      const savedPosition = getPosition(content.id);
-                      if (savedPosition && savedPosition > 5) {
-                        // Only restore if more than 5 seconds in
-                        player.currentTime = savedPosition;
-                        setCurrentTime(savedPosition);
-                      }
-                    }}
-                    onTimeUpdate={(currentTime) => {
-                      // Save position every 5 seconds
-                      if (
-                        content &&
-                        (content.content_type === "video" ||
-                          content.content_type === "audio") &&
-                        Math.floor(currentTime) % 5 === 0
-                      ) {
-                        savePosition(content.id, currentTime);
-                      }
-                    }}
-                    onSeeking={(currentTime) => {
-                      setCurrentTime(currentTime);
-                    }}
                   />
-
-                  {/* Resume Message */}
-                  {currentTime > 0 && (
-                    <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
-                      <p className="text-sm text-orange-800">
-                        ⏯️ Resuming from {Math.floor(currentTime / 60)}:
-                        {Math.floor(currentTime % 60)
-                          .toString()
-                          .padStart(2, "0")}
-                      </p>
-                    </div>
-                  )}
                 </div>
               )}
 

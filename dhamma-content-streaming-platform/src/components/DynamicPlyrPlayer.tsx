@@ -19,4 +19,4 @@ const DynamicPlyrPlayer = dynamic(() => import("./PlyrPlayer"), {
 export default DynamicPlyrPlayer;
 
 // Re-export types for convenience
-export type { PlyrPlayerProps, PlyrPlayerRef } from "./PlyrPlayer";
+export type { PlyrPlayerProps } from "./PlyrPlayer";
