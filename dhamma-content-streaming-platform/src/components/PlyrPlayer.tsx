@@ -1,202 +1,141 @@
 "use client";
 
-import {
-  useEffect,
-  useRef,
-  useState,
-  forwardRef,
-  useImperativeHandle
-} from "react";
-import Plyr from "plyr";
+import { forwardRef, useEffect, useRef, useCallback } from "react";
+import Plyr from "plyr-react";
+import type PlyrCore from "plyr";
+import "plyr-react/plyr.css";
 
 export interface PlyrPlayerProps {
   src: string;
   type: "video" | "audio";
   width?: string;
   height?: string;
-  onTimeUpdate?: (currentTime: number) => void;
-  onSeeking?: (currentTime: number) => void;
-  onReady?: (player: Plyr) => void;
   className?: string;
 }
 
-export interface PlyrPlayerRef {
-  player: Plyr | null;
-  currentTime: number;
-  duration: number;
-  seek: (time: number) => void;
-  play: () => void;
-  pause: () => void;
-}
-
-const PlyrPlayer = forwardRef<PlyrPlayerRef, PlyrPlayerProps>(
-  (
-    {
-      src,
-      type,
-      width = "100%",
-      height,
-      onTimeUpdate,
-      onSeeking,
-      onReady,
-      className
-    },
-    ref
-  ) => {
-    const videoRef = useRef<HTMLVideoElement>(null);
-    const audioRef = useRef<HTMLAudioElement>(null);
-    const playerRef = useRef<Plyr | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    // Expose player methods through ref
-    useImperativeHandle(ref, () => ({
-      player: playerRef.current,
-      currentTime: playerRef.current?.currentTime || 0,
-      duration: playerRef.current?.duration || 0,
-      seek: (time: number) => {
-        if (playerRef.current) {
-          playerRef.current.currentTime = time;
-        }
-      },
-      play: () => {
-        if (playerRef.current) {
-          playerRef.current.play();
-        }
-      },
-      pause: () => {
-        if (playerRef.current) {
-          playerRef.current.pause();
-        }
-      }
-    }));
-
-    useEffect(() => {
-      const mediaElement =
-        type === "video" ? videoRef.current : audioRef.current;
-
-      if (!mediaElement) return;
-
-      // Initialize Plyr
-      try {
-        const player = new Plyr(mediaElement, {
-          controls: [
-            "play-large",
-            "play",
-            "progress",
-            "current-time",
-            "mute",
-            "volume",
-            "captions",
-            "settings",
-            "pip",
-            "airplay",
-            "fullscreen"
-          ],
-          settings: ["captions", "quality", "speed", "loop"],
-          keyboard: { focused: true, global: false },
-          tooltips: { controls: false, seek: true },
-          hideControls: true,
-          resetOnEnd: false,
-          clickToPlay: true,
-          disableContextMenu: true
-        });
-
-        playerRef.current = player;
-
-        // Event listeners
-        player.on("ready", () => {
-          setIsLoading(false);
-          onReady?.(player);
-        });
-
-        player.on("error", (event) => {
-          console.error("Plyr error:", event);
-          setError("Failed to load media");
-          setIsLoading(false);
-        });
-
-        player.on("timeupdate", () => {
-          const currentTime = player.currentTime;
-          onTimeUpdate?.(currentTime);
-        });
-
-        player.on("seeking", () => {
-          const currentTime = player.currentTime;
-          onSeeking?.(currentTime);
-        });
-
-        player.on("loadstart", () => {
-          setIsLoading(true);
-          setError(null);
-        });
-
-        player.on("canplay", () => {
-          setIsLoading(false);
-        });
-
-        // Cleanup function
-        return () => {
-          if (playerRef.current) {
-            playerRef.current.destroy();
-            playerRef.current = null;
+const PlyrPlayer = forwardRef<unknown, PlyrPlayerProps>(
+  ({ src, type, width = "100%", height, className }, ref) => {
+    // Use a callback ref to ensure we get the correct instance
+    // Plyr-react's ref is expected to be an object with a .plyr property
+    type PlyrReactRef = { plyr: PlyrCore } | null;
+    const localRef = useRef<PlyrReactRef>(null);
+    const setPlayerRef = useCallback(
+      (node: unknown) => {
+        if (typeof ref === "function") {
+          ref(node);
+        } else if (ref && typeof ref === "object" && "current" in ref) {
+          // Only assign if node is a PlyrReactRef
+          if (node === null || (typeof node === "object" && "plyr" in node)) {
+            (ref as { current: PlyrReactRef }).current = node as PlyrReactRef;
           }
-        };
-      } catch (err) {
-        console.error("Failed to initialize Plyr:", err);
-        setError("Failed to initialize player");
-        setIsLoading(false);
-      }
-    }, [type, onTimeUpdate, onSeeking, onReady]);
+        }
+        localRef.current = node as PlyrReactRef;
+      },
+      [ref]
+    );
+    const playerRef = localRef;
+    const storageKey = `plyr-resume-${type}-${src}`;
 
-    // Update source when src changes
+    // Map props to plyr-react's source prop
+    const source = {
+      type,
+      sources: [
+        {
+          src,
+          type: type === "video" ? "video/mp4" : "audio/mp3"
+        }
+      ]
+    };
+
+    // Resume logic (robust, event-driven, with logging and retry)
     useEffect(() => {
-      if (playerRef.current && src) {
-        playerRef.current.source = {
-          type: type,
-          sources: [
-            {
-              src: src,
-              type: type === "video" ? "video/mp4" : "audio/mp3"
-            }
-          ]
-        };
+      if (typeof window === "undefined") return; // SSR safety
+      let retryTimeout: NodeJS.Timeout | null = null;
+      let didResume = false;
+
+      function getPlyr() {
+        return playerRef?.current?.plyr;
       }
-    }, [src, type]);
 
-    if (error) {
-      return (
-        <div
-          className={`bg-gray-100 rounded-lg flex items-center justify-center ${className}`}
-          style={{
-            width,
-            height: height || (type === "video" ? "400px" : "80px")
-          }}
-        >
-          <div className="text-center text-gray-600">
-            <span className="text-2xl mb-2 block">⚠️</span>
-            <p>{error}</p>
-          </div>
-        </div>
-      );
-    }
+      type PlyrInstance = {
+        currentTime: number;
+        duration: number;
+        ended: boolean;
+        on: (event: string, cb: () => void) => void;
+        off: (event: string, cb: () => void) => void;
+      };
+      const isPlyrInstance = (plyr: unknown): plyr is PlyrInstance =>
+        !!plyr &&
+        typeof (plyr as PlyrInstance).on === "function" &&
+        typeof (plyr as PlyrInstance).off === "function";
 
-    if (isLoading) {
-      return (
-        <div
-          className={`bg-gray-200 rounded-lg flex items-center justify-center ${className}`}
-          style={{
-            width,
-            height: height || (type === "video" ? "400px" : "80px")
-          }}
-        >
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600 mx-auto mb-2"></div>
-            <p className="text-gray-600">Loading player...</p>
-          </div>
-        </div>
-      );
-    }
+      const tryResume = (eventName: string) => {
+        const plyr = getPlyr();
+        if (!isPlyrInstance(plyr)) {
+          console.log(
+            `[PlyrPlayer] [${eventName}] plyr instance not ready or invalid, will retry...`
+          );
+          retryTimeout = setTimeout(() => tryResume(eventName), 200);
+          return;
+        }
+        if (didResume) return;
+        const saved = window.localStorage.getItem(storageKey);
+        if (saved) {
+          const time = parseFloat(saved);
+          if (!Number.isNaN(time) && time > 0 && plyr.duration > time) {
+            plyr.currentTime = time;
+            didResume = true;
+            console.log(
+              `[PlyrPlayer] Resumed to ${time}s on event '${eventName}'`
+            );
+          } else {
+            console.log(
+              `[PlyrPlayer] No valid resume time found in storage for key ${storageKey}`
+            );
+          }
+        } else {
+          console.log(
+            `[PlyrPlayer] No resume time in storage for key ${storageKey}`
+          );
+        }
+      };
+
+      const onLoadedData = () => tryResume("loadeddata");
+      const onReady = () => tryResume("ready");
+
+      const plyr = getPlyr();
+      if (isPlyrInstance(plyr)) {
+        plyr.on("loadeddata", onLoadedData);
+        plyr.on("ready", onReady);
+        plyr.on("timeupdate", onTimeUpdate);
+        plyr.on("ended", onEnded);
+      } else {
+        // If plyr is not ready, set up a retry
+        retryTimeout = setTimeout(() => tryResume("effect-init"), 200);
+      }
+
+      function onTimeUpdate() {
+        const plyr = getPlyr();
+        if (isPlyrInstance(plyr) && !plyr.ended && plyr.currentTime > 0) {
+          window.localStorage.setItem(storageKey, plyr.currentTime.toString());
+        }
+      }
+      function onEnded() {
+        window.localStorage.removeItem(storageKey);
+      }
+
+      // Cleanup listeners on unmount or source change
+      return () => {
+        const plyr = getPlyr();
+        if (isPlyrInstance(plyr)) {
+          plyr.off("loadeddata", onLoadedData);
+          plyr.off("ready", onReady);
+          plyr.off("timeupdate", onTimeUpdate);
+          plyr.off("ended", onEnded);
+        }
+        if (retryTimeout) clearTimeout(retryTimeout);
+      };
+    }, [storageKey, playerRef]);
 
     return (
       <div
@@ -206,26 +145,7 @@ const PlyrPlayer = forwardRef<PlyrPlayerRef, PlyrPlayerProps>(
           height: height || (type === "video" ? "400px" : "80px")
         }}
       >
-        {type === "video" ? (
-          <video
-            ref={videoRef}
-            className="plyr-react plyr"
-            style={{ width: "100%", height: "100%" }}
-            playsInline
-            crossOrigin="anonymous"
-          >
-            <track kind="captions" />
-          </video>
-        ) : (
-          <audio
-            ref={audioRef}
-            className="plyr-react plyr"
-            style={{ width: "100%", height: "100%" }}
-            crossOrigin="anonymous"
-          >
-            <track kind="captions" />
-          </audio>
-        )}
+        <Plyr ref={setPlayerRef} source={source} />
       </div>
     );
   }
