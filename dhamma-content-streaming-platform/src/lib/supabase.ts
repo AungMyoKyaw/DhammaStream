@@ -186,11 +186,14 @@ export const queries = {
   },
 
   // Get all content by speaker with pagination and search
+
   getContentBySpeakerWithPagination: async (
     speakerId: number,
     page: number = 1,
     pageSize: number = 12,
-    searchQuery?: string
+    searchQuery?: string,
+    type?: string,
+    sort: "newest" | "oldest" | "title-asc" | "title-desc" = "newest"
   ) => {
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
@@ -211,7 +214,28 @@ export const queries = {
       query = query.ilike("title", `%${searchQuery.trim()}%`);
     }
 
-    return query.order("created_at", { ascending: false }).range(from, to);
+    if (type && type !== "all") {
+      query = query.eq("content_type", type);
+    }
+
+    // Determine sort order
+    switch (sort) {
+      case "oldest":
+        query = query.order("created_at", { ascending: true });
+        break;
+      case "title-asc":
+        query = query.order("title", { ascending: true });
+        break;
+      case "title-desc":
+        query = query.order("title", { ascending: false });
+        break;
+      case "newest":
+      default:
+        query = query.order("created_at", { ascending: false });
+        break;
+    }
+
+    return query.range(from, to);
   },
 
   // Get content by speaker (all content types) - non-paginated for quick overview

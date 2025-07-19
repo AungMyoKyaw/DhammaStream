@@ -2,26 +2,40 @@ import { queries } from "@/lib/supabase";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import SearchInput from "@/components/SearchInput";
 import PaginationControls from "@/components/PaginationControls";
 import CompactContentCard from "@/components/CompactContentCard";
+import SpeakerContentToolbar from "@/components/SpeakerContentToolbar";
 
 interface SpeakerDetailPageProps {
-  readonly params: Promise<{ id: string }>;
-  readonly searchParams: Promise<{
-    search?: string;
-    page?: string;
-  }>;
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default async function SpeakerDetailPage({
-  params,
-  searchParams
-}: SpeakerDetailPageProps) {
-  const { id } = await params;
-  const searchParamsData = await searchParams;
-  const search = searchParamsData.search || "";
-  const page = parseInt(searchParamsData.page || "1", 10);
+export default async function SpeakerDetailPage(props: SpeakerDetailPageProps) {
+  const params = await props.params;
+  const searchParams = await props.searchParams;
+  const { id } = params;
+
+  // Helper function to get string value from search params
+  const getSearchParam = (param: string | string[] | undefined): string => {
+    if (Array.isArray(param)) return param[0] || "";
+    return param || "";
+  };
+
+  const search = getSearchParam(searchParams.search);
+  const type =
+    (getSearchParam(searchParams.type) as
+      | "all"
+      | "video"
+      | "audio"
+      | "ebook") || "all";
+  const sort =
+    (getSearchParam(searchParams.sort) as
+      | "newest"
+      | "oldest"
+      | "title-asc"
+      | "title-desc") || "newest";
+  const page = parseInt(getSearchParam(searchParams.page) || "1", 10);
   const pageSize = 12;
   const speakerId = parseInt(id);
 
@@ -32,7 +46,14 @@ export default async function SpeakerDetailPage({
   // Get speaker data and their content with pagination
   const [speakerResult, contentResult] = await Promise.all([
     queries.getSpeakers(),
-    queries.getContentBySpeakerWithPagination(speakerId, page, pageSize, search)
+    queries.getContentBySpeakerWithPagination(
+      speakerId,
+      page,
+      pageSize,
+      search,
+      type,
+      sort
+    )
   ]);
 
   if (speakerResult.error || contentResult.error) {
@@ -52,46 +73,44 @@ export default async function SpeakerDetailPage({
   const speakerContent = contentResult.data || [];
   const totalCount = contentResult.count || 0;
   const totalPages = Math.ceil(totalCount / pageSize);
-
-  // Helper functions
   const getItemCountText = (count: number, search: string) => {
     const itemText = count !== 1 ? "items" : "item";
     if (search) {
-      return `Found ${count} ${itemText} for "${search}"`;
+      return `${count} ${itemText} found for "${search}"`;
     }
-    return `Showing ${count} ${itemText}`;
+    return `${count} ${itemText} found`;
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 pb-24">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-orange-100">
+      <header className="bg-white/90 shadow-lg border-b border-orange-100 sticky top-0 z-30 backdrop-blur">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
-            <Link href="/" className="flex items-center">
+            <Link
+              href="/"
+              className="flex items-center focus:outline-none focus:ring-2 focus:ring-orange-400"
+              aria-label="Go to homepage"
+            >
               <h1 className="text-3xl font-bold text-orange-600">
-                DhammaStream
+                <span title="DhammaStream">🧘‍♂️</span> DhammaStream
               </h1>
             </Link>
-            <nav className="hidden md:flex space-x-6">
-              <Link href="/speakers" className="text-orange-600 font-medium">
+            <nav
+              className="hidden md:flex space-x-6"
+              aria-label="Main navigation"
+            >
+              <Link
+                href="/speakers"
+                className="text-orange-600 font-medium focus:outline-none focus:ring-2 focus:ring-orange-400"
+                aria-label="Teachers"
+              >
                 Teachers
               </Link>
               <Link
-                href="/browse/video"
-                className="text-gray-600 hover:text-orange-600 transition-colors"
-              >
-                Videos
-              </Link>
-              <Link
-                href="/browse/audio"
-                className="text-gray-600 hover:text-orange-600 transition-colors"
-              >
-                Audio
-              </Link>
-              <Link
                 href="/browse/ebook"
-                className="text-gray-600 hover:text-orange-600 transition-colors"
+                className="text-gray-600 hover:text-orange-600 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-400"
+                aria-label="Books"
               >
                 Books
               </Link>
@@ -102,16 +121,33 @@ export default async function SpeakerDetailPage({
 
       {/* Breadcrumb */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <nav className="text-sm text-gray-600">
-          <Link href="/" className="hover:text-orange-600">
+        <nav
+          className="text-sm text-gray-600 flex items-center gap-2"
+          aria-label="Breadcrumb"
+        >
+          <Link
+            href="/"
+            className="hover:text-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-400"
+            aria-label="Home"
+          >
             Home
           </Link>
-          <span className="mx-2">›</span>
-          <Link href="/speakers" className="hover:text-orange-600">
+          <span className="mx-2" aria-hidden="true">
+            ›
+          </span>
+          <Link
+            href="/speakers"
+            className="hover:text-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-400"
+            aria-label="Teachers"
+          >
             Teachers
           </Link>
-          <span className="mx-2">›</span>
-          <span className="text-gray-900">{speaker.name}</span>
+          <span className="mx-2" aria-hidden="true">
+            ›
+          </span>
+          <span className="text-gray-900" aria-current="page">
+            {speaker.name}
+          </span>
         </nav>
       </div>
 
@@ -135,7 +171,6 @@ export default async function SpeakerDetailPage({
                 )}
               </div>
             </div>
-
             {/* Speaker Info */}
             <div className="flex-1 text-center md:text-left">
               <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -159,30 +194,28 @@ export default async function SpeakerDetailPage({
         </div>
 
         {/* Content Sections */}
-        <div className="space-y-8">
+        <div className="space-y-6">
           {/* All Content - Unified List */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-              <h3 className="text-2xl font-bold text-gray-900">
-                All Content from {speaker.name}
-              </h3>
-              <div className="max-w-md">
-                <SearchInput
-                  placeholder="Search this teacher's content..."
-                  className="w-full"
-                />
-              </div>
-            </div>
+          <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 md:p-6">
+            {/* Unified Content Toolbar */}
+            <SpeakerContentToolbar
+              search={search}
+              type={type}
+              sort={sort}
+              page={page}
+            />
 
-            {/* Results Count */}
-            <p className="text-gray-600 mb-6">
-              {getItemCountText(totalCount, search)}
-            </p>
+            {/* Results Context */}
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-gray-600 font-medium text-sm md:text-base">
+                {getItemCountText(totalCount, search)}
+              </p>
+            </div>
 
             {/* Content Grid - Display all content types together */}
             {speakerContent.length > 0 ? (
               <>
-                <div className="grid gap-4 mb-8">
+                <div className="space-y-3 mb-6 md:mb-8">
                   {speakerContent.map((content) => (
                     <CompactContentCard key={content.id} content={content} />
                   ))}
@@ -192,16 +225,18 @@ export default async function SpeakerDetailPage({
                 <PaginationControls
                   currentPage={page}
                   totalPages={totalPages}
+                  totalItems={totalCount}
+                  itemsPerPage={pageSize}
                   className="justify-center"
                 />
               </>
             ) : (
-              <div className="text-center py-12">
-                <span className="text-6xl mb-4 block">🔍</span>
-                <h4 className="text-xl font-bold text-gray-900 mb-2">
+              <div className="text-center py-8 md:py-12">
+                <span className="text-4xl md:text-6xl mb-4 block">🔍</span>
+                <h4 className="text-lg md:text-xl font-bold text-gray-900 mb-2">
                   No content found
                 </h4>
-                <p className="text-gray-600 mb-4">
+                <p className="text-gray-600 mb-4 text-sm md:text-base px-4">
                   {search
                     ? `No content from ${speaker.name} matches "${search}". Try a different search term.`
                     : `No content available from ${speaker.name} yet.`}
@@ -209,7 +244,7 @@ export default async function SpeakerDetailPage({
                 {search && (
                   <Link
                     href={`/speakers/${speakerId}`}
-                    className="inline-block bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors"
+                    className="inline-block bg-orange-600 text-white px-4 md:px-6 py-2 md:py-3 rounded-lg hover:bg-orange-700 transition-colors text-sm md:text-base"
                   >
                     View All Content from {speaker.name}
                   </Link>

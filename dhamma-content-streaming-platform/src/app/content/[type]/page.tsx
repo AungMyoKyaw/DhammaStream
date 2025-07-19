@@ -1,5 +1,7 @@
+/* eslint-disable jsx-a11y/media-has-caption, react/jsx-pascal-case */
 import { queries } from "@/lib/supabase";
 import Link from "next/link";
+import { ContentTypeIcons } from "@/components/ui/icons";
 import { notFound } from "next/navigation";
 import CompactContentCard from "@/components/CompactContentCard";
 
@@ -10,21 +12,29 @@ interface Props {
 const contentTypes = {
   video: {
     title: "Video Teachings",
-    icon: "📹",
+    // eslint-disable-next-line jsx-a11y/media-has-caption
+    icon: (
+      <ContentTypeIcons.video className="inline-block w-12 h-12 text-red-500" />
+    ),
     description:
       "Discover inspiring Buddhist video teachings, guided meditations, and dharma talks.",
     color: "red"
   },
   audio: {
     title: "Audio Content",
-    icon: "🎧",
+    // eslint-disable-next-line jsx-a11y/media-has-caption
+    icon: (
+      <ContentTypeIcons.audio className="inline-block w-12 h-12 text-blue-500" />
+    ),
     description:
       "Listen to Buddhist podcasts, guided meditations, and spiritual discussions.",
     color: "blue"
   },
   ebook: {
     title: "Digital Books",
-    icon: "📚",
+    icon: (
+      <ContentTypeIcons.ebook className="inline-block w-12 h-12 text-green-500" />
+    ),
     description:
       "Read Buddhist texts, meditation guides, and spiritual literature.",
     color: "green"

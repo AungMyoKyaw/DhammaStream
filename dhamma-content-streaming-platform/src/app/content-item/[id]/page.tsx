@@ -7,7 +7,8 @@ import Image from "next/image";
 import { queries } from "@/lib/supabase";
 
 import type { DhammaContentWithRelations } from "@/types/database";
-import DynamicPlyrPlayer from "@/components/DynamicPlyrPlayer";
+import ResponsivePlyrPlayer from "@/components/ResponsivePlyrPlayer";
+import { Navigation } from "@/components/Navigation";
 
 export default function ContentViewPage({
   params
@@ -73,28 +74,18 @@ export default function ContentViewPage({
 
   if (error || !content) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50">
-        <header className="bg-white shadow-sm border-b border-orange-100">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center py-6">
-              <Link href="/" className="flex items-center">
-                <h1 className="text-3xl font-bold text-orange-600">
-                  DhammaStream
-                </h1>
-              </Link>
-            </div>
-          </div>
-        </header>
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 dark:from-gray-900 dark:to-gray-800">
+        <Navigation />
         <div className="max-w-4xl mx-auto px-4 py-16 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
             Content Not Found
           </h2>
-          <p className="text-gray-600 mb-8">
+          <p className="text-gray-600 dark:text-gray-300 mb-8">
             {error || "The requested content could not be found."}
           </p>
           <Link
             href="/"
-            className="inline-block bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors"
+            className="inline-block bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 dark:bg-orange-500 dark:hover:bg-orange-600 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
           >
             Return Home
           </Link>
@@ -115,61 +106,27 @@ export default function ContentViewPage({
     contentTypeConfig.video;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-orange-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
-            <Link href="/" className="flex items-center">
-              <h1 className="text-3xl font-bold text-orange-600">
-                DhammaStream
-              </h1>
-            </Link>
-            <nav className="hidden md:flex space-x-6">
-              <Link
-                href="/speakers"
-                className="text-gray-600 hover:text-orange-600 transition-colors"
-              >
-                Teachers
-              </Link>
-              <Link
-                href="/browse/video"
-                className="text-gray-600 hover:text-orange-600 transition-colors"
-              >
-                Videos
-              </Link>
-              <Link
-                href="/browse/audio"
-                className="text-gray-600 hover:text-orange-600 transition-colors"
-              >
-                Audio
-              </Link>
-              <Link
-                href="/browse/ebook"
-                className="text-gray-600 hover:text-orange-600 transition-colors"
-              >
-                Books
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 dark:from-gray-900 dark:to-gray-800">
+      <Navigation />
 
       {/* Breadcrumb */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <nav className="text-sm text-gray-600">
-          <Link href="/" className="hover:text-orange-600">
+        <nav className="text-sm text-gray-600 dark:text-gray-400">
+          <Link
+            href="/"
+            className="hover:text-orange-600 dark:hover:text-orange-400"
+          >
             Home
           </Link>
           <span className="mx-2">›</span>
           <Link
             href={`/browse/${content.content_type}`}
-            className="hover:text-orange-600"
+            className="hover:text-orange-600 dark:hover:text-orange-400"
           >
             {contentTypeLabel}
           </Link>
           <span className="mx-2">›</span>
-          <span className="text-gray-900">{content.title}</span>
+          <span className="text-gray-900 dark:text-white">{content.title}</span>
         </nav>
       </div>
 
@@ -182,22 +139,22 @@ export default function ContentViewPage({
             {(content.content_type === "video" ||
               content.content_type === "audio") &&
               content.file_url && (
-                <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-                  <DynamicPlyrPlayer
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+                  <ResponsivePlyrPlayer
                     src={content.file_url}
                     type={content.content_type}
-                    width="100%"
-                    height={content.content_type === "video" ? "400px" : "80px"}
+                    className="w-full"
+                    maxHeight="500px"
                   />
                 </div>
               )}
 
             {/* Ebook Content */}
             {content.content_type === "ebook" && (
-              <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
                 <div className="text-center">
                   <span className="text-6xl mb-4 block">📚</span>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                     Digital Book
                   </h3>
                   {content.file_url ? (
@@ -205,26 +162,28 @@ export default function ContentViewPage({
                       href={content.file_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-block bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
+                      className="inline-block bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
                     >
                       Open Book
                     </a>
                   ) : (
-                    <p className="text-gray-600">Book file not available</p>
+                    <p className="text-gray-600 dark:text-gray-300">
+                      Book file not available
+                    </p>
                   )}
                 </div>
               </div>
             )}
 
             {/* Content Details */}
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
                 {content.title}
               </h1>
 
               {/* Metadata */}
-              <div className="border-t pt-4 space-y-3">
-                <div className="flex items-center text-gray-600">
+              <div className="border-t dark:border-gray-700 pt-4 space-y-3">
+                <div className="flex items-center text-gray-600 dark:text-gray-300">
                   <span className="font-medium mr-2">Type:</span>
                   <span className="flex items-center">
                     {config.icon}{" "}
@@ -234,7 +193,7 @@ export default function ContentViewPage({
                 </div>
 
                 {content.duration_estimate && (
-                  <div className="flex items-center text-gray-600">
+                  <div className="flex items-center text-gray-600 dark:text-gray-300">
                     <span className="font-medium mr-2">Duration:</span>
                     <span>
                       {Math.floor(content.duration_estimate / 60)}h{" "}
@@ -244,7 +203,7 @@ export default function ContentViewPage({
                 )}
 
                 {content.category && (
-                  <div className="flex items-center text-gray-600">
+                  <div className="flex items-center text-gray-600 dark:text-gray-300">
                     <span className="font-medium mr-2">Category:</span>
                     <span>{content.category.name}</span>
                   </div>
@@ -257,16 +216,16 @@ export default function ContentViewPage({
           <div className="lg:col-span-1">
             {/* Speaker Info */}
             {content.speaker && (
-              <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                   Teacher
                 </h3>
                 <Link
                   href={`/speakers/${content.speaker.id}`}
-                  className="group"
+                  className="group focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 rounded-lg"
                 >
-                  <div className="flex items-center space-x-3 group-hover:bg-orange-50 p-3 rounded-lg transition-colors">
-                    <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                  <div className="flex items-center space-x-3 group-hover:bg-orange-50 dark:group-hover:bg-orange-900/20 p-3 rounded-lg transition-colors">
+                    <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center">
                       {content.speaker.photo_url ? (
                         <Image
                           src={content.speaker.photo_url}
@@ -276,14 +235,16 @@ export default function ContentViewPage({
                           className="w-12 h-12 rounded-full object-cover"
                         />
                       ) : (
-                        <span className="text-2xl text-orange-600">🧘‍♂️</span>
+                        <span className="text-2xl text-orange-600 dark:text-orange-400">
+                          🧘‍♂️
+                        </span>
                       )}
                     </div>
                     <div>
-                      <h4 className="font-medium text-gray-900 group-hover:text-orange-600 transition-colors">
+                      <h4 className="font-medium text-gray-900 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
                         {content.speaker.name}
                       </h4>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-gray-600 dark:text-gray-300">
                         View all teachings
                       </p>
                     </div>
@@ -293,14 +254,14 @@ export default function ContentViewPage({
             )}
 
             {/* Actions */}
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                 Actions
               </h3>
               <div className="space-y-3">
                 <Link
                   href={`/browse/${content.content_type}`}
-                  className="w-full bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors text-center block"
+                  className="w-full bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 dark:bg-orange-500 dark:hover:bg-orange-600 transition-colors text-center block focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
                 >
                   More {contentTypeLabel}
                 </Link>
@@ -308,7 +269,7 @@ export default function ContentViewPage({
                 {content.speaker && (
                   <Link
                     href={`/speakers/${content.speaker.id}`}
-                    className="w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors text-center block"
+                    className="w-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-center block focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
                   >
                     More by {content.speaker.name}
                   </Link>
@@ -317,7 +278,7 @@ export default function ContentViewPage({
                 <button
                   type="button"
                   onClick={() => router.back()}
-                  className="w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="w-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
                 >
                   ← Go Back
                 </button>
