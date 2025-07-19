@@ -11,10 +11,15 @@ const client = new Client({ connectionString: DATABASE_URL });
 
 async function createIndexes() {
   const sql = `
-    CREATE INDEX IF NOT EXISTS idx_dhamma_content_content_type ON dhamma_content(content_type);
-    CREATE INDEX IF NOT EXISTS idx_dhamma_content_created_at ON dhamma_content(created_at);
-    CREATE INDEX IF NOT EXISTS idx_dhamma_content_content_type_created_at ON dhamma_content(content_type, created_at DESC);
-    CREATE INDEX IF NOT EXISTS idx_content_type_created_at ON dhamma_content (content_type, created_at DESC);
+    -- Main composite index for filtering by content_type and ordering by created_at DESC
+    CREATE INDEX IF NOT EXISTS idx_dhamma_content_content_type_created_at_desc ON dhamma_content(content_type, created_at DESC);
+
+    -- Indexes for foreign keys to speed up joins and deletes
+    CREATE INDEX IF NOT EXISTS idx_dhamma_content_category_id ON dhamma_content(category_id);
+    CREATE INDEX IF NOT EXISTS idx_dhamma_content_speaker_id ON dhamma_content(speaker_id);
+
+    -- Optional: BRIN index for large, append-only tables (uncomment if table is huge)
+    -- CREATE INDEX IF NOT EXISTS idx_dhamma_content_created_at_brin ON dhamma_content USING BRIN (created_at);
   `;
   try {
     await client.connect();
