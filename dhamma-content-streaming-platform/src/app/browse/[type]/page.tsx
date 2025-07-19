@@ -1,9 +1,19 @@
 import { queries } from "@/lib/supabase";
 import Link from "next/link";
+import { ContentTypeIcons, FeatureIcons } from "@/components/ui/icons";
+import { ReactNode } from "react";
+
+// alias icon components for proper JSX naming
+const {
+  video: VideoIcon,
+  audio: AudioIcon,
+  ebook: EbookIcon
+} = ContentTypeIcons;
 import { notFound } from "next/navigation";
 import SearchInput from "@/components/SearchInput";
 import PaginationControls from "@/components/PaginationControls";
 import CompactContentCard from "@/components/CompactContentCard";
+import { Navigation } from "@/components/Navigation";
 import type { DhammaContentWithRelations } from "@/types/database";
 
 interface Props {
@@ -14,21 +24,21 @@ interface Props {
 const contentTypes = {
   video: {
     title: "Video Teachings",
-    icon: "📹",
+    icon: <VideoIcon className="inline-block w-12 h-12 text-red-500" />,
     description:
       "Discover inspiring Buddhist video teachings, guided meditations, and dharma talks.",
     color: "red"
   },
   audio: {
     title: "Audio Content",
-    icon: "🎧",
+    icon: <AudioIcon className="inline-block w-12 h-12 text-blue-500" />,
     description:
       "Listen to Buddhist podcasts, guided meditations, and spiritual discussions.",
     color: "blue"
   },
   ebook: {
     title: "Digital Books",
-    icon: "📚",
+    icon: <EbookIcon className="inline-block w-12 h-12 text-green-500" />,
     description:
       "Read Buddhist texts, meditation guides, and spiritual literature.",
     color: "green"
@@ -67,8 +77,9 @@ export default async function BrowsePage({ params, searchParams }: Props) {
   const totalPages = Math.ceil((count || 0) / pageSize);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50">
-      <PageHeader type={type} contentConfig={contentConfig} />
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 dark:from-gray-900 dark:to-gray-800">
+      <Navigation />
+      <Breadcrumb contentConfig={contentConfig} />
       <MainContent
         contentConfig={contentConfig}
         search={search}
@@ -83,76 +94,38 @@ export default async function BrowsePage({ params, searchParams }: Props) {
   );
 }
 
-interface PageHeaderProps {
-  type: string;
+interface BreadcrumbProps {
   contentConfig: {
     title: string;
-    icon: string;
+    icon: ReactNode;
     description: string;
     color: string;
   };
 }
 
-function PageHeader({ type, contentConfig }: PageHeaderProps) {
+function Breadcrumb({ contentConfig }: BreadcrumbProps) {
   return (
-    <>
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-orange-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
-            <Link href="/" className="flex items-center">
-              <h1 className="text-3xl font-bold text-orange-600">
-                DhammaStream
-              </h1>
-            </Link>
-            <nav className="hidden md:flex space-x-6">
-              <Link
-                href="/speakers"
-                className="text-gray-600 hover:text-orange-600 transition-colors"
-              >
-                Teachers
-              </Link>
-              <Link
-                href="/browse/video"
-                className={`${type === "video" ? "text-orange-600 font-medium" : "text-gray-600 hover:text-orange-600"} transition-colors`}
-              >
-                Videos
-              </Link>
-              <Link
-                href="/browse/audio"
-                className={`${type === "audio" ? "text-orange-600 font-medium" : "text-gray-600 hover:text-orange-600"} transition-colors`}
-              >
-                Audio
-              </Link>
-              <Link
-                href="/browse/ebook"
-                className={`${type === "ebook" ? "text-orange-600 font-medium" : "text-gray-600 hover:text-orange-600"} transition-colors`}
-              >
-                Books
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
-
-      {/* Breadcrumb */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <nav className="text-sm text-gray-600">
-          <Link href="/" className="hover:text-orange-600">
-            Home
-          </Link>
-          <span className="mx-2">›</span>
-          <span className="text-gray-900">{contentConfig.title}</span>
-        </nav>
-      </div>
-    </>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <nav className="text-sm text-gray-600 dark:text-gray-400">
+        <Link
+          href="/"
+          className="hover:text-orange-600 dark:hover:text-orange-400"
+        >
+          Home
+        </Link>
+        <span className="mx-2">›</span>
+        <span className="text-gray-900 dark:text-white">
+          {contentConfig.title}
+        </span>
+      </nav>
+    </div>
   );
 }
 
 interface MainContentProps {
   contentConfig: {
     title: string;
-    icon: string;
+    icon: ReactNode;
     description: string;
     color: string;
   };
@@ -203,15 +176,15 @@ function MainContent({
 function PageIntro({
   contentConfig
 }: {
-  contentConfig: { title: string; icon: string; description: string };
+  contentConfig: { title: string; icon: ReactNode; description: string };
 }) {
   return (
     <div className="text-center mb-8">
       <div className="text-6xl mb-4">{contentConfig.icon}</div>
-      <h2 className="text-4xl font-bold text-gray-900 mb-4">
+      <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
         {contentConfig.title}
       </h2>
-      <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+      <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8">
         {contentConfig.description}
       </p>
 
@@ -368,7 +341,7 @@ function NoContentMessage({
 }) {
   return (
     <div className="bg-white rounded-lg shadow-md p-12 text-center">
-      <span className="text-6xl mb-4 block">🙏</span>
+      <FeatureIcons.meditation className="w-12 h-12 text-gray-400 mx-auto mb-4" />
       <h3 className="text-2xl font-bold text-gray-900 mb-4">
         {search ? "No Results Found" : "Coming Soon"}
       </h3>

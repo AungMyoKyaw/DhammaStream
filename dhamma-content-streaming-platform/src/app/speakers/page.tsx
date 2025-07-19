@@ -4,6 +4,8 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import SearchInput from "@/components/SearchInput";
 import PaginationControls from "@/components/PaginationControls";
+import { Navigation } from "@/components/Navigation";
+import { FeatureIcons } from "@/components/ui/icons";
 
 interface SpeakersPageProps {
   readonly searchParams: Promise<{
@@ -44,25 +46,14 @@ export default async function SpeakersPage({
 
   if (!speakers || speakers.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50">
-        {/* Header */}
-        <header className="bg-white shadow-sm border-b border-orange-100">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center py-6">
-              <Link href="/" className="flex items-center">
-                <h1 className="text-3xl font-bold text-orange-600">
-                  DhammaStream
-                </h1>
-              </Link>
-            </div>
-          </div>
-        </header>
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 dark:from-gray-900 dark:to-gray-800">
+        <Navigation />
 
         <div className="max-w-4xl mx-auto px-4 py-16 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
             {search ? `No teachers found for "${search}"` : "No Teachers Found"}
           </h2>
-          <p className="text-gray-600 mb-8">
+          <p className="text-gray-600 dark:text-gray-300 mb-8">
             {search
               ? "Try a different search term or browse all teachers."
               : "We're currently building our collection of Buddhist teachers and speakers."}
@@ -70,14 +61,14 @@ export default async function SpeakersPage({
           {search && (
             <Link
               href="/speakers"
-              className="inline-block bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors mr-4"
+              className="inline-block bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 dark:bg-orange-500 dark:hover:bg-orange-600 transition-colors mr-4 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
             >
               View All Teachers
             </Link>
           )}
           <Link
             href="/"
-            className="inline-block bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors"
+            className="inline-block bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 dark:bg-orange-500 dark:hover:bg-orange-600 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
           >
             Return Home
           </Link>
@@ -87,50 +78,16 @@ export default async function SpeakersPage({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-orange-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
-            <Link href="/" className="flex items-center">
-              <h1 className="text-3xl font-bold text-orange-600">
-                DhammaStream
-              </h1>
-            </Link>
-            <nav className="hidden md:flex space-x-6">
-              <Link href="/speakers" className="text-orange-600 font-medium">
-                Teachers
-              </Link>
-              <Link
-                href="/browse/video"
-                className="text-gray-600 hover:text-orange-600 transition-colors"
-              >
-                Videos
-              </Link>
-              <Link
-                href="/browse/audio"
-                className="text-gray-600 hover:text-orange-600 transition-colors"
-              >
-                Audio
-              </Link>
-              <Link
-                href="/browse/ebook"
-                className="text-gray-600 hover:text-orange-600 transition-colors"
-              >
-                Books
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 dark:from-gray-900 dark:to-gray-800">
+      <Navigation />
 
       {/* Page Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
             Buddhist Teachers & Speakers
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8">
             Discover wisdom from renowned Buddhist teachers, meditation masters,
             and spiritual guides from around the world.
           </p>
@@ -144,7 +101,7 @@ export default async function SpeakersPage({
           </div>
 
           {/* Results Count */}
-          <p className="text-gray-600 mb-6">
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
             {getTeacherCountText(count || 0, search)}
           </p>
         </div>
@@ -155,11 +112,11 @@ export default async function SpeakersPage({
             <Link
               key={speaker.id}
               href={`/speakers/${speaker.id}`}
-              className="group"
+              className="group focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 rounded-lg"
             >
-              <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 border border-orange-100 h-full">
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 border border-orange-100 dark:border-gray-700 h-full">
                 {/* Speaker Avatar/Placeholder */}
-                <div className="w-20 h-20 bg-orange-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                <div className="w-20 h-20 bg-orange-100 dark:bg-orange-900/30 rounded-full mx-auto mb-4 flex items-center justify-center">
                   {speaker.photo_url ? (
                     <Image
                       src={speaker.photo_url}
@@ -169,24 +126,24 @@ export default async function SpeakersPage({
                       className="w-20 h-20 rounded-full object-cover"
                     />
                   ) : (
-                    <span className="text-3xl text-orange-600">🧘‍♂️</span>
+                    <FeatureIcons.meditation className="w-10 h-10 text-orange-600 dark:text-orange-400" />
                   )}
                 </div>
 
                 {/* Speaker Info */}
                 <div className="text-center">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-orange-600 transition-colors">
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
                     {speaker.name}
                   </h3>
 
                   {speaker.bio && (
-                    <p className="text-gray-600 text-sm line-clamp-3">
+                    <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-3">
                       {speaker.bio}
                     </p>
                   )}
 
                   {!speaker.bio && (
-                    <p className="text-gray-500 text-sm italic">
+                    <p className="text-gray-500 dark:text-gray-400 text-sm italic">
                       Buddhist teacher and spiritual guide
                     </p>
                   )}
@@ -194,8 +151,9 @@ export default async function SpeakersPage({
 
                 {/* View Details Link */}
                 <div className="mt-4 text-center">
-                  <span className="text-orange-600 text-sm font-medium group-hover:underline">
-                    View Teachings →
+                  <span className="text-orange-600 dark:text-orange-400 text-sm font-medium group-hover:underline flex items-center justify-center gap-1">
+                    View Teachings
+                    <FeatureIcons.arrowRight className="w-4 h-4" />
                   </span>
                 </div>
               </div>
@@ -216,7 +174,7 @@ export default async function SpeakersPage({
         <div className="text-center mt-12">
           <Link
             href="/"
-            className="inline-block bg-orange-600 text-white px-8 py-3 rounded-lg hover:bg-orange-700 transition-colors font-medium"
+            className="inline-block bg-orange-600 text-white px-8 py-3 rounded-lg hover:bg-orange-700 dark:bg-orange-500 dark:hover:bg-orange-600 transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
           >
             Back to Home
           </Link>
