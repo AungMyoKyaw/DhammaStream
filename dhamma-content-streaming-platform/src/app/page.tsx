@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ContentTypeIcons, FeatureIcons } from "@/components/ui/icons";
+
 import { Navigation } from "@/components/Navigation";
 
 export default function HomePage() {
@@ -57,7 +58,7 @@ export default function HomePage() {
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow p-8 border border-orange-100 dark:border-gray-700 h-full">
                 <div className="text-center">
                   <div className="text-orange-600 dark:text-orange-400 mb-4 flex justify-center">
-                    <FeatureIcons.meditation className="w-16 h-16" />
+                    <FeatureIcons.Meditation className="w-16 h-16" />
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
                     Teachers & Speakers
@@ -78,7 +79,7 @@ export default function HomePage() {
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow p-8 border border-orange-100 dark:border-gray-700 h-full">
                 <div className="text-center">
                   <div className="text-orange-600 dark:text-orange-400 mb-4 flex justify-center">
-                    <ContentTypeIcons.video className="w-16 h-16" />
+                    <ContentTypeIcons.Video className="w-16 h-16" />
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
                     Video Teachings
@@ -99,7 +100,7 @@ export default function HomePage() {
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow p-8 border border-orange-100 dark:border-gray-700 h-full">
                 <div className="text-center">
                   <div className="text-orange-600 dark:text-orange-400 mb-4 flex justify-center">
-                    <ContentTypeIcons.audio className="w-16 h-16" />
+                    <ContentTypeIcons.Audio className="w-16 h-16" />
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
                     Audio Content
@@ -120,7 +121,7 @@ export default function HomePage() {
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow p-8 border border-orange-100 dark:border-gray-700 h-full">
                 <div className="text-center">
                   <div className="text-orange-600 dark:text-orange-400 mb-4 flex justify-center">
-                    <ContentTypeIcons.ebook className="w-16 h-16" />
+                    <ContentTypeIcons.Ebook className="w-16 h-16" />
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
                     Digital Books
@@ -155,7 +156,7 @@ export default function HomePage() {
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="text-orange-600 dark:text-orange-400 mb-4 flex justify-center">
-                <FeatureIcons.play className="w-12 h-12" />
+                <FeatureIcons.Play className="w-12 h-12" />
               </div>
               <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
                 Resume Playback
@@ -168,7 +169,7 @@ export default function HomePage() {
 
             <div className="text-center">
               <div className="text-orange-600 dark:text-orange-400 mb-4 flex justify-center">
-                <ContentTypeIcons.other className="w-12 h-12" />
+                <ContentTypeIcons.Other className="w-12 h-12" />
               </div>
               <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
                 Authentic Teachings
@@ -181,7 +182,7 @@ export default function HomePage() {
 
             <div className="text-center">
               <div className="text-orange-600 dark:text-orange-400 mb-4 flex justify-center">
-                <FeatureIcons.globe className="w-12 h-12" />
+                <FeatureIcons.Globe className="w-12 h-12" />
               </div>
               <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
                 Responsive Design
@@ -190,6 +191,124 @@ export default function HomePage() {
                 Enjoy seamless access to teachings on any device - desktop,
                 tablet, or mobile.
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Project Info Section */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-orange-50 to-amber-100 dark:from-gray-900 dark:to-gray-800">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Data Source Card */}
+            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 flex flex-col items-center border border-orange-100 dark:border-gray-700">
+              <div className="mb-4 text-orange-600 dark:text-orange-400">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-10 w-10"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <title>Data Source Icon</title>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 6v6l4 2"
+                  />
+                </svg>
+              </div>
+              <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                Data Source
+              </h4>
+              <p className="text-gray-600 dark:text-gray-300 text-center mb-4">
+                This project is built using the catalog database available at{" "}
+                <span className="font-semibold">Myanmar Dhamma Catalog</span>.
+              </p>
+              <a
+                href="https://myanmartipitaka.org/catalog"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center text-orange-600 dark:text-orange-400 font-medium hover:underline transition-colors"
+              >
+                Visit Myanmar Dhamma Catalog
+                <svg
+                  className="ml-2 w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <title>External Link</title>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M17 7l-10 10M17 7h-6m6 0v6"
+                  />
+                </svg>
+              </a>
+            </div>
+            {/* Open Source Card */}
+            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 flex flex-col items-center border border-orange-100 dark:border-gray-700">
+              <div className="mb-4 text-orange-600 dark:text-orange-400">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-10 w-10"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <title>Open Source Icon</title>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 7a4 4 0 01-8 0"
+                  />
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    fill="none"
+                  />
+                </svg>
+              </div>
+              <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                Open Source Notice
+              </h4>
+              <p className="text-gray-600 dark:text-gray-300 text-center mb-4">
+                This is an open-source project. You can view the source code at
+                the DhammaStream GitHub Repository.
+              </p>
+              <a
+                href="https://github.com/AungMyoKyaw/DhammaStream"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center text-orange-600 dark:text-orange-400 font-medium hover:underline transition-colors"
+              >
+                View on GitHub
+                <svg
+                  className="ml-2 w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <title>External Link</title>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M17 7l-10 10M17 7h-6m6 0v6"
+                  />
+                </svg>
+              </a>
             </div>
           </div>
         </div>
