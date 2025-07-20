@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import ContentCardAlternatives from "@/components/ContentCardAlternatives";
 import type { DhammaContentWithRelations } from "@/types/database";
