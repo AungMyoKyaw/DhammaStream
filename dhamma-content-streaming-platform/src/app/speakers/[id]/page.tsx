@@ -7,6 +7,7 @@ import CompactContentCard from "@/components/CompactContentCard";
 import SpeakerContentToolbar from "@/components/SpeakerContentToolbar";
 import { Navigation } from "@/components/Navigation";
 import { UserRound } from "lucide-react";
+import { Suspense } from "react";
 
 interface SpeakerDetailPageProps {
   params: Promise<{ id: string }>;
@@ -171,12 +172,15 @@ export default async function SpeakerDetailPage(props: SpeakerDetailPageProps) {
           {/* All Content - Unified List */}
           <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 p-4 md:p-6">
             {/* Unified Content Toolbar */}
-            <SpeakerContentToolbar
-              search={search}
-              type={type}
-              sort={sort}
-              page={page}
-            />
+
+            <Suspense>
+              <SpeakerContentToolbar
+                search={search}
+                type={type}
+                sort={sort}
+                page={page}
+              />
+            </Suspense>
 
             {/* Results Context */}
             <div className="flex items-center justify-between mb-4">

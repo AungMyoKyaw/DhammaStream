@@ -1,0 +1,98 @@
+/* Custom Plyr styles for dark mode */
+.plyr {
+  --plyr-color-main: #ea580c; /* Orange-600 */
+  --plyr-audio-controls-background: #ffffff;
+  --plyr-audio-control-color: #374151;
+  --plyr-audio-control-color-hover: #ea580c;
+}
+
+/* Dark mode styles */
+.dark .plyr {
+  --plyr-color-main: #fb923c; /* Orange-400 for dark mode */
+  --plyr-audio-controls-background: #1f2937;
+  --plyr-audio-control-color: #d1d5db;
+  --plyr-audio-control-color-hover: #fb923c;
+}
+
+/* Audio player specific styles */
+.plyr--audio {
+  background: var(--plyr-audio-controls-background);
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+}
+
+.dark .plyr--audio {
+  border-color: #374151;
+}
+
+/* Control buttons */
+.plyr__controls {
+  color: var(--plyr-audio-control-color);
+  background: transparent;
+}
+
+.plyr__control:hover {
+  color: var(--plyr-audio-control-color-hover);
+}
+
+/* Progress bar */
+.plyr__progress {
+  background: #e5e7eb;
+}
+
+.dark .plyr__progress {
+  background: #374151;
+}
+
+.plyr__progress__buffer {
+  background: #d1d5db;
+}
+
+.dark .plyr__progress__buffer {
+  background: #4b5563;
+}
+
+/* Time display */
+.plyr__time {
+  color: var(--plyr-audio-control-color);
+  font-weight: 500;
+}
+
+/* Volume control */
+.plyr__volume {
+  max-width: 110px;
+}
+
+/* Control icons */
+.plyr__control svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Play button enhancement */
+.plyr__control--overlaid {
+  background: var(--plyr-color-main);
+  border: none;
+}
+
+.plyr__control--overlaid:hover {
+  background: var(--plyr-color-main);
+  opacity: 0.9;
+}
+
+/* Loading spinner */
+.plyr__progress__ring {
+  color: var(--plyr-color-main);
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .plyr__volume {
+    display: none;
+  }
+
+  .plyr__control svg {
+    width: 16px;
+    height: 16px;
+  }
+}

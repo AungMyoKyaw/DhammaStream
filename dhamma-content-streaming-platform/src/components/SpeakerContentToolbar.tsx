@@ -20,7 +20,7 @@ export default function SpeakerContentToolbar({
   return (
     <div className="space-y-4 mb-6">
       {/* Primary Search */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 md:p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-3 md:p-4">
         <SearchInput
           placeholder="Search this teacher's content..."
           className="w-full"

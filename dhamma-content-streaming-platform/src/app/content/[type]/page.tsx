@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/media-has-caption, react/jsx-pascal-case */
 import { queries } from "@/lib/supabase";
 import Link from "next/link";
 import { ContentTypeIcons } from "@/components/ui/icons";
@@ -12,8 +11,8 @@ interface Props {
 const contentTypes = {
   video: {
     title: "Video Teachings",
-    // eslint-disable-next-line jsx-a11y/media-has-caption
     icon: (
+      // eslint-disable-next-line jsx-a11y/media-has-caption,react/jsx-pascal-case -- false positive, this is an icon, not a media element
       <ContentTypeIcons.video className="inline-block w-12 h-12 text-red-500" />
     ),
     description:
@@ -22,8 +21,8 @@ const contentTypes = {
   },
   audio: {
     title: "Audio Content",
-    // eslint-disable-next-line jsx-a11y/media-has-caption
     icon: (
+      // eslint-disable-next-line jsx-a11y/media-has-caption,react/jsx-pascal-case -- false positive, this is an icon, not a media element
       <ContentTypeIcons.audio className="inline-block w-12 h-12 text-blue-500" />
     ),
     description:
@@ -33,6 +32,7 @@ const contentTypes = {
   ebook: {
     title: "Digital Books",
     icon: (
+      // eslint-disable-next-line jsx-a11y/media-has-caption,react/jsx-pascal-case -- false positive, this is an icon, not a media element
       <ContentTypeIcons.ebook className="inline-block w-12 h-12 text-green-500" />
     ),
     description:

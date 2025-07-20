@@ -4,9 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useState } from "react";
+import { startNavigation } from "@/components/NavigationLoadingBar";
 
 interface NavigationProps {
-  className?: string;
+  readonly className?: string;
 }
 
 export function Navigation({ className = "" }: NavigationProps) {
@@ -33,6 +34,11 @@ export function Navigation({ className = "" }: NavigationProps) {
     return `${baseClasses} ${isActive(path) ? activeClasses : inactiveClasses}`;
   };
 
+  const handleNavClick = () => {
+    startNavigation();
+    setIsMobileMenuOpen(false);
+  };
+
   const navLinks = [
     { href: "/speakers", label: "Teachers" },
     { href: "/browse/video", label: "Videos" },
@@ -48,6 +54,7 @@ export function Navigation({ className = "" }: NavigationProps) {
         <div className="flex justify-between items-center py-6">
           <Link
             href="/"
+            onClick={handleNavClick}
             className="flex items-center focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 rounded-md"
           >
             <h1 className="text-3xl font-bold text-orange-600 dark:text-orange-400">
@@ -62,6 +69,7 @@ export function Navigation({ className = "" }: NavigationProps) {
                 <Link
                   key={link.href}
                   href={link.href}
+                  onClick={handleNavClick}
                   className={getLinkClasses(link.href)}
                 >
                   {link.label}
@@ -114,7 +122,7 @@ export function Navigation({ className = "" }: NavigationProps) {
                   key={link.href}
                   href={link.href}
                   className={`${getLinkClasses(link.href)} block`}
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={handleNavClick}
                 >
                   {link.label}
                 </Link>

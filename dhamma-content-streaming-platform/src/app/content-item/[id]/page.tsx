@@ -9,6 +9,7 @@ import { queries } from "@/lib/supabase";
 import type { DhammaContentWithRelations } from "@/types/database";
 import ResponsivePlyrPlayer from "@/components/ResponsivePlyrPlayer";
 import { Navigation } from "@/components/Navigation";
+import { ContentTypeIcons, FeatureIcons } from "@/components/ui/icons";
 
 export default function ContentViewPage({
   params
@@ -23,6 +24,11 @@ export default function ContentViewPage({
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Destructure icons for proper JSX usage
+  const EbookIcon = ContentTypeIcons.ebook;
+  const ClockIcon = FeatureIcons.clock;
+  const MeditationIcon = FeatureIcons.meditation;
 
   const contentId = parseInt(id);
 
@@ -95,10 +101,22 @@ export default function ContentViewPage({
   }
 
   const contentTypeConfig = {
-    video: { icon: "📹", color: "red" },
-    audio: { icon: "🎧", color: "blue" },
-    ebook: { icon: "📚", color: "green" },
-    other: { icon: "📄", color: "gray" }
+    video: {
+      icon: ContentTypeIcons.video,
+      color: "red"
+    },
+    audio: {
+      icon: ContentTypeIcons.audio,
+      color: "blue"
+    },
+    ebook: {
+      icon: ContentTypeIcons.ebook,
+      color: "green"
+    },
+    other: {
+      icon: ContentTypeIcons.other,
+      color: "gray"
+    }
   } as const;
 
   const config =
@@ -143,6 +161,8 @@ export default function ContentViewPage({
                   <ResponsivePlyrPlayer
                     src={content.file_url}
                     type={content.content_type}
+                    contentId={content.id}
+                    title={content.title}
                     className="w-full"
                     maxHeight="500px"
                   />
@@ -153,7 +173,9 @@ export default function ContentViewPage({
             {content.content_type === "ebook" && (
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
                 <div className="text-center">
-                  <span className="text-6xl mb-4 block">📚</span>
+                  <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                    <EbookIcon className="w-16 h-16 text-green-600 dark:text-green-400" />
+                  </div>
                   <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                     Digital Book
                   </h3>
@@ -185,8 +207,8 @@ export default function ContentViewPage({
               <div className="border-t dark:border-gray-700 pt-4 space-y-3">
                 <div className="flex items-center text-gray-600 dark:text-gray-300">
                   <span className="font-medium mr-2">Type:</span>
-                  <span className="flex items-center">
-                    {config.icon}{" "}
+                  <span className="flex items-center gap-2">
+                    <config.icon className="w-5 h-5 text-current" />
                     {content.content_type.charAt(0).toUpperCase() +
                       content.content_type.slice(1)}
                   </span>
@@ -195,7 +217,8 @@ export default function ContentViewPage({
                 {content.duration_estimate && (
                   <div className="flex items-center text-gray-600 dark:text-gray-300">
                     <span className="font-medium mr-2">Duration:</span>
-                    <span>
+                    <span className="flex items-center gap-2">
+                      <ClockIcon className="w-4 h-4 text-current" />
                       {Math.floor(content.duration_estimate / 60)}h{" "}
                       {content.duration_estimate % 60}m
                     </span>
@@ -235,9 +258,7 @@ export default function ContentViewPage({
                           className="w-12 h-12 rounded-full object-cover"
                         />
                       ) : (
-                        <span className="text-2xl text-orange-600 dark:text-orange-400">
-                          🧘‍♂️
-                        </span>
+                        <MeditationIcon className="w-12 h-12 text-orange-600 dark:text-orange-400" />
                       )}
                     </div>
                     <div>
