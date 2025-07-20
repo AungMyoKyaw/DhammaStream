@@ -22,7 +22,7 @@ const SpeakerFilterChips: React.FC<SpeakerFilterChipsProps> = ({
             params.set("page", "1");
             window.location.search = params.toString();
           }}
-          className="flex items-center bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-medium hover:bg-orange-200 focus:outline-none focus:ring-2 focus:ring-orange-400"
+          className="flex items-center bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-3 py-1 rounded-full text-sm font-medium hover:bg-orange-200 dark:hover:bg-orange-900/50 focus:outline-none focus:ring-2 focus:ring-orange-400 dark:focus:ring-orange-500"
           aria-label="Clear search filter"
         >
           Search: "{search}"<span className="ml-1 text-lg">×</span>
@@ -37,7 +37,7 @@ const SpeakerFilterChips: React.FC<SpeakerFilterChipsProps> = ({
             params.set("page", "1");
             window.location.search = params.toString();
           }}
-          className="flex items-center bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-medium hover:bg-orange-200 focus:outline-none focus:ring-2 focus:ring-orange-400"
+          className="flex items-center bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-3 py-1 rounded-full text-sm font-medium hover:bg-orange-200 dark:hover:bg-orange-900/50 focus:outline-none focus:ring-2 focus:ring-orange-400 dark:focus:ring-orange-500"
           aria-label="Clear type filter"
         >
           Type: {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -53,7 +53,7 @@ const SpeakerFilterChips: React.FC<SpeakerFilterChipsProps> = ({
             params.set("page", "1");
             window.location.search = params.toString();
           }}
-          className="flex items-center bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-medium hover:bg-orange-200 focus:outline-none focus:ring-2 focus:ring-orange-400"
+          className="flex items-center bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-3 py-1 rounded-full text-sm font-medium hover:bg-orange-200 dark:hover:bg-orange-900/50 focus:outline-none focus:ring-2 focus:ring-orange-400 dark:focus:ring-orange-500"
           aria-label="Clear sort filter"
         >
           Sort:{" "}
@@ -72,7 +72,7 @@ const SpeakerFilterChips: React.FC<SpeakerFilterChipsProps> = ({
             params.set("page", "1");
             window.location.search = params.toString();
           }}
-          className="flex items-center bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm font-medium hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-400 ml-2"
+          className="flex items-center bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-1 rounded-full text-sm font-medium hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-400 dark:focus:ring-orange-500 ml-2"
           aria-label="Reset all filters"
         >
           Reset All

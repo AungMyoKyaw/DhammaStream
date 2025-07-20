@@ -19,9 +19,11 @@ import {
   SkipBack,
   SkipForward,
   Volume2,
-  Filter
+  Filter,
+  Rocket
 } from "lucide-react";
 
+export { Rocket };
 export const ContentTypeIcons = {
   video: Video,
   audio: Headphones,
