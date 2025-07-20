@@ -126,7 +126,7 @@ export default async function SpeakersPage({
                       className="w-20 h-20 rounded-full object-cover"
                     />
                   ) : (
-                    <FeatureIcons.meditation className="w-10 h-10 text-orange-600 dark:text-orange-400" />
+                    <FeatureIcons.Meditation className="w-10 h-10 text-orange-600 dark:text-orange-400" />
                   )}
                 </div>
 
@@ -153,7 +153,7 @@ export default async function SpeakersPage({
                 <div className="mt-4 text-center">
                   <span className="text-orange-600 dark:text-orange-400 text-sm font-medium group-hover:underline flex items-center justify-center gap-1">
                     View Teachings
-                    <FeatureIcons.arrowRight className="w-4 h-4" />
+                    <FeatureIcons.ArrowRight className="w-4 h-4" />
                   </span>
                 </div>
               </div>

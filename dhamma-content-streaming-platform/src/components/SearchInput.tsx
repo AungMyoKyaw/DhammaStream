@@ -62,7 +62,7 @@ export default function SearchInput({
       <form onSubmit={handleSubmit} className="relative">
         <div className="relative flex items-center">
           <span className="absolute left-4 flex items-center pointer-events-none">
-            <FeatureIcons.search
+            <FeatureIcons.Search
               className="w-5 h-5 text-gray-400 dark:text-gray-500"
               aria-hidden="true"
             />
@@ -81,7 +81,7 @@ export default function SearchInput({
               className="absolute right-16 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-400 rounded-full p-1"
               aria-label="Clear search"
             >
-              <FeatureIcons.close className="h-4 w-4" aria-hidden="true" />
+              <FeatureIcons.Close className="h-4 w-4" aria-hidden="true" />
             </button>
           )}
           <button

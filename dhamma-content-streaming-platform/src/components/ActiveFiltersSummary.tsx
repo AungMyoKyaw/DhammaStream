@@ -33,8 +33,8 @@ export default function ActiveFiltersSummary({
   };
 
   const activeCount = getActiveFilterCount();
-  const FilterIcon = FeatureIcons.filter;
-  const CloseIcon = FeatureIcons.close;
+  const FilterIcon = FeatureIcons.Filter;
+  const CloseIcon = FeatureIcons.Close;
 
   return (
     <div className="flex items-center gap-2 text-sm text-gray-600">

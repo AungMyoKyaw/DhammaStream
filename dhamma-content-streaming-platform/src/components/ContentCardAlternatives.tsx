@@ -42,7 +42,7 @@ export function ContentCardAlternatives({
           {/* Speaker */}
           {content.speaker?.name && (
             <p className="text-base text-gray-700 dark:text-gray-300 mb-3 font-medium flex items-center gap-1">
-              <FeatureIcons.meditation className="w-4 h-4" />
+              <FeatureIcons.Meditation className="w-4 h-4" />
               by {content.speaker.name}
             </p>
           )}
@@ -51,20 +51,20 @@ export function ContentCardAlternatives({
           <div className="flex flex-wrap gap-4 text-sm text-gray-500 dark:text-gray-400 mb-4">
             {content.duration_estimate && (
               <span className="flex items-center gap-1">
-                <FeatureIcons.clock className="w-4 h-4" />
+                <FeatureIcons.Clock className="w-4 h-4" />
                 {Math.floor(content.duration_estimate / 60)}h{" "}
                 {content.duration_estimate % 60}m
               </span>
             )}
             {content.language && (
               <span className="flex items-center gap-1">
-                <FeatureIcons.globe className="w-4 h-4" />
+                <FeatureIcons.Globe className="w-4 h-4" />
                 {content.language}
               </span>
             )}
             {content.date_recorded && (
               <span className="flex items-center gap-1">
-                <FeatureIcons.calendar className="w-4 h-4" />
+                <FeatureIcons.Calendar className="w-4 h-4" />
                 {new Date(content.date_recorded).getFullYear()}
               </span>
             )}
@@ -76,7 +76,7 @@ export function ContentCardAlternatives({
             {content.content_type === "audio" && "Listen Now"}
             {content.content_type === "ebook" && "Read Book"}
             {content.content_type === "other" && "View Content"}
-            <FeatureIcons.arrowRight className="w-4 h-4" />
+            <FeatureIcons.ArrowRight className="w-4 h-4" />
           </div>
         </div>
       </Link>
@@ -104,7 +104,7 @@ export function ContentCardAlternatives({
                 </span>
                 {content.duration_estimate && (
                   <span className="text-xs text-gray-400 dark:text-gray-500 flex items-center gap-1">
-                    <FeatureIcons.clock className="w-3 h-3" />
+                    <FeatureIcons.Clock className="w-3 h-3" />
                     {Math.floor(content.duration_estimate / 60)}h{" "}
                     {content.duration_estimate % 60}m
                   </span>
@@ -117,7 +117,7 @@ export function ContentCardAlternatives({
 
               {content.speaker?.name && (
                 <p className="text-sm text-gray-600 dark:text-gray-300 mb-2 flex items-center gap-1">
-                  <FeatureIcons.meditation className="w-3 h-3" />
+                  <FeatureIcons.Meditation className="w-3 h-3" />
                   by {content.speaker.name}
                 </p>
               )}
@@ -127,7 +127,7 @@ export function ContentCardAlternatives({
                 {content.content_type === "audio" && "Listen"}
                 {content.content_type === "ebook" && "Read"}
                 {content.content_type === "other" && "View"}
-                <FeatureIcons.arrowRight className="w-4 h-4" />
+                <FeatureIcons.ArrowRight className="w-4 h-4" />
               </div>
             </div>
           </div>
@@ -173,13 +173,13 @@ export function ContentCardAlternatives({
               <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-300 mb-1">
                 {content.speaker?.name && (
                   <span className="flex items-center gap-1">
-                    <FeatureIcons.meditation className="w-3 h-3" />
+                    <FeatureIcons.Meditation className="w-3 h-3" />
                     by {content.speaker.name}
                   </span>
                 )}
                 {content.duration_estimate && (
                   <span className="flex items-center gap-1">
-                    <FeatureIcons.clock className="w-3 h-3" />
+                    <FeatureIcons.Clock className="w-3 h-3" />
                     {Math.floor(content.duration_estimate / 60)}h{" "}
                     {content.duration_estimate % 60}m
                   </span>
@@ -192,7 +192,7 @@ export function ContentCardAlternatives({
 
             {/* Action indicator */}
             <div className="flex-shrink-0 text-orange-600 dark:text-orange-400 opacity-0 group-hover:opacity-100 transition-opacity">
-              <FeatureIcons.chevronRight className="w-5 h-5" />
+              <FeatureIcons.ChevronRight className="w-5 h-5" />
             </div>
           </div>
         </div>
@@ -225,14 +225,14 @@ export function ContentCardAlternatives({
 
           {content.speaker?.name && (
             <p className="text-sm text-gray-600 dark:text-gray-300 mb-2 flex items-center gap-1">
-              <FeatureIcons.meditation className="w-3 h-3" />
+              <FeatureIcons.Meditation className="w-3 h-3" />
               by {content.speaker.name}
             </p>
           )}
 
           {content.duration_estimate && (
             <div className="text-xs text-gray-500 dark:text-gray-400 mb-2 flex items-center gap-1">
-              <FeatureIcons.clock className="w-3 h-3" />
+              <FeatureIcons.Clock className="w-3 h-3" />
               Duration: {Math.floor(content.duration_estimate / 60)}h{" "}
               {content.duration_estimate % 60}m
             </div>
@@ -243,7 +243,7 @@ export function ContentCardAlternatives({
             {content.content_type === "audio" && "Listen Now"}
             {content.content_type === "ebook" && "Read Book"}
             {content.content_type === "other" && "View Content"}
-            <FeatureIcons.arrowRight className="w-4 h-4" />
+            <FeatureIcons.ArrowRight className="w-4 h-4" />
           </div>
         </div>
       </div>

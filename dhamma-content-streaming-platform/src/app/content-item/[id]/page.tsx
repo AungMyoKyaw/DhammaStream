@@ -26,9 +26,9 @@ export default function ContentViewPage({
   const [error, setError] = useState<string | null>(null);
 
   // Destructure icons for proper JSX usage
-  const EbookIcon = ContentTypeIcons.ebook;
-  const ClockIcon = FeatureIcons.clock;
-  const MeditationIcon = FeatureIcons.meditation;
+  const EbookIcon = ContentTypeIcons.Ebook;
+  const ClockIcon = FeatureIcons.Clock;
+  const MeditationIcon = FeatureIcons.Meditation;
 
   const contentId = parseInt(id);
 
@@ -102,19 +102,19 @@ export default function ContentViewPage({
 
   const contentTypeConfig = {
     video: {
-      icon: ContentTypeIcons.video,
+      icon: ContentTypeIcons.Video,
       color: "red"
     },
     audio: {
-      icon: ContentTypeIcons.audio,
+      icon: ContentTypeIcons.Audio,
       color: "blue"
     },
     ebook: {
-      icon: ContentTypeIcons.ebook,
+      icon: ContentTypeIcons.Ebook,
       color: "green"
     },
     other: {
-      icon: ContentTypeIcons.other,
+      icon: ContentTypeIcons.Other,
       color: "gray"
     }
   } as const;

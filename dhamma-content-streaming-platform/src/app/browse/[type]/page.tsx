@@ -5,9 +5,9 @@ import { ReactNode } from "react";
 
 // alias icon components for proper JSX naming
 const {
-  video: VideoIcon,
-  audio: AudioIcon,
-  ebook: EbookIcon
+  Video: VideoIcon,
+  Audio: AudioIcon,
+  Ebook: EbookIcon
 } = ContentTypeIcons;
 import { notFound } from "next/navigation";
 import SearchInput from "@/components/SearchInput";
@@ -341,7 +341,7 @@ function NoContentMessage({
 }) {
   return (
     <div className="bg-white rounded-lg shadow-md p-12 text-center">
-      <FeatureIcons.meditation className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+      <FeatureIcons.Meditation className="w-12 h-12 text-gray-400 mx-auto mb-4" />
       <h3 className="text-2xl font-bold text-gray-900 mb-4">
         {search ? "No Results Found" : "Coming Soon"}
       </h3>

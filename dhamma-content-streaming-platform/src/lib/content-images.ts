@@ -53,10 +53,10 @@ export function getContentAspectRatio(contentType: ContentType): string {
  */
 export function getContentTypeConfig(contentType: ContentType) {
   const configs = {
-    video: { iconType: "video" as const, color: "red" },
-    audio: { iconType: "audio" as const, color: "blue" },
-    ebook: { iconType: "ebook" as const, color: "green" },
-    other: { iconType: "other" as const, color: "gray" }
+    video: { iconType: "Video" as const, color: "red" },
+    audio: { iconType: "Audio" as const, color: "blue" },
+    ebook: { iconType: "Ebook" as const, color: "green" },
+    other: { iconType: "Other" as const, color: "gray" }
   } as const;
 
   return configs[contentType] || configs.other;

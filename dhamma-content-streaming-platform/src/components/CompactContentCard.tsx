@@ -54,7 +54,7 @@ function CompactContentCard({ content }: CompactContentCardProps) {
             </span>
             {content.date_recorded && (
               <span className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
-                <FeatureIcons.calendar className="w-3 h-3" />
+                <FeatureIcons.Calendar className="w-3 h-3" />
                 {new Date(content.date_recorded).toLocaleDateString()}
               </span>
             )}
@@ -84,14 +84,14 @@ function CompactContentCard({ content }: CompactContentCardProps) {
             <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
               {content.duration_estimate && (
                 <span className="flex items-center gap-1">
-                  <FeatureIcons.clock className="w-3 h-3" />
+                  <FeatureIcons.Clock className="w-3 h-3" />
                   {Math.floor(content.duration_estimate / 60)}h{" "}
                   {content.duration_estimate % 60}m
                 </span>
               )}
               {content.language && (
                 <span className="flex items-center gap-1">
-                  <FeatureIcons.globe className="w-3 h-3" />
+                  <FeatureIcons.Globe className="w-3 h-3" />
                   {content.language}
                 </span>
               )}
@@ -102,7 +102,7 @@ function CompactContentCard({ content }: CompactContentCardProps) {
               {content.content_type === "audio" && "Listen"}
               {content.content_type === "ebook" && "Read"}
               {content.content_type === "other" && "View"}
-              <FeatureIcons.arrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              <FeatureIcons.ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </div>
           </div>
         </div>
