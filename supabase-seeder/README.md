@@ -57,7 +57,31 @@ Creates all required tables in your Supabase/Postgres instance using the credent
 npm run create-tables
 ```
 
-### 3. Seed Data to Supabase
+### 3. Create Indexes in Supabase
+
+**File:** `src/create-indexes.ts`
+
+Creates indexes on the `dhamma_content` table to improve query performance.
+
+**Usage:**
+
+```bash
+npm run create-indexes
+```
+
+### 4. Enable Row-Level Security (RLS)
+
+**File:** `src/enable-rls.ts`
+
+Enables RLS for the tables and creates a public read policy.
+
+**Usage:**
+
+```bash
+npm run enable-rls
+```
+
+### 5. Seed Data to Supabase
 
 **File:** `src/seed-supabase.ts`
 

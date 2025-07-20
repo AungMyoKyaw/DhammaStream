@@ -1,4 +1,20 @@
+# Dhamma Content Streaming Platform
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+## Overview
+
+This project is a web-based platform for streaming Dhamma talks and lectures. It features a Next.js frontend and uses Supabase for its database and backend services.
+
+## Features
+
+- **Browse Content:** Users can browse content by type (video, audio, ebook).
+- **Speakers:** View a list of speakers and their content.
+- **Search:** Search for content and speakers.
+- **Pagination:** Paginated content for easy browsing.
+- **Video/Audio Player:** A responsive media player for video and audio content.
+- **Resume Playback:** The player remembers the user's position in a video or audio file.
+- **Dark Mode:** The application supports a dark mode theme.
 
 ## Getting Started
 
