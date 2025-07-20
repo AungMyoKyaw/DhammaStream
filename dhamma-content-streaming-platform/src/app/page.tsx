@@ -228,7 +228,7 @@ export default function HomePage() {
                 <span className="font-semibold">Myanmar Dhamma Catalog</span>.
               </p>
               <a
-                href="https://myanmartipitaka.org/catalog"
+                href="https://github.com/AungMyoKyaw/myanmar-dhamma-catalog"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center text-orange-600 dark:text-orange-400 font-medium hover:underline transition-colors"
