@@ -117,8 +117,8 @@ export default function PaginationControls({
   };
 
   const context = getPaginationContext();
-  const ChevronLeftIcon = FeatureIcons.chevronLeft;
-  const ChevronRightIcon = FeatureIcons.chevronRight;
+  const ChevronLeftIcon = FeatureIcons.ChevronLeft;
+  const ChevronRightIcon = FeatureIcons.ChevronRight;
 
   return (
     <div className="space-y-4">

@@ -12,8 +12,7 @@ const contentTypes = {
   video: {
     title: "Video Teachings",
     icon: (
-      // eslint-disable-next-line jsx-a11y/media-has-caption,react/jsx-pascal-case -- false positive, this is an icon, not a media element
-      <ContentTypeIcons.video className="inline-block w-12 h-12 text-red-500" />
+      <ContentTypeIcons.Video className="inline-block w-12 h-12 text-red-500" />
     ),
     description:
       "Discover inspiring Buddhist video teachings, guided meditations, and dharma talks.",
@@ -22,8 +21,7 @@ const contentTypes = {
   audio: {
     title: "Audio Content",
     icon: (
-      // eslint-disable-next-line jsx-a11y/media-has-caption,react/jsx-pascal-case -- false positive, this is an icon, not a media element
-      <ContentTypeIcons.audio className="inline-block w-12 h-12 text-blue-500" />
+      <ContentTypeIcons.Audio className="inline-block w-12 h-12 text-blue-500" />
     ),
     description:
       "Listen to Buddhist podcasts, guided meditations, and spiritual discussions.",
@@ -32,8 +30,7 @@ const contentTypes = {
   ebook: {
     title: "Digital Books",
     icon: (
-      // eslint-disable-next-line jsx-a11y/media-has-caption,react/jsx-pascal-case -- false positive, this is an icon, not a media element
-      <ContentTypeIcons.ebook className="inline-block w-12 h-12 text-green-500" />
+      <ContentTypeIcons.Ebook className="inline-block w-12 h-12 text-green-500" />
     ),
     description:
       "Read Buddhist texts, meditation guides, and spiritual literature.",

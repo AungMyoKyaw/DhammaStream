@@ -13,7 +13,7 @@ export default function DefaultMediaCover({
   title,
   className = ""
 }: DefaultMediaCoverProps) {
-  const Icon = type === "video" ? FeatureIcons.play : FeatureIcons.volume;
+  const Icon = type === "video" ? FeatureIcons.Play : FeatureIcons.Volume;
 
   return (
     <div
