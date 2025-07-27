@@ -126,18 +126,26 @@ export default function ActiveFiltersSummary({
   };
 
   // Get active filters
-  const activeFilters: Array<{ key: string; value: string; label: string }> = [];
+  const activeFilters: Array<{ key: string; value: string; label: string }> =
+    [];
 
   // Add search term if present
   if (search?.trim()) {
-    activeFilters.push({ key: 'search', value: search, label: `"${search}"` });
+    activeFilters.push({ key: "search", value: search, label: `"${search}"` });
   }
 
-  const filterParams = ['speaker', 'category', 'language', 'duration', 'dateRange', 'sort'];
+  const filterParams = [
+    "speaker",
+    "category",
+    "language",
+    "duration",
+    "dateRange",
+    "sort"
+  ];
 
-  filterParams.forEach(param => {
+  filterParams.forEach((param) => {
     const value = searchParams.get(param);
-    if (value && value !== "" && !(param === 'sort' && value === 'relevance')) {
+    if (value && value !== "" && !(param === "sort" && value === "relevance")) {
       const label = filterLabels[param]?.[value] || value;
       activeFilters.push({ key: param, value, label });
     }
@@ -145,7 +153,7 @@ export default function ActiveFiltersSummary({
 
   // Fallback for legacy props
   if (type && type !== "all") {
-    activeFilters.push({ key: 'type', value: type, label: type });
+    activeFilters.push({ key: "type", value: type, label: type });
   }
 
   // Don't render if no active filters
@@ -154,7 +162,9 @@ export default function ActiveFiltersSummary({
   }
 
   return (
-    <div className={`bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 ${className}`}>
+    <div
+      className={`bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 ${className}`}
+    >
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1">
           <FeatureIcons.Filter className="w-4 h-4" />

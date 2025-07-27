@@ -23,7 +23,10 @@ interface LearningPathsProps {
   currentPath?: string;
 }
 
-export default function LearningPaths({ className = "", currentPath }: LearningPathsProps) {
+export default function LearningPaths({
+  className = "",
+  currentPath
+}: LearningPathsProps) {
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("all");
   const [selectedTradition, setSelectedTradition] = useState<string>("all");
 
@@ -32,80 +35,118 @@ export default function LearningPaths({ className = "", currentPath }: LearningP
     {
       id: "mindfulness-basics",
       title: "Mindfulness Meditation Basics",
-      description: "A complete introduction to mindfulness meditation practice, perfect for beginners starting their meditation journey.",
+      description:
+        "A complete introduction to mindfulness meditation practice, perfect for beginners starting their meditation journey.",
       difficulty: "beginner",
       duration: "4 weeks",
       tradition: "Vipassana",
       contentCount: 12,
       completedCount: 0,
-      topics: ["Breathing meditation", "Body awareness", "Walking meditation", "Loving-kindness"],
+      topics: [
+        "Breathing meditation",
+        "Body awareness",
+        "Walking meditation",
+        "Loving-kindness"
+      ],
       contents: []
     },
     {
       id: "zen-foundations",
       title: "Zen Practice Foundations",
-      description: "Explore the fundamentals of Zen meditation and philosophy through traditional teachings and guided practices.",
+      description:
+        "Explore the fundamentals of Zen meditation and philosophy through traditional teachings and guided practices.",
       difficulty: "intermediate",
       duration: "6 weeks",
       tradition: "Zen",
       contentCount: 18,
       completedCount: 3,
-      topics: ["Zazen meditation", "Koan study", "Zen philosophy", "Daily practice"],
+      topics: [
+        "Zazen meditation",
+        "Koan study",
+        "Zen philosophy",
+        "Daily practice"
+      ],
       contents: []
     },
     {
       id: "advanced-vipassana",
       title: "Advanced Vipassana Retreat",
-      description: "Deepen your insight meditation practice with advanced techniques and intensive retreat-style teachings.",
+      description:
+        "Deepen your insight meditation practice with advanced techniques and intensive retreat-style teachings.",
       difficulty: "advanced",
       duration: "8 weeks",
       tradition: "Theravada",
       contentCount: 24,
       completedCount: 0,
-      topics: ["Advanced insight", "Jhana states", "Noble truths", "Retreat practice"],
+      topics: [
+        "Advanced insight",
+        "Jhana states",
+        "Noble truths",
+        "Retreat practice"
+      ],
       contents: []
     },
     {
       id: "compassion-cultivation",
       title: "Cultivating Compassion",
-      description: "Learn traditional Buddhist methods for developing compassion and loving-kindness toward all beings.",
+      description:
+        "Learn traditional Buddhist methods for developing compassion and loving-kindness toward all beings.",
       difficulty: "intermediate",
       duration: "5 weeks",
       tradition: "Tibetan",
       contentCount: 15,
       completedCount: 7,
-      topics: ["Loving-kindness", "Tonglen practice", "Bodhicitta", "Self-compassion"],
+      topics: [
+        "Loving-kindness",
+        "Tonglen practice",
+        "Bodhicitta",
+        "Self-compassion"
+      ],
       contents: []
     },
     {
       id: "dharma-study",
       title: "Essential Dharma Teachings",
-      description: "Study the core teachings of Buddhism through classical texts and contemporary explanations.",
+      description:
+        "Study the core teachings of Buddhism through classical texts and contemporary explanations.",
       difficulty: "beginner",
       duration: "10 weeks",
       tradition: "Universal",
       contentCount: 30,
       completedCount: 5,
-      topics: ["Four Noble Truths", "Eightfold Path", "Dependent origination", "Karma"],
+      topics: [
+        "Four Noble Truths",
+        "Eightfold Path",
+        "Dependent origination",
+        "Karma"
+      ],
       contents: []
     },
     {
       id: "daily-practice",
       title: "Building a Daily Practice",
-      description: "Practical guidance for establishing and maintaining a consistent meditation and mindfulness practice.",
+      description:
+        "Practical guidance for establishing and maintaining a consistent meditation and mindfulness practice.",
       difficulty: "beginner",
       duration: "3 weeks",
       tradition: "Universal",
       contentCount: 9,
       completedCount: 2,
-      topics: ["Morning routine", "Evening reflection", "Habit formation", "Overcoming obstacles"],
+      topics: [
+        "Morning routine",
+        "Evening reflection",
+        "Habit formation",
+        "Overcoming obstacles"
+      ],
       contents: []
     }
   ];
 
-  const filteredPaths = learningPaths.filter(path => {
-    const difficultyMatch = selectedDifficulty === "all" || path.difficulty === selectedDifficulty;
-    const traditionMatch = selectedTradition === "all" || path.tradition === selectedTradition;
+  const filteredPaths = learningPaths.filter((path) => {
+    const difficultyMatch =
+      selectedDifficulty === "all" || path.difficulty === selectedDifficulty;
+    const traditionMatch =
+      selectedTradition === "all" || path.tradition === selectedTradition;
     return difficultyMatch && traditionMatch;
   });
 
@@ -126,7 +167,14 @@ export default function LearningPaths({ className = "", currentPath }: LearningP
     return Math.round((completed / total) * 100);
   };
 
-  const traditions = ["all", "Vipassana", "Zen", "Theravada", "Tibetan", "Universal"];
+  const traditions = [
+    "all",
+    "Vipassana",
+    "Zen",
+    "Theravada",
+    "Tibetan",
+    "Universal"
+  ];
   const difficulties = ["all", "beginner", "intermediate", "advanced"];
 
   return (
@@ -150,9 +198,11 @@ export default function LearningPaths({ className = "", currentPath }: LearningP
             className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
             aria-label="Filter by difficulty level"
           >
-            {difficulties.map(difficulty => (
+            {difficulties.map((difficulty) => (
               <option key={difficulty} value={difficulty}>
-                {difficulty === "all" ? "All Levels" : `${difficulty.charAt(0).toUpperCase()}${difficulty.slice(1)}`}
+                {difficulty === "all"
+                  ? "All Levels"
+                  : `${difficulty.charAt(0).toUpperCase()}${difficulty.slice(1)}`}
               </option>
             ))}
           </select>
@@ -168,7 +218,7 @@ export default function LearningPaths({ className = "", currentPath }: LearningP
             className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
             aria-label="Filter by Buddhist tradition"
           >
-            {traditions.map(tradition => (
+            {traditions.map((tradition) => (
               <option key={tradition} value={tradition}>
                 {tradition === "all" ? "All Traditions" : tradition}
               </option>
@@ -181,7 +231,9 @@ export default function LearningPaths({ className = "", currentPath }: LearningP
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredPaths.map((path) => {
           const isCurrentPath = currentPath === path.id;
-          const progressPercentage = path.completedCount ? getProgressPercentage(path.completedCount, path.contentCount) : 0;
+          const progressPercentage = path.completedCount
+            ? getProgressPercentage(path.completedCount, path.contentCount)
+            : 0;
 
           return (
             <div
@@ -219,7 +271,9 @@ export default function LearningPaths({ className = "", currentPath }: LearningP
 
                 {/* Difficulty Badge */}
                 <div className="flex items-center justify-between mb-4">
-                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(path.difficulty)}`}>
+                  <span
+                    className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(path.difficulty)}`}
+                  >
                     {path.difficulty}
                   </span>
                   <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -228,20 +282,21 @@ export default function LearningPaths({ className = "", currentPath }: LearningP
                 </div>
 
                 {/* Progress Bar */}
-                {path.completedCount !== undefined && path.completedCount > 0 && (
-                  <div className="mb-4">
-                    <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 mb-1">
-                      <span>Progress</span>
-                      <span>{progressPercentage}%</span>
+                {path.completedCount !== undefined &&
+                  path.completedCount > 0 && (
+                    <div className="mb-4">
+                      <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 mb-1">
+                        <span>Progress</span>
+                        <span>{progressPercentage}%</span>
+                      </div>
+                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                        <div
+                          className="bg-orange-600 dark:bg-orange-500 h-2 rounded-full transition-all duration-300"
+                          style={{ width: `${progressPercentage}%` }}
+                        ></div>
+                      </div>
                     </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                      <div
-                        className="bg-orange-600 dark:bg-orange-500 h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${progressPercentage}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                )}
+                  )}
 
                 {/* Topics */}
                 <div className="mb-4">
@@ -272,16 +327,15 @@ export default function LearningPaths({ className = "", currentPath }: LearningP
                     isCurrentPath
                       ? "bg-orange-600 hover:bg-orange-700 text-white"
                       : path.completedCount && path.completedCount > 0
-                      ? "bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white"
-                      : "bg-orange-600 hover:bg-orange-700 text-white"
+                        ? "bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white"
+                        : "bg-orange-600 hover:bg-orange-700 text-white"
                   }`}
                 >
                   {isCurrentPath
                     ? "Current Path"
                     : path.completedCount && path.completedCount > 0
-                    ? "Continue"
-                    : "Start Path"
-                  }
+                      ? "Continue"
+                      : "Start Path"}
                 </Link>
               </div>
             </div>
@@ -304,7 +358,8 @@ export default function LearningPaths({ className = "", currentPath }: LearningP
       {/* Call to Action */}
       <div className="text-center mt-8">
         <p className="text-gray-600 dark:text-gray-400 mb-4">
-          Looking for something specific? Browse all content or search for topics.
+          Looking for something specific? Browse all content or search for
+          topics.
         </p>
         <div className="flex justify-center space-x-4">
           <Link

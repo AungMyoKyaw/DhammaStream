@@ -65,9 +65,12 @@ const mockBookmarks: Bookmark[] = [
   }
 ];
 
-export default function BookmarkManager({ className = "" }: Omit<BookmarkManagerProps, 'userId'>) {
+export default function BookmarkManager({
+  className = ""
+}: Omit<BookmarkManagerProps, "userId">) {
   const [bookmarks, setBookmarks] = useState<Bookmark[]>(mockBookmarks);
-  const [filteredBookmarks, setFilteredBookmarks] = useState<Bookmark[]>(mockBookmarks);
+  const [filteredBookmarks, setFilteredBookmarks] =
+    useState<Bookmark[]>(mockBookmarks);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedType, setSelectedType] = useState<string>("all");
@@ -77,8 +80,10 @@ export default function BookmarkManager({ className = "" }: Omit<BookmarkManager
   const [editingNotes, setEditingNotes] = useState("");
 
   // Get unique categories and types for filtering
-  const categories = Array.from(new Set(bookmarks.filter(b => b.category).map(b => b.category)));
-  const types = Array.from(new Set(bookmarks.map(b => b.type)));
+  const categories = Array.from(
+    new Set(bookmarks.filter((b) => b.category).map((b) => b.category))
+  );
+  const types = Array.from(new Set(bookmarks.map((b) => b.type)));
 
   // Format duration
   const formatDuration = (seconds: number) => {
@@ -92,10 +97,10 @@ export default function BookmarkManager({ className = "" }: Omit<BookmarkManager
 
   // Format date
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric"
     });
   };
 
@@ -111,22 +116,27 @@ export default function BookmarkManager({ className = "" }: Omit<BookmarkManager
 
     // Search filter
     if (searchQuery) {
-      filtered = filtered.filter(bookmark =>
-        bookmark.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        bookmark.speaker?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        bookmark.notes?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        bookmark.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+      filtered = filtered.filter(
+        (bookmark) =>
+          bookmark.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          bookmark.speaker?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          bookmark.notes?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          bookmark.tags.some((tag) =>
+            tag.toLowerCase().includes(searchQuery.toLowerCase())
+          )
       );
     }
 
     // Category filter
     if (selectedCategory !== "all") {
-      filtered = filtered.filter(bookmark => bookmark.category === selectedCategory);
+      filtered = filtered.filter(
+        (bookmark) => bookmark.category === selectedCategory
+      );
     }
 
     // Type filter
     if (selectedType !== "all") {
-      filtered = filtered.filter(bookmark => bookmark.type === selectedType);
+      filtered = filtered.filter((bookmark) => bookmark.type === selectedType);
     }
 
     // Sort
@@ -138,7 +148,10 @@ export default function BookmarkManager({ className = "" }: Omit<BookmarkManager
           return (a.speaker || "").localeCompare(b.speaker || "");
         case "date":
         default:
-          return new Date(b.bookmarkedAt).getTime() - new Date(a.bookmarkedAt).getTime();
+          return (
+            new Date(b.bookmarkedAt).getTime() -
+            new Date(a.bookmarkedAt).getTime()
+          );
       }
     });
 
@@ -147,14 +160,14 @@ export default function BookmarkManager({ className = "" }: Omit<BookmarkManager
 
   // Remove bookmark
   const removeBookmark = (bookmarkId: string) => {
-    setBookmarks(bookmarks.filter(b => b.id !== bookmarkId));
+    setBookmarks(bookmarks.filter((b) => b.id !== bookmarkId));
   };
 
   // Update notes
   const updateNotes = (bookmarkId: string, notes: string) => {
-    setBookmarks(bookmarks.map(b =>
-      b.id === bookmarkId ? { ...b, notes } : b
-    ));
+    setBookmarks(
+      bookmarks.map((b) => (b.id === bookmarkId ? { ...b, notes } : b))
+    );
     setIsEditingNotes(null);
     setEditingNotes("");
   };
@@ -172,7 +185,9 @@ export default function BookmarkManager({ className = "" }: Omit<BookmarkManager
   };
 
   return (
-    <div className={`bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 ${className}`}>
+    <div
+      className={`bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 ${className}`}
+    >
       {/* Header */}
       <div className="p-6 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between mb-4">
@@ -213,8 +228,10 @@ export default function BookmarkManager({ className = "" }: Omit<BookmarkManager
               className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
             >
               <option value="all">All Categories</option>
-              {categories.map(category => (
-                <option key={category} value={category}>{category}</option>
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
               ))}
             </select>
 
@@ -224,7 +241,7 @@ export default function BookmarkManager({ className = "" }: Omit<BookmarkManager
               className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
             >
               <option value="all">All Types</option>
-              {types.map(type => (
+              {types.map((type) => (
                 <option key={type} value={type}>
                   {type.charAt(0).toUpperCase() + type.slice(1)}
                 </option>
@@ -233,7 +250,9 @@ export default function BookmarkManager({ className = "" }: Omit<BookmarkManager
 
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as "date" | "title" | "speaker")}
+              onChange={(e) =>
+                setSortBy(e.target.value as "date" | "title" | "speaker")
+              }
               className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
             >
               <option value="date">Sort by Date</option>
@@ -255,17 +274,21 @@ export default function BookmarkManager({ className = "" }: Omit<BookmarkManager
               No bookmarks found
             </h3>
             <p className="text-gray-600 dark:text-gray-400">
-              {searchQuery || selectedCategory !== "all" || selectedType !== "all"
+              {searchQuery ||
+              selectedCategory !== "all" ||
+              selectedType !== "all"
                 ? "Try adjusting your search or filters"
-                : "Start bookmarking content to see it here"
-              }
+                : "Start bookmarking content to see it here"}
             </p>
           </div>
         ) : (
-          <div className={viewMode === "grid"
-            ? "grid grid-cols-1 md:grid-cols-2 gap-6"
-            : "space-y-4"
-          }>
+          <div
+            className={
+              viewMode === "grid"
+                ? "grid grid-cols-1 md:grid-cols-2 gap-6"
+                : "space-y-4"
+            }
+          >
             {filteredBookmarks.map((bookmark) => (
               <div
                 key={bookmark.id}
@@ -275,7 +298,9 @@ export default function BookmarkManager({ className = "" }: Omit<BookmarkManager
               >
                 {/* Content Image/Icon */}
                 <div className={viewMode === "list" ? "flex-shrink-0" : "mb-3"}>
-                  <div className={`relative ${viewMode === "list" ? "w-16 h-16" : "w-full h-32"} bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden`}>
+                  <div
+                    className={`relative ${viewMode === "list" ? "w-16 h-16" : "w-full h-32"} bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden`}
+                  >
                     {bookmark.imageUrl ? (
                       <div className="w-full h-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
                         <span className="text-gray-500 dark:text-gray-400 text-xs">
@@ -284,7 +309,11 @@ export default function BookmarkManager({ className = "" }: Omit<BookmarkManager
                       </div>
                     ) : (
                       <DefaultMediaCover
-                        type={bookmark.type === "ebook" || bookmark.type === "other" ? "audio" : bookmark.type}
+                        type={
+                          bookmark.type === "ebook" || bookmark.type === "other"
+                            ? "audio"
+                            : bookmark.type
+                        }
                         className="w-full h-full"
                       />
                     )}
@@ -325,7 +354,9 @@ export default function BookmarkManager({ className = "" }: Omit<BookmarkManager
 
                   <div className="flex items-center space-x-4 text-xs text-gray-500 dark:text-gray-400 mb-2">
                     <span className="capitalize">{bookmark.type}</span>
-                    {bookmark.duration && <span>{formatDuration(bookmark.duration)}</span>}
+                    {bookmark.duration && (
+                      <span>{formatDuration(bookmark.duration)}</span>
+                    )}
                     {bookmark.category && <span>{bookmark.category}</span>}
                     <span>{formatDate(bookmark.bookmarkedAt)}</span>
                   </div>
@@ -333,7 +364,8 @@ export default function BookmarkManager({ className = "" }: Omit<BookmarkManager
                   {/* Progress info */}
                   {bookmark.position && bookmark.duration && (
                     <p className="text-xs text-orange-600 dark:text-orange-400 mb-2">
-                      {getProgress(bookmark)}% complete • Resume at {formatDuration(bookmark.position)}
+                      {getProgress(bookmark)}% complete • Resume at{" "}
+                      {formatDuration(bookmark.position)}
                     </p>
                   )}
 
@@ -365,7 +397,9 @@ export default function BookmarkManager({ className = "" }: Omit<BookmarkManager
                         <div className="flex space-x-2">
                           <button
                             type="button"
-                            onClick={() => updateNotes(bookmark.id, editingNotes)}
+                            onClick={() =>
+                              updateNotes(bookmark.id, editingNotes)
+                            }
                             className="px-3 py-1 text-xs bg-orange-600 hover:bg-orange-700 text-white rounded transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500"
                           >
                             Save

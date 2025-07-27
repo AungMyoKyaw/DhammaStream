@@ -15,14 +15,29 @@ interface TimerPreset {
 }
 
 const timerPresets: TimerPreset[] = [
-  { name: "Short Meditation", duration: 5, description: "Quick mindfulness session" },
-  { name: "Standard Session", duration: 10, description: "Regular meditation practice" },
-  { name: "Extended Practice", duration: 20, description: "Deeper contemplation" },
+  {
+    name: "Short Meditation",
+    duration: 5,
+    description: "Quick mindfulness session"
+  },
+  {
+    name: "Standard Session",
+    duration: 10,
+    description: "Regular meditation practice"
+  },
+  {
+    name: "Extended Practice",
+    duration: 20,
+    description: "Deeper contemplation"
+  },
   { name: "Long Retreat", duration: 30, description: "Extended mindfulness" },
   { name: "Hour Practice", duration: 60, description: "Full hour session" }
 ];
 
-export default function MeditationTimer({ onTimerComplete, className = "" }: MeditationTimerProps) {
+export default function MeditationTimer({
+  onTimerComplete,
+  className = ""
+}: MeditationTimerProps) {
   const [isActive, setIsActive] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0); // in seconds
   const [selectedDuration, setSelectedDuration] = useState(10); // in minutes
@@ -41,9 +56,9 @@ export default function MeditationTimer({ onTimerComplete, className = "" }: Med
     const secs = seconds % 60;
 
     if (hours > 0) {
-      return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      return `${hours}:${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
     }
-    return `${minutes}:${secs.toString().padStart(2, '0')}`;
+    return `${minutes}:${secs.toString().padStart(2, "0")}`;
   }, []);
 
   // Play bell sound (using Web Audio API for better control)
@@ -51,7 +66,10 @@ export default function MeditationTimer({ onTimerComplete, className = "" }: Med
     if (!bellEnabled) return;
 
     // Create a simple bell-like tone using Web Audio API
-    const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    const AudioContextClass =
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof AudioContext })
+        .webkitAudioContext;
     const audioContext = new AudioContextClass();
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
@@ -60,10 +78,16 @@ export default function MeditationTimer({ onTimerComplete, className = "" }: Med
     gainNode.connect(audioContext.destination);
 
     oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-    oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
+    oscillator.frequency.exponentialRampToValueAtTime(
+      400,
+      audioContext.currentTime + 0.1
+    );
 
     gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
+    gainNode.gain.exponentialRampToValueAtTime(
+      0.01,
+      audioContext.currentTime + 1
+    );
 
     oscillator.start(audioContext.currentTime);
     oscillator.stop(audioContext.currentTime + 1);
@@ -107,13 +131,24 @@ export default function MeditationTimer({ onTimerComplete, className = "" }: Med
         clearInterval(intervalRef.current);
       }
     };
-  }, [isActive, timeLeft, intervalBells, intervalMinutes, selectedDuration, playBell, onTimerComplete]);
+  }, [
+    isActive,
+    timeLeft,
+    intervalBells,
+    intervalMinutes,
+    selectedDuration,
+    playBell,
+    onTimerComplete
+  ]);
 
   // Start timer
   const startTimer = () => {
     if (!isActive) {
       if (timeLeft === 0) {
-        const duration = showCustom && customDuration ? parseInt(customDuration) : selectedDuration;
+        const duration =
+          showCustom && customDuration
+            ? parseInt(customDuration)
+            : selectedDuration;
         setTimeLeft(duration * 60);
       }
       setIsActive(true);
@@ -134,15 +169,21 @@ export default function MeditationTimer({ onTimerComplete, className = "" }: Med
 
   // Add time (extend session)
   const addTime = (minutes: number) => {
-    setTimeLeft(prev => prev + (minutes * 60));
+    setTimeLeft((prev) => prev + minutes * 60);
   };
 
   // Calculate progress percentage
-  const totalDuration = (showCustom && customDuration ? parseInt(customDuration) : selectedDuration) * 60;
-  const progress = timeLeft > 0 ? ((totalDuration - timeLeft) / totalDuration) * 100 : 0;
+  const totalDuration =
+    (showCustom && customDuration
+      ? parseInt(customDuration)
+      : selectedDuration) * 60;
+  const progress =
+    timeLeft > 0 ? ((totalDuration - timeLeft) / totalDuration) * 100 : 0;
 
   return (
-    <div className={`bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 ${className}`}>
+    <div
+      className={`bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 ${className}`}
+    >
       <div className="text-center">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
           Meditation Timer
@@ -221,7 +262,9 @@ export default function MeditationTimer({ onTimerComplete, className = "" }: Med
                   max="120"
                   className="w-24 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-center bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
-                <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">minutes</span>
+                <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">
+                  minutes
+                </span>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-4">
@@ -237,7 +280,9 @@ export default function MeditationTimer({ onTimerComplete, className = "" }: Med
                     }`}
                   >
                     <div className="font-medium">{preset.name}</div>
-                    <div className="text-xs opacity-75">{preset.duration} min</div>
+                    <div className="text-xs opacity-75">
+                      {preset.duration} min
+                    </div>
                   </button>
                 ))}
               </div>
@@ -281,7 +326,9 @@ export default function MeditationTimer({ onTimerComplete, className = "" }: Med
         {/* Quick Add Time Buttons (during active session) */}
         {isActive && (
           <div className="flex items-center justify-center space-x-2 mb-6">
-            <span className="text-sm text-gray-600 dark:text-gray-400 mr-2">Add:</span>
+            <span className="text-sm text-gray-600 dark:text-gray-400 mr-2">
+              Add:
+            </span>
             {[1, 5, 10].map((minutes) => (
               <button
                 key={minutes}
@@ -298,7 +345,10 @@ export default function MeditationTimer({ onTimerComplete, className = "" }: Med
         {/* Timer Settings */}
         <div className="space-y-4 text-left border-t border-gray-200 dark:border-gray-700 pt-4">
           <div className="flex items-center justify-between">
-            <label htmlFor="bell-enabled" className="text-sm text-gray-700 dark:text-gray-300">
+            <label
+              htmlFor="bell-enabled"
+              className="text-sm text-gray-700 dark:text-gray-300"
+            >
               Bell sounds
             </label>
             <button
@@ -318,7 +368,10 @@ export default function MeditationTimer({ onTimerComplete, className = "" }: Med
           </div>
 
           <div className="flex items-center justify-between">
-            <label htmlFor="interval-bells" className="text-sm text-gray-700 dark:text-gray-300">
+            <label
+              htmlFor="interval-bells"
+              className="text-sm text-gray-700 dark:text-gray-300"
+            >
               Interval bells
             </label>
             <button
@@ -339,7 +392,9 @@ export default function MeditationTimer({ onTimerComplete, className = "" }: Med
 
           {intervalBells && (
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-700 dark:text-gray-300">Every</span>
+              <span className="text-sm text-gray-700 dark:text-gray-300">
+                Every
+              </span>
               <select
                 value={intervalMinutes}
                 onChange={(e) => setIntervalMinutes(parseInt(e.target.value))}

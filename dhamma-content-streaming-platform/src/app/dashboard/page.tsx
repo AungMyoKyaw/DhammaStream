@@ -1,9 +1,9 @@
-import { Suspense } from 'react';
-import SearchFilters from '@/components/SearchFilters';
-import ContentRecommendations from '@/components/ContentRecommendations';
+import { Suspense } from "react";
+import SearchFilters from "@/components/SearchFilters";
+// ...existing code...
 // LearningPaths import removed
-import UserProfileComponent from '@/components/UserProfileComponent';
-import { FeatureIcons } from '@/components/ui/icons';
+import UserProfileComponent from "@/components/UserProfileComponent";
+import { FeatureIcons } from "@/components/ui/icons";
 
 export default function DashboardPage() {
   return (
@@ -27,8 +27,12 @@ export default function DashboardPage() {
                 <FeatureIcons.Play className="w-5 h-5 text-orange-600 dark:text-orange-400" />
               </div>
               <div>
-                <h3 className="font-medium text-gray-900 dark:text-white">Continue Learning</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Resume your last session</p>
+                <h3 className="font-medium text-gray-900 dark:text-white">
+                  Continue Learning
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Resume your last session
+                </p>
               </div>
             </div>
           </div>
@@ -39,8 +43,12 @@ export default function DashboardPage() {
                 <FeatureIcons.Calendar className="w-5 h-5 text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <h3 className="font-medium text-gray-900 dark:text-white">Daily Practice</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">12-day streak</p>
+                <h3 className="font-medium text-gray-900 dark:text-white">
+                  Daily Practice
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  12-day streak
+                </p>
               </div>
               {/* Learning Paths component removed */}
             </div>
@@ -54,8 +62,12 @@ export default function DashboardPage() {
                 <FeatureIcons.Clock className="w-5 h-5 text-purple-600 dark:text-purple-400" />
               </div>
               <div>
-                <h3 className="font-medium text-gray-900 dark:text-white">Meditation Timer</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Start a session</p>
+                <h3 className="font-medium text-gray-900 dark:text-white">
+                  Meditation Timer
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Start a session
+                </p>
               </div>
             </div>
           </div>
@@ -65,14 +77,6 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Content Recommendations */}
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                Recommended for You
-              </h2>
-              <ContentRecommendations />
-            </div>
-
             {/* Learning Paths section removed */}
 
             {/* Search & Filter */}
@@ -80,21 +84,23 @@ export default function DashboardPage() {
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                 Discover Content
               </h2>
-              <Suspense fallback={
-                <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-                  <div className="animate-pulse">
-                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-4"></div>
-                    <div className="space-y-3">
-                      <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                      <div className="grid grid-cols-3 gap-4">
-                        <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                        <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                        <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              <Suspense
+                fallback={
+                  <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+                    <div className="animate-pulse">
+                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-4"></div>
+                      <div className="space-y-3">
+                        <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                        <div className="grid grid-cols-3 gap-4">
+                          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              }>
+                }
+              >
                 <SearchFilters />
               </Suspense>
             </div>
@@ -130,7 +136,9 @@ export default function DashboardPage() {
                     <p className="text-sm font-medium text-gray-900 dark:text-white">
                       Completed &quot;Introduction to Mindfulness&quot;
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">2 hours ago</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      2 hours ago
+                    </p>
                   </div>
                 </div>
               </div>
@@ -146,7 +154,9 @@ export default function DashboardPage() {
                     <p className="text-sm font-medium text-gray-900 dark:text-white">
                       Meditation session: 20 minutes
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">2 days ago</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      2 days ago
+                    </p>
                   </div>
                 </div>
               </div>

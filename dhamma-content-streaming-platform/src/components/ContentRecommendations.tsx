@@ -21,7 +21,9 @@ export default function ContentRecommendations({
   categoryId,
   className = ""
 }: ContentRecommendationsProps) {
-  const [recommendations, setRecommendations] = useState<DhammaContentWithRelations[]>([]);
+  const [recommendations, setRecommendations] = useState<
+    DhammaContentWithRelations[]
+  >([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -35,12 +37,13 @@ export default function ContentRecommendations({
         // In a real implementation, this would use machine learning or collaborative filtering
         const params = new URLSearchParams();
 
-        if (speakerId) params.append('speaker_id', speakerId.toString());
-        if (categoryId) params.append('category_id', categoryId.toString());
-        if (contentType) params.append('content_type', contentType);
-        if (currentContent?.id) params.append('exclude_id', currentContent.id.toString());
+        if (speakerId) params.append("speaker_id", speakerId.toString());
+        if (categoryId) params.append("category_id", categoryId.toString());
+        if (contentType) params.append("content_type", contentType);
+        if (currentContent?.id)
+          params.append("exclude_id", currentContent.id.toString());
 
-        params.append('limit', '6');
+        params.append("limit", "6");
 
         // Mock data for now - in real implementation, this would be an API call
         // For demonstration, we'll show some placeholder recommendations
@@ -50,7 +53,8 @@ export default function ContentRecommendations({
             title: "Introduction to Mindfulness Meditation",
             content_type: "video" as const,
             file_url: "/mock-video-1.mp4",
-            description: "A gentle introduction to mindfulness practice for beginners.",
+            description:
+              "A gentle introduction to mindfulness practice for beginners.",
             duration_estimate: 1800,
             language: "english",
             created_at: new Date().toISOString(),
@@ -77,7 +81,8 @@ export default function ContentRecommendations({
             title: "Walking Meditation Practice",
             content_type: "audio" as const,
             file_url: "/mock-audio-1.mp3",
-            description: "Learn the art of walking meditation for mindful movement.",
+            description:
+              "Learn the art of walking meditation for mindful movement.",
             duration_estimate: 1200,
             language: "english",
             created_at: new Date().toISOString(),
@@ -104,7 +109,8 @@ export default function ContentRecommendations({
             title: "The Four Noble Truths",
             content_type: "ebook" as const,
             file_url: "/mock-ebook-1.pdf",
-            description: "A comprehensive guide to the fundamental teachings of Buddhism.",
+            description:
+              "A comprehensive guide to the fundamental teachings of Buddhism.",
             duration_estimate: null,
             language: "english",
             created_at: new Date().toISOString(),
@@ -129,12 +135,12 @@ export default function ContentRecommendations({
         ];
 
         // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
 
         setRecommendations(mockRecommendations);
       } catch (err) {
-        setError('Failed to load recommendations');
-        console.error('Error fetching recommendations:', err);
+        setError("Failed to load recommendations");
+        console.error("Error fetching recommendations:", err);
       } finally {
         setLoading(false);
       }
@@ -155,11 +161,11 @@ export default function ContentRecommendations({
 
   const getContentIcon = (type: string) => {
     switch (type) {
-      case 'video':
+      case "video":
         return <ContentTypeIcons.Video className="w-4 h-4" />;
-      case 'audio':
+      case "audio":
         return <ContentTypeIcons.Audio className="w-4 h-4" />;
-      case 'ebook':
+      case "ebook":
         return <ContentTypeIcons.Ebook className="w-4 h-4" />;
       default:
         return <ContentTypeIcons.Other className="w-4 h-4" />;
@@ -182,7 +188,10 @@ export default function ContentRecommendations({
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {skeletonItems.map((item) => (
-            <div key={item.id} className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 animate-pulse">
+            <div
+              key={item.id}
+              className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 animate-pulse"
+            >
               <div className="aspect-video bg-gray-200 dark:bg-gray-700 rounded mb-3"></div>
               <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
               <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
@@ -215,7 +224,12 @@ export default function ContentRecommendations({
           >
             <div className="aspect-video relative overflow-hidden bg-gray-100 dark:bg-gray-700">
               <DefaultMediaCover
-                type={content.content_type === "ebook" || content.content_type === "other" ? "video" : content.content_type}
+                type={
+                  content.content_type === "ebook" ||
+                  content.content_type === "other"
+                    ? "video"
+                    : content.content_type
+                }
                 title={content.title}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
               />
