@@ -7,9 +7,13 @@ import Image from "next/image";
 import { queries } from "@/lib/supabase";
 
 import type { DhammaContentWithRelations } from "@/types/database";
-import ResponsivePlyrPlayer from "@/components/ResponsivePlyrPlayer";
+import ReactPlayerComponent from "@/components/ReactPlayerComponentSimple";
 import { Navigation } from "@/components/Navigation";
 import { ContentTypeIcons, FeatureIcons } from "@/components/ui/icons";
+import {
+  TopBarLoadingState,
+  ContentLoadingState
+} from "@/components/LoadingState";
 
 export default function ContentViewPage({
   params
@@ -69,12 +73,15 @@ export default function ContentViewPage({
   // Main return and JSX
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading content...</p>
+      <>
+        <TopBarLoadingState />
+        <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 dark:from-gray-900 dark:to-gray-800">
+          <Navigation />
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <ContentLoadingState />
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
@@ -158,7 +165,7 @@ export default function ContentViewPage({
               content.content_type === "audio") &&
               content.file_url && (
                 <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
-                  <ResponsivePlyrPlayer
+                  <ReactPlayerComponent
                     src={content.file_url}
                     type={content.content_type}
                     contentId={content.id}

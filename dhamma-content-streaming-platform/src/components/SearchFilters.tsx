@@ -51,29 +51,31 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
   const searchParams = useSearchParams();
 
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isApplyingFilter, setIsApplyingFilter] = useState(false);
   const [filters, setFilters] = useState<FilterOptions>({
-    speaker: searchParams.get("speaker") || "",
-    category: searchParams.get("category") || "",
-    language: searchParams.get("language") || "",
-    duration: searchParams.get("duration") || "",
-    dateRange: searchParams.get("dateRange") || "",
+    speaker: searchParams.get("speaker") || "any",
+    category: searchParams.get("category") || "any",
+    language: searchParams.get("language") || "any",
+    duration: searchParams.get("duration") || "any",
+    dateRange: searchParams.get("dateRange") || "any",
     sortBy: searchParams.get("sort") || "relevance"
   });
 
   // Check if any filters are active
   const hasActiveFilters = Object.values(filters).some(
-    (value) => value && value !== "relevance"
+    (value) => value && value !== "relevance" && value !== "any"
   );
 
   useEffect(() => {
     setFilters({
-      speaker: searchParams.get("speaker") || "",
-      category: searchParams.get("category") || "",
-      language: searchParams.get("language") || "",
-      duration: searchParams.get("duration") || "",
-      dateRange: searchParams.get("dateRange") || "",
+      speaker: searchParams.get("speaker") || "any",
+      category: searchParams.get("category") || "any",
+      language: searchParams.get("language") || "any",
+      duration: searchParams.get("duration") || "any",
+      dateRange: searchParams.get("dateRange") || "any",
       sortBy: searchParams.get("sort") || "relevance"
     });
+    setIsApplyingFilter(false); // Reset loading state when URL changes
   }, [searchParams]);
 
   const createQueryString = useCallback(
@@ -82,7 +84,7 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
 
       Object.entries(updates).forEach(([key, value]) => {
         const paramKey = key === "sortBy" ? "sort" : key;
-        if (value && value !== "") {
+        if (value && value !== "" && value !== "any") {
           params.set(paramKey, value);
         } else {
           params.delete(paramKey);
@@ -100,6 +102,7 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
   const handleFilterChange = (key: keyof FilterOptions, value: string) => {
     const newFilters = { ...filters, [key]: value };
     setFilters(newFilters);
+    setIsApplyingFilter(true);
 
     const queryString = createQueryString({ [key]: value });
     router.push(`${pathname}?${queryString}`);
@@ -107,14 +110,15 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
 
   const clearAllFilters = () => {
     const clearedFilters = {
-      speaker: "",
-      category: "",
-      language: "",
-      duration: "",
-      dateRange: "",
+      speaker: "any",
+      category: "any",
+      language: "any",
+      duration: "any",
+      dateRange: "any",
       sortBy: "relevance"
     };
     setFilters(clearedFilters);
+    setIsApplyingFilter(true);
 
     const queryString = createQueryString(clearedFilters);
     router.push(`${pathname}?${queryString}`);
@@ -122,12 +126,16 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
 
   return (
     <div
-      className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-3 sm:p-4 ${className}`}
+      className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-3 sm:p-4 ${className} ${isApplyingFilter ? "opacity-75" : ""}`}
     >
       {/* Filter Toggle Header */}
       <div className="flex items-center justify-between mb-3 sm:mb-4">
         <div className="flex items-center space-x-2">
-          <FeatureIcons.Filter className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 dark:text-gray-400" />
+          {isApplyingFilter ? (
+            <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-orange-600 border-t-transparent rounded-full animate-spin" />
+          ) : (
+            <FeatureIcons.Filter className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 dark:text-gray-400" />
+          )}
           <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
             Filters
           </h3>
@@ -143,7 +151,8 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
             <button
               type="button"
               onClick={clearAllFilters}
-              className="text-xs sm:text-sm text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300 font-medium"
+              disabled={isApplyingFilter}
+              className="text-xs sm:text-sm text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Clear All
             </button>
@@ -151,7 +160,8 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
           <button
             type="button"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="p-1 rounded-md text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            disabled={isApplyingFilter}
+            className="p-1 rounded-md text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label={isExpanded ? "Collapse filters" : "Expand filters"}
           >
             <FeatureIcons.ChevronDown
@@ -169,6 +179,7 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
         <Select
           value={filters.sortBy}
           onValueChange={(value) => handleFilterChange("sortBy", value)}
+          disabled={isApplyingFilter}
         >
           <SelectTrigger className="w-full text-sm" aria-label="Sort by">
             <SelectValue />
@@ -194,6 +205,7 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
             <Select
               value={filters.duration}
               onValueChange={(value) => handleFilterChange("duration", value)}
+              disabled={isApplyingFilter}
             >
               <SelectTrigger
                 className="w-full text-sm"
@@ -202,7 +214,7 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
                 <SelectValue placeholder="Any duration" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Any duration</SelectItem>
+                <SelectItem value="any">Any duration</SelectItem>
                 {durationOptions.map((option) => (
                   <SelectItem key={option.value} value={option.value}>
                     {option.label}
@@ -220,6 +232,7 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
             <Select
               value={filters.language}
               onValueChange={(value) => handleFilterChange("language", value)}
+              disabled={isApplyingFilter}
             >
               <SelectTrigger
                 className="w-full text-sm"
@@ -228,7 +241,7 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
                 <SelectValue placeholder="Any language" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Any language</SelectItem>
+                <SelectItem value="any">Any language</SelectItem>
                 <SelectItem value="english">English</SelectItem>
                 <SelectItem value="burmese">Burmese</SelectItem>
                 <SelectItem value="pali">Pali</SelectItem>
@@ -247,6 +260,7 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
             <Select
               value={filters.dateRange}
               onValueChange={(value) => handleFilterChange("dateRange", value)}
+              disabled={isApplyingFilter}
             >
               <SelectTrigger
                 className="w-full text-sm"
@@ -255,7 +269,7 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
                 <SelectValue placeholder="Any time" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Any time</SelectItem>
+                <SelectItem value="any">Any time</SelectItem>
                 {dateRangeOptions.map((option) => (
                   <SelectItem key={option.value} value={option.value}>
                     {option.label}
@@ -273,6 +287,7 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
             <Select
               value={filters.category}
               onValueChange={(value) => handleFilterChange("category", value)}
+              disabled={isApplyingFilter}
             >
               <SelectTrigger
                 className="w-full text-sm"
@@ -281,7 +296,7 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
                 <SelectValue placeholder="Any category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Any category</SelectItem>
+                <SelectItem value="any">Any category</SelectItem>
                 <SelectItem value="meditation">Meditation</SelectItem>
                 <SelectItem value="dharma-talk">Dharma Talk</SelectItem>
                 <SelectItem value="sutra">Sutra</SelectItem>
@@ -302,6 +317,7 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
             <Select
               value={filters.speaker}
               onValueChange={(value) => handleFilterChange("speaker", value)}
+              disabled={isApplyingFilter}
             >
               <SelectTrigger
                 className="w-full text-sm"
@@ -310,7 +326,7 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
                 <SelectValue placeholder="Any teacher" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Any teacher</SelectItem>
+                <SelectItem value="any">Any teacher</SelectItem>
                 {/* These would be populated from the database */}
                 <SelectItem value="ajahn-chah">Ajahn Chah</SelectItem>
                 <SelectItem value="thich-nhat-hanh">Thich Nhat Hanh</SelectItem>

@@ -3,8 +3,8 @@ import { useState } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 // Dynamically import player only on client to prevent SSR document errors
-const ResponsivePlyrPlayer = dynamic(
-  () => import("@/components/ResponsivePlyrPlayer"),
+const ReactPlayerComponentSimple = dynamic(
+  () => import("@/components/ReactPlayerComponentSimple"),
   { ssr: false }
 );
 
@@ -59,9 +59,9 @@ export default function VideoPlayerTestClient() {
             Video Player Responsiveness Test
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-4xl mb-6">
-            This page tests the ResponsivePlyrPlayer component with videos of
-            different aspect ratios. The player should automatically adapt its
-            height based on the video's dimensions while maintaining
+            This page tests the ReactPlayerComponentSimple component with videos
+            of different aspect ratios. The player should automatically adapt
+            its height based on the video's dimensions while maintaining
             responsiveness across different screen sizes.
           </p>
 
@@ -117,11 +117,14 @@ export default function VideoPlayerTestClient() {
               {testVideos[selectedVideo as keyof typeof testVideos].title}
             </h3>
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-4">
-              <ResponsivePlyrPlayer
+              <ReactPlayerComponentSimple
                 src={testVideos[selectedVideo as keyof typeof testVideos].src}
                 type="video"
                 className="w-full"
-                maxHeight="600px"
+                contentId={1}
+                title={
+                  testVideos[selectedVideo as keyof typeof testVideos].title
+                }
               />
             </div>
             <p className="text-gray-600 dark:text-gray-300">

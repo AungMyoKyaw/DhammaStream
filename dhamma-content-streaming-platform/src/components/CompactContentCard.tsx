@@ -16,6 +16,7 @@ function CompactContentCard({ content }: CompactContentCardProps) {
 
   // Tooltip for long titles
   const [showTooltip, setShowTooltip] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
   const titleRef = useRef<HTMLHeadingElement | null>(null);
 
   // Helper to check if title is truncated
@@ -24,24 +25,36 @@ function CompactContentCard({ content }: CompactContentCardProps) {
     return el.scrollWidth > el.clientWidth;
   };
 
+  const handleClick = (e: React.MouseEvent) => {
+    setIsNavigating(true);
+    // Navigation will occur, loading state will be cleared when component unmounts
+  };
+
   return (
     <Link
       href={`/content-item/${content.id}`}
       className="group focus:outline-none focus:ring-2 focus:ring-orange-400 dark:focus:ring-orange-500"
       aria-label={`View details for ${content.title}`}
       tabIndex={0}
+      onClick={handleClick}
     >
       <div
-        className="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 p-3 sm:p-4 border border-gray-100 dark:border-gray-700 h-full flex gap-3 sm:gap-4 group/card relative"
+        className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 p-3 sm:p-4 border border-gray-100 dark:border-gray-700 h-full flex gap-3 sm:gap-4 group/card relative ${
+          isNavigating ? "opacity-75 pointer-events-none" : ""
+        }`}
         style={{ minHeight: 90 }}
       >
         {/* Content type icon */}
         <div className="flex-shrink-0">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center border border-orange-200 dark:border-orange-800">
-            <IconComponent
-              className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600 dark:text-orange-400"
-              aria-label={content.content_type}
-            />
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center border border-orange-200 dark:border-orange-800 relative">
+            {isNavigating ? (
+              <div className="animate-spin rounded-full h-5 w-5 sm:h-6 sm:w-6 border-2 border-orange-600 dark:border-orange-400 border-t-transparent"></div>
+            ) : (
+              <IconComponent
+                className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600 dark:text-orange-400"
+                aria-label={content.content_type}
+              />
+            )}
           </div>
         </div>
 
@@ -117,7 +130,11 @@ function CompactContentCard({ content }: CompactContentCardProps) {
                 {content.content_type === "ebook" && "Read"}
                 {content.content_type === "other" && "View"}
               </span>
-              <FeatureIcons.ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-1" />
+              {isNavigating ? (
+                <div className="animate-spin rounded-full h-3 w-3 sm:h-4 sm:w-4 border border-orange-600 dark:border-orange-400 border-t-transparent"></div>
+              ) : (
+                <FeatureIcons.ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-1" />
+              )}
             </div>
           </div>
         </div>
