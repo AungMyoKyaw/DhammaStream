@@ -45,17 +45,17 @@ export function Navigation({ className = "" }: NavigationProps) {
       className={`bg-white shadow-sm border-b border-orange-100 dark:bg-gray-900 dark:border-gray-700 ${className}`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-6">
+        <div className="flex justify-between items-center py-4 md:py-6">
           <Link
             href="/"
             className="flex items-center focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 rounded-md"
           >
-            <h1 className="text-3xl font-bold text-orange-600 dark:text-orange-400">
+            <h1 className="text-2xl md:text-3xl font-bold text-orange-600 dark:text-orange-400">
               DhammaStream
             </h1>
           </Link>
 
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-3 md:space-x-6">
             {/* Desktop Navigation */}
             <nav className="hidden md:flex space-x-6">
               {navLinks.map((link) => (
@@ -73,8 +73,9 @@ export function Navigation({ className = "" }: NavigationProps) {
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 rounded-md text-gray-600 hover:text-orange-600 dark:text-gray-300 dark:hover:text-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+              className="md:hidden p-2 rounded-md text-gray-600 hover:text-orange-600 dark:text-gray-300 dark:hover:text-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-colors"
               aria-label="Toggle navigation menu"
+              aria-expanded={isMobileMenuOpen}
             >
               <svg
                 className="w-6 h-6"
@@ -107,13 +108,14 @@ export function Navigation({ className = "" }: NavigationProps) {
 
         {/* Mobile Navigation Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden pb-4 border-t border-orange-100 dark:border-gray-700 mt-4">
-            <nav className="flex flex-col space-y-2 pt-4">
+          <div className="md:hidden pb-4 border-t border-orange-100 dark:border-gray-700">
+            <nav className="flex flex-col space-y-1 pt-4">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`${getLinkClasses(link.href)} block`}
+                  className={`${getLinkClasses(link.href)} block py-3 text-lg`}
+                  onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {link.label}
                 </Link>
