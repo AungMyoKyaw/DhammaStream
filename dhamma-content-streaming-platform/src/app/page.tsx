@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { ContentTypeIcons, FeatureIcons } from "@/components/ui/icons";
 import ContentRecommendations from "@/components/ContentRecommendations";
-import LearningPaths from "@/components/LearningPaths";
+// Removed LearningPaths import
 
 import { Navigation } from "@/components/Navigation";
 
@@ -147,9 +147,7 @@ export default function HomePage() {
 
       {/* Learning Paths Section */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-orange-50 to-amber-100 dark:from-gray-900 dark:to-gray-800">
-        <div className="max-w-7xl mx-auto">
-          <LearningPaths />
-        </div>
+    {/* Learning Paths Section removed */}
       </section>
 
       {/* Content Recommendations Section */}

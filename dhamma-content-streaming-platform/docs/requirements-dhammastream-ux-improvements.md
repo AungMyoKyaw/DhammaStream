@@ -83,7 +83,7 @@ The platform features a clean, Buddhist-themed design with orange/amber color sc
 **Spiritual Seekers:**
 - New to Buddhism or meditation
 - Exploring different teachers and traditions
-- Need guidance and structured learning paths
+// ...existing content...
 - May have limited Buddhist knowledge
 
 **Teachers and Content Creators:**
@@ -133,7 +133,7 @@ The platform features a clean, Buddhist-themed design with orange/amber color sc
 | Stakeholder | Primary Needs | Key Requirements | Success Measures |
 |-------------|---------------|------------------|------------------|
 | Practitioners | Deep content, personalization | Advanced search, progress tracking | Session duration, return visits |
-| Beginners | Guidance, structure | Learning paths, clear navigation | Onboarding completion, engagement |
+| Beginners | Guidance, structure | Clear navigation | Onboarding completion, engagement |
 | Accessibility Users | Equal access | WCAG compliance, assistive tech support | Accessibility audits, user feedback |
 | Mobile Users | Convenience, efficiency | Offline mode, fast loading | Mobile metrics, performance scores |
 
@@ -165,13 +165,13 @@ The platform features a clean, Buddhist-themed design with orange/amber color sc
 - **Priority**: Medium
 - **User Stories**: As a returning user, I want personalized content suggestions so that I can discover relevant teachings efficiently
 
-**FR-003: Structured Learning Paths**
+// ...existing content...
 - **Description**: Curated sequential content pathways
 - **Acceptance Criteria**:
   - Pre-defined paths for beginners, intermediate, advanced
   - Tradition-specific paths (Zen, Vipassana, Tibetan, etc.)
   - Topic-based paths (meditation, ethics, wisdom)
-  - Progress tracking within learning paths
+// ...existing content...
   - Ability to bookmark and resume paths
 - **Priority**: High
 - **User Stories**: As a beginner, I want guided learning sequences so that I can progress systematically in my understanding
@@ -230,7 +230,7 @@ The platform features a clean, Buddhist-themed design with orange/amber color sc
 
 **US-001**: As a Buddhist practitioner, I want to search for teachings by specific traditions (Zen, Theravada, Mahayana) so that I can focus on my preferred practice method.
 
-**US-002**: As a beginner, I want suggested learning paths so that I can progress systematically without feeling overwhelmed.
+// ...existing content...
 
 **US-003**: As a returning user, I want to see "Continue Where You Left Off" recommendations so that I can easily resume my studies.
 
