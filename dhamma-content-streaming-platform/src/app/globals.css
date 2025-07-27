@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "plyr/dist/plyr.css";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
@@ -42,35 +41,6 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-}
-
-/* Custom Plyr styling to match DhammaStream theme */
-.plyr {
-  --plyr-color-main: #ea580c; /* Orange-600 to match DhammaStream theme */
-}
-
-/* Responsive video player styles */
-.plyr--video {
-  width: 100%;
-  height: auto;
-}
-
-.plyr__video-wrapper {
-  width: 100%;
-  height: auto;
-}
-
-.plyr__video-wrapper video {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-}
-
-/* Ensure the player adapts to its content */
-.plyr__poster {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
 }
 
 :root {
@@ -148,5 +118,59 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Enhanced Media Player Controls for Mobile */
+@media (max-width: 768px) {
+  /* Improve audio controls on mobile */
+  audio::-webkit-media-controls-panel {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    padding: 8px;
+  }
+
+  audio::-webkit-media-controls-play-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  audio::-webkit-media-controls-timeline {
+    height: 6px;
+    border-radius: 3px;
+  }
+
+  video::-webkit-media-controls-panel {
+    padding: 12px;
+  }
+
+  video::-webkit-media-controls-play-button {
+    min-width: 48px;
+    min-height: 48px;
+  }
+
+  /* Custom styling for ReactPlayer wrapper */
+  .react-player-wrapper {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .react-player-wrapper video {
+    border-radius: 12px;
+  }
+}
+
+/* Touch-friendly adjustments */
+@media (pointer: coarse) {
+  /* Increase button sizes for touch */
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Better spacing for touch targets */
+  .audio-controls {
+    padding: 12px;
+    gap: 16px;
   }
 }

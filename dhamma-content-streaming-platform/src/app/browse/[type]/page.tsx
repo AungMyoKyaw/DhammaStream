@@ -16,7 +16,9 @@ import ActiveFiltersSummary from "@/components/ActiveFiltersSummary";
 import PaginationControls from "@/components/PaginationControls";
 import CompactContentCard from "@/components/CompactContentCard";
 import { Navigation } from "@/components/Navigation";
+import { ContentListSkeleton } from "@/components/LoadingState";
 import type { DhammaContentWithRelations } from "@/types/database";
+import { Suspense } from "react";
 
 interface Props {
   params: Promise<{ type: string }>;
@@ -59,6 +61,42 @@ export default async function BrowsePage({ params, searchParams }: Props) {
   const currentPage = Number(page) || 1;
   const pageSize = 12;
 
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 dark:from-gray-900 dark:to-gray-800">
+      <Navigation />
+      <Breadcrumb contentConfig={contentConfig} />
+      <Suspense fallback={<ContentLoadingSkeleton />}>
+        <ContentWrapper
+          type={type}
+          search={search}
+          currentPage={currentPage}
+          pageSize={pageSize}
+          contentConfig={contentConfig}
+        />
+      </Suspense>
+    </div>
+  );
+}
+
+// Separate component to handle async data fetching
+async function ContentWrapper({
+  type,
+  search,
+  currentPage,
+  pageSize,
+  contentConfig
+}: {
+  type: string;
+  search?: string;
+  currentPage: number;
+  pageSize: number;
+  contentConfig: {
+    title: string;
+    icon: ReactNode;
+    description: string;
+    color: string;
+  };
+}) {
   // Fetch content with pagination and search
   const {
     data: content,
@@ -79,19 +117,42 @@ export default async function BrowsePage({ params, searchParams }: Props) {
   const totalPages = Math.ceil((count || 0) / pageSize);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 dark:from-gray-900 dark:to-gray-800">
-      <Navigation />
-      <Breadcrumb contentConfig={contentConfig} />
-      <MainContent
-        contentConfig={contentConfig}
-        search={search}
-        count={count || undefined}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        content={content || []}
-        pageSize={pageSize}
-        type={type}
-      />
+    <MainContent
+      contentConfig={contentConfig}
+      search={search}
+      count={count || undefined}
+      currentPage={currentPage}
+      totalPages={totalPages}
+      content={content || []}
+      pageSize={pageSize}
+      type={type}
+    />
+  );
+}
+
+// Loading skeleton component
+function ContentLoadingSkeleton() {
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <div className="text-center mb-6 sm:mb-8">
+        {/* Skeleton for page intro */}
+        <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full mx-auto mb-4 animate-pulse"></div>
+        <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-64 mx-auto mb-4 animate-pulse"></div>
+        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-96 mx-auto mb-6 animate-pulse"></div>
+
+        {/* Skeleton for search bar */}
+        <div className="max-w-lg mx-auto">
+          <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse"></div>
+        </div>
+      </div>
+
+      {/* Skeleton for filters */}
+      <div className="mb-6">
+        <div className="h-16 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse mb-4"></div>
+      </div>
+
+      {/* Skeleton for content list */}
+      <ContentListSkeleton count={6} />
     </div>
   );
 }

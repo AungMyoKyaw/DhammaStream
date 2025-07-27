@@ -1,6 +1,6 @@
 "use client";
 
-import ResponsivePlyrPlayer from "@/components/ResponsivePlyrPlayer";
+import ReactPlayerComponentSimple from "@/components/ReactPlayerComponentSimple";
 
 export default function TestPlayerPage() {
   return (
@@ -14,13 +14,12 @@ export default function TestPlayerPage() {
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
             Video Player Test
           </h2>
-          <ResponsivePlyrPlayer
+          <ReactPlayerComponentSimple
             src="https://www.w3schools.com/html/mov_bbb.mp4"
             type="video"
             contentId={1}
             title="Test Video"
             className="w-full"
-            maxHeight="400px"
           />
         </div>
 
@@ -28,7 +27,7 @@ export default function TestPlayerPage() {
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
             Audio Player Test
           </h2>
-          <ResponsivePlyrPlayer
+          <ReactPlayerComponentSimple
             src="https://www.soundjay.com/misc/sounds/bell-ringing-05.wav"
             type="audio"
             contentId={2}

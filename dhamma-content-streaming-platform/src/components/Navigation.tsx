@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface NavigationProps {
   readonly className?: string;
@@ -12,6 +12,19 @@ interface NavigationProps {
 export function Navigation({ className = "" }: NavigationProps) {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [navigatingTo, setNavigatingTo] = useState<string | null>(null);
+
+  // Clear navigation state when pathname changes
+  useEffect(() => {
+    setNavigatingTo(null);
+  }, [pathname]);
+
+  const handleNavClick = (href: string) => {
+    if (href !== pathname) {
+      setNavigatingTo(href);
+    }
+    setIsMobileMenuOpen(false);
+  };
 
   const isActive = (path: string) => {
     if (path === "/speakers") {
@@ -29,8 +42,10 @@ export function Navigation({ className = "" }: NavigationProps) {
     const activeClasses = "text-orange-600 dark:text-orange-400 font-medium";
     const inactiveClasses =
       "text-gray-600 hover:text-orange-600 dark:text-gray-300 dark:hover:text-orange-400";
+    const loadingClasses = "opacity-75 pointer-events-none";
 
-    return `${baseClasses} ${isActive(path) ? activeClasses : inactiveClasses}`;
+    const isNavigating = navigatingTo === path;
+    return `${baseClasses} ${isActive(path) ? activeClasses : inactiveClasses} ${isNavigating ? loadingClasses : ""}`;
   };
 
   const navLinks = [
@@ -63,8 +78,14 @@ export function Navigation({ className = "" }: NavigationProps) {
                   key={link.href}
                   href={link.href}
                   className={getLinkClasses(link.href)}
+                  onClick={() => handleNavClick(link.href)}
                 >
-                  {link.label}
+                  <span className="flex items-center gap-2">
+                    {link.label}
+                    {navigatingTo === link.href && (
+                      <div className="animate-spin rounded-full h-3 w-3 border border-orange-600 dark:border-orange-400 border-t-transparent"></div>
+                    )}
+                  </span>
                 </Link>
               ))}
             </nav>
@@ -115,9 +136,14 @@ export function Navigation({ className = "" }: NavigationProps) {
                   key={link.href}
                   href={link.href}
                   className={`${getLinkClasses(link.href)} block py-3 text-lg`}
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={() => handleNavClick(link.href)}
                 >
-                  {link.label}
+                  <span className="flex items-center gap-2">
+                    {link.label}
+                    {navigatingTo === link.href && (
+                      <div className="animate-spin rounded-full h-3 w-3 border border-orange-600 dark:border-orange-400 border-t-transparent"></div>
+                    )}
+                  </span>
                 </Link>
               ))}
             </nav>
