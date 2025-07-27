@@ -2,6 +2,12 @@
 
 DhammaStream is a web-based platform for streaming Dhamma talks and lectures. It features a Next.js frontend and uses Supabase for its database and backend services.
 
+## Screenshots
+
+![DhammaStream Application](screenshots/dhammastream-app-screenshot.png)
+
+*DhammaStream homepage showing the Buddhist content streaming platform with sections for Teachers & Speakers, Video Teachings, Audio Content, and Digital Books*
+
 ## Table of Contents
 
 - [Project Structure](#project-structure)
