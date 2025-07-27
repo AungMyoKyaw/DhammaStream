@@ -122,13 +122,13 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
 
   return (
     <div
-      className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 ${className}`}
+      className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-3 sm:p-4 ${className}`}
     >
       {/* Filter Toggle Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-3 sm:mb-4">
         <div className="flex items-center space-x-2">
-          <FeatureIcons.Filter className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+          <FeatureIcons.Filter className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 dark:text-gray-400" />
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
             Filters
           </h3>
           {hasActiveFilters && (
@@ -143,7 +143,7 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
             <button
               type="button"
               onClick={clearAllFilters}
-              className="text-sm text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300 font-medium"
+              className="text-xs sm:text-sm text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300 font-medium"
             >
               Clear All
             </button>
@@ -155,22 +155,22 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
             aria-label={isExpanded ? "Collapse filters" : "Expand filters"}
           >
             <FeatureIcons.ChevronDown
-              className={`w-5 h-5 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
+              className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
             />
           </button>
         </div>
       </div>
 
       {/* Quick Sort */}
-      <div className="mb-4">
-        <div className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+      <div className="mb-3 sm:mb-4">
+        <div className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Sort by
         </div>
         <Select
           value={filters.sortBy}
           onValueChange={(value) => handleFilterChange("sortBy", value)}
         >
-          <SelectTrigger className="w-full" aria-label="Sort by">
+          <SelectTrigger className="w-full text-sm" aria-label="Sort by">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -185,17 +185,20 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
 
       {/* Expandable Filters */}
       {isExpanded && (
-        <div className="space-y-4 border-t border-gray-200 dark:border-gray-600 pt-4">
+        <div className="space-y-3 sm:space-y-4 border-t border-gray-200 dark:border-gray-600 pt-3 sm:pt-4">
           {/* Duration Filter */}
           <div>
-            <div className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <div className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Duration
             </div>
             <Select
               value={filters.duration}
               onValueChange={(value) => handleFilterChange("duration", value)}
             >
-              <SelectTrigger className="w-full" aria-label="Filter by duration">
+              <SelectTrigger
+                className="w-full text-sm"
+                aria-label="Filter by duration"
+              >
                 <SelectValue placeholder="Any duration" />
               </SelectTrigger>
               <SelectContent>
@@ -211,14 +214,17 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
 
           {/* Language Filter */}
           <div>
-            <div className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <div className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Language
             </div>
             <Select
               value={filters.language}
               onValueChange={(value) => handleFilterChange("language", value)}
             >
-              <SelectTrigger className="w-full" aria-label="Filter by language">
+              <SelectTrigger
+                className="w-full text-sm"
+                aria-label="Filter by language"
+              >
                 <SelectValue placeholder="Any language" />
               </SelectTrigger>
               <SelectContent>
@@ -235,7 +241,7 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
 
           {/* Date Range Filter */}
           <div>
-            <div className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <div className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Date Added
             </div>
             <Select
@@ -243,7 +249,7 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
               onValueChange={(value) => handleFilterChange("dateRange", value)}
             >
               <SelectTrigger
-                className="w-full"
+                className="w-full text-sm"
                 aria-label="Filter by date added"
               >
                 <SelectValue placeholder="Any time" />
@@ -261,14 +267,17 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
 
           {/* Category Filter - Will be populated from database */}
           <div>
-            <div className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <div className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Category
             </div>
             <Select
               value={filters.category}
               onValueChange={(value) => handleFilterChange("category", value)}
             >
-              <SelectTrigger className="w-full" aria-label="Filter by category">
+              <SelectTrigger
+                className="w-full text-sm"
+                aria-label="Filter by category"
+              >
                 <SelectValue placeholder="Any category" />
               </SelectTrigger>
               <SelectContent>
@@ -287,7 +296,7 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
 
           {/* Speaker Filter - Will be populated from database */}
           <div>
-            <div className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <div className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Teacher/Speaker
             </div>
             <Select
@@ -295,7 +304,7 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
               onValueChange={(value) => handleFilterChange("speaker", value)}
             >
               <SelectTrigger
-                className="w-full"
+                className="w-full text-sm"
                 aria-label="Filter by teacher or speaker"
               >
                 <SelectValue placeholder="Any teacher" />

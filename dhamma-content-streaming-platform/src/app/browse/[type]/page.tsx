@@ -1,7 +1,7 @@
 import { queries } from "@/lib/supabase";
 import Link from "next/link";
 import { ContentTypeIcons, FeatureIcons } from "@/components/ui/icons";
-import { type ReactNode } from "react";
+import type { ReactNode } from "react";
 
 // alias icon components for proper JSX naming
 const {
@@ -107,8 +107,8 @@ interface BreadcrumbProps {
 
 function Breadcrumb({ contentConfig }: BreadcrumbProps) {
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-      <nav className="text-sm text-gray-600 dark:text-gray-400">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
+      <nav className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
         <Link
           href="/"
           className="hover:text-orange-600 dark:hover:text-orange-400"
@@ -151,16 +151,16 @@ function MainContent({
   type
 }: MainContentProps) {
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
       <PageIntro contentConfig={contentConfig} />
 
       {/* Advanced Search Filters */}
-      <div className="mb-6">
+      <div className="mb-4 sm:mb-6">
         <SearchFilters />
       </div>
 
       {/* Active Filters Summary */}
-      <ActiveFiltersSummary search={search} className="mb-6" />
+      <ActiveFiltersSummary search={search} className="mb-4 sm:mb-6" />
 
       <ResultsSummary
         search={search}
@@ -190,12 +190,14 @@ function PageIntro({
   contentConfig: { title: string; icon: ReactNode; description: string };
 }) {
   return (
-    <div className="text-center mb-8">
-      <div className="text-6xl mb-4">{contentConfig.icon}</div>
-      <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+    <div className="text-center mb-6 sm:mb-8">
+      <div className="text-4xl sm:text-5xl md:text-6xl mb-4">
+        {contentConfig.icon}
+      </div>
+      <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
         {contentConfig.title}
       </h2>
-      <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8">
+      <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-6 sm:mb-8">
         {contentConfig.description}
       </p>
 

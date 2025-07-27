@@ -32,14 +32,14 @@ function CompactContentCard({ content }: CompactContentCardProps) {
       tabIndex={0}
     >
       <div
-        className="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 p-4 border border-gray-100 dark:border-gray-700 h-full flex gap-4 group/card relative"
+        className="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 p-3 sm:p-4 border border-gray-100 dark:border-gray-700 h-full flex gap-3 sm:gap-4 group/card relative"
         style={{ minHeight: 90 }}
       >
         {/* Content type icon */}
         <div className="flex-shrink-0">
-          <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center border border-orange-200 dark:border-orange-800">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center border border-orange-200 dark:border-orange-800">
             <IconComponent
-              className="w-6 h-6 text-orange-600 dark:text-orange-400"
+              className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600 dark:text-orange-400"
               aria-label={content.content_type}
             />
           </div>
@@ -48,12 +48,12 @@ function CompactContentCard({ content }: CompactContentCardProps) {
         {/* Content details */}
         <div className="flex-1 min-w-0">
           {/* Header: Type + Date */}
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between mb-1 sm:mb-2">
             <span className="text-xs font-semibold text-orange-600 dark:text-orange-400 uppercase tracking-wide">
               {content.content_type}
             </span>
             {content.date_recorded && (
-              <span className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+              <span className="text-xs text-gray-500 dark:text-gray-400 items-center gap-1 hidden sm:flex">
                 <FeatureIcons.Calendar className="w-3 h-3" />
                 {new Date(content.date_recorded).toLocaleDateString()}
               </span>
@@ -63,7 +63,7 @@ function CompactContentCard({ content }: CompactContentCardProps) {
           {/* Title */}
           <h3
             ref={titleRef}
-            className="text-base font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors line-clamp-2 cursor-pointer leading-tight"
+            className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors line-clamp-2 cursor-pointer leading-tight"
             aria-label={content.title}
             onMouseEnter={() => setShowTooltip(isTruncated(titleRef.current))}
             onMouseLeave={() => setShowTooltip(false)}
@@ -80,8 +80,8 @@ function CompactContentCard({ content }: CompactContentCardProps) {
           </h3>
 
           {/* Metadata + Action */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div className="flex items-center gap-2 sm:gap-3 text-xs text-gray-500 dark:text-gray-400 flex-wrap">
               {content.duration_estimate && (
                 <span className="flex items-center gap-1">
                   <FeatureIcons.Clock className="w-3 h-3" />
@@ -95,14 +95,29 @@ function CompactContentCard({ content }: CompactContentCardProps) {
                   {content.language}
                 </span>
               )}
+              {/* Show date on mobile if hidden in header */}
+              {content.date_recorded && (
+                <span className="flex items-center gap-1 sm:hidden">
+                  <FeatureIcons.Calendar className="w-3 h-3" />
+                  {new Date(content.date_recorded).toLocaleDateString()}
+                </span>
+              )}
             </div>
 
-            <div className="text-orange-600 dark:text-orange-400 text-sm font-medium group-hover:underline flex items-center gap-1">
-              {content.content_type === "video" && "Watch"}
-              {content.content_type === "audio" && "Listen"}
-              {content.content_type === "ebook" && "Read"}
-              {content.content_type === "other" && "View"}
-              <FeatureIcons.ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            <div className="text-orange-600 dark:text-orange-400 text-xs sm:text-sm font-medium group-hover:underline flex items-center gap-1 flex-shrink-0">
+              <span className="hidden sm:inline">
+                {content.content_type === "video" && "Watch"}
+                {content.content_type === "audio" && "Listen"}
+                {content.content_type === "ebook" && "Read"}
+                {content.content_type === "other" && "View"}
+              </span>
+              <span className="sm:hidden">
+                {content.content_type === "video" && "Watch"}
+                {content.content_type === "audio" && "Listen"}
+                {content.content_type === "ebook" && "Read"}
+                {content.content_type === "other" && "View"}
+              </span>
+              <FeatureIcons.ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-1" />
             </div>
           </div>
         </div>

@@ -131,7 +131,7 @@ export default function PaginationControls({
 
       {/* Pagination Controls */}
       <nav
-        className={`flex items-center justify-center space-x-2 ${className}`}
+        className={`flex items-center justify-center space-x-1 sm:space-x-2 ${className}`}
         aria-label="Pagination"
       >
         {/* Previous button */}
@@ -139,15 +139,15 @@ export default function PaginationControls({
           type="button"
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage <= 1}
-          className="px-3 py-2 text-sm font-medium text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors flex items-center gap-1"
+          className="px-2 py-2 sm:px-3 sm:py-2 text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors flex items-center gap-1"
           aria-label="Go to previous page"
         >
-          <ChevronLeftIcon className="w-4 h-4" />
-          Previous
+          <ChevronLeftIcon className="w-3 h-3 sm:w-4 sm:h-4" />
+          <span className="hidden sm:inline">Previous</span>
         </button>
 
         {/* Page numbers */}
-        <div className="flex space-x-1">
+        <div className="flex space-x-0.5 sm:space-x-1">
           {pageNumbers.map((page, index) => {
             // Create unique keys for ellipsis elements by using their position
             const key = page === "..." ? `ellipsis-${index}` : `page-${page}`;
@@ -155,14 +155,14 @@ export default function PaginationControls({
             return (
               <span key={key}>
                 {page === "..." ? (
-                  <span className="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <span className="px-2 py-2 sm:px-3 sm:py-2 text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
                     ...
                   </span>
                 ) : (
                   <button
                     type="button"
                     onClick={() => handlePageChange(Number(page))}
-                    className={`px-3 py-2 text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors ${
+                    className={`px-2 py-2 sm:px-3 sm:py-2 text-xs sm:text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors min-w-[36px] sm:min-w-[40px] ${
                       currentPage === page
                         ? "bg-orange-600 text-white border border-orange-600 dark:bg-orange-500 dark:border-orange-500"
                         : "text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
@@ -183,11 +183,11 @@ export default function PaginationControls({
           type="button"
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage >= totalPages}
-          className="px-3 py-2 text-sm font-medium text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors flex items-center gap-1"
+          className="px-2 py-2 sm:px-3 sm:py-2 text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors flex items-center gap-1"
           aria-label="Go to next page"
         >
-          Next
-          <ChevronRightIcon className="w-4 h-4" />
+          <span className="hidden sm:inline">Next</span>
+          <ChevronRightIcon className="w-3 h-3 sm:w-4 sm:h-4" />
         </button>
       </nav>
     </div>
