@@ -4,9 +4,14 @@ DhammaStream is a web-based platform for streaming Dhamma talks and lectures. It
 
 ## Screenshots
 
-![DhammaStream Application](screenshots/dhammastream-app-screenshot.png)
 
-*DhammaStream homepage showing the Buddhist content streaming platform with sections for Teachers & Speakers, Video Teachings, Audio Content, and Digital Books*
+![DhammaStream Homepage (Playwright Screenshot)](screenshots/dhamma-stream-homepage.png)
+
+*Homepage captured using Playwright automation on https://dhamma-stream.vercel.app (July 2025)*
+
+![DhammaStream Application (Legacy Screenshot)](screenshots/dhammastream-app-screenshot.png)
+
+*Legacy screenshot: DhammaStream homepage showing the Buddhist content streaming platform with sections for Teachers & Speakers, Video Teachings, Audio Content, and Digital Books*
 
 ## Table of Contents
 
