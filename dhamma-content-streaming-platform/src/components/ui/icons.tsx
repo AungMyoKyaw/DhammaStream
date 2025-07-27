@@ -11,6 +11,7 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Home,
   ArrowLeft,
   ArrowRight,
@@ -40,6 +41,7 @@ export const FeatureIcons = {
   Close: X,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Home,
   ArrowLeft,
   ArrowRight,
@@ -48,7 +50,8 @@ export const FeatureIcons = {
   SkipBack,
   SkipForward,
   Volume: Volume2,
-  Filter
+  Filter,
+  Rocket
 } as const;
 
 export type ContentType = keyof typeof ContentTypeIcons;

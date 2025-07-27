@@ -31,7 +31,7 @@ export default function SpeakerContentToolbar({
       <div className="flex flex-col space-y-3 md:space-y-0 md:flex-row md:items-center md:justify-between md:gap-4">
         <div className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:gap-3">
           <ContentTypeTabs />
-          <ActiveFiltersSummary search={search} type={type} sort={sort} />
+          <ActiveFiltersSummary search={search} type={type} />
         </div>
         <div className="flex justify-end">
           <SortDropdownWrapper

@@ -1,7 +1,7 @@
 import { queries } from "@/lib/supabase";
 import Link from "next/link";
 import { ContentTypeIcons, FeatureIcons } from "@/components/ui/icons";
-import { ReactNode } from "react";
+import { type ReactNode } from "react";
 
 // alias icon components for proper JSX naming
 const {
@@ -11,6 +11,8 @@ const {
 } = ContentTypeIcons;
 import { notFound } from "next/navigation";
 import SearchInput from "@/components/SearchInput";
+import SearchFilters from "@/components/SearchFilters";
+import ActiveFiltersSummary from "@/components/ActiveFiltersSummary";
 import PaginationControls from "@/components/PaginationControls";
 import CompactContentCard from "@/components/CompactContentCard";
 import { Navigation } from "@/components/Navigation";
@@ -151,6 +153,15 @@ function MainContent({
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <PageIntro contentConfig={contentConfig} />
+
+      {/* Advanced Search Filters */}
+      <div className="mb-6">
+        <SearchFilters />
+      </div>
+
+      {/* Active Filters Summary */}
+      <ActiveFiltersSummary search={search} className="mb-6" />
+
       <ResultsSummary
         search={search}
         count={count}
