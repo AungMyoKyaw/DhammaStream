@@ -3,7 +3,13 @@
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useCallback, useState, useEffect } from "react";
 import { FeatureIcons } from "@/components/ui/icons";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
 
 interface SearchFiltersProps {
   className?: string;
@@ -55,7 +61,9 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
   });
 
   // Check if any filters are active
-  const hasActiveFilters = Object.values(filters).some(value => value && value !== "relevance");
+  const hasActiveFilters = Object.values(filters).some(
+    (value) => value && value !== "relevance"
+  );
 
   useEffect(() => {
     setFilters({
@@ -113,7 +121,9 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
   };
 
   return (
-    <div className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 ${className}`}>
+    <div
+      className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 ${className}`}
+    >
       {/* Filter Toggle Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-2">
@@ -145,7 +155,7 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
             aria-label={isExpanded ? "Collapse filters" : "Expand filters"}
           >
             <FeatureIcons.ChevronDown
-              className={`w-5 h-5 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+              className={`w-5 h-5 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
             />
           </button>
         </div>
@@ -232,7 +242,10 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
               value={filters.dateRange}
               onValueChange={(value) => handleFilterChange("dateRange", value)}
             >
-              <SelectTrigger className="w-full" aria-label="Filter by date added">
+              <SelectTrigger
+                className="w-full"
+                aria-label="Filter by date added"
+              >
                 <SelectValue placeholder="Any time" />
               </SelectTrigger>
               <SelectContent>
@@ -281,7 +294,10 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
               value={filters.speaker}
               onValueChange={(value) => handleFilterChange("speaker", value)}
             >
-              <SelectTrigger className="w-full" aria-label="Filter by teacher or speaker">
+              <SelectTrigger
+                className="w-full"
+                aria-label="Filter by teacher or speaker"
+              >
                 <SelectValue placeholder="Any teacher" />
               </SelectTrigger>
               <SelectContent>
@@ -290,7 +306,9 @@ export default function SearchFilters({ className = "" }: SearchFiltersProps) {
                 <SelectItem value="ajahn-chah">Ajahn Chah</SelectItem>
                 <SelectItem value="thich-nhat-hanh">Thich Nhat Hanh</SelectItem>
                 <SelectItem value="dalai-lama">Dalai Lama</SelectItem>
-                <SelectItem value="joseph-goldstein">Joseph Goldstein</SelectItem>
+                <SelectItem value="joseph-goldstein">
+                  Joseph Goldstein
+                </SelectItem>
                 <SelectItem value="jack-kornfield">Jack Kornfield</SelectItem>
               </SelectContent>
             </Select>

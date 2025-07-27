@@ -71,7 +71,9 @@ export default function UserProfileComponent({
   onUpdatePreferences,
   className = ""
 }: UserProfileComponentProps) {
-  const [activeTab, setActiveTab] = useState<"profile" | "preferences" | "stats">("profile");
+  const [activeTab, setActiveTab] = useState<
+    "profile" | "preferences" | "stats"
+  >("profile");
   const [preferences, setPreferences] = useState<UserPreferences>(
     user?.preferences || defaultPreferences
   );
@@ -152,12 +154,18 @@ export default function UserProfileComponent({
 
   const tabs = [
     { id: "profile" as const, label: "Profile", icon: FeatureIcons.Meditation },
-    { id: "preferences" as const, label: "Preferences", icon: FeatureIcons.Filter },
+    {
+      id: "preferences" as const,
+      label: "Preferences",
+      icon: FeatureIcons.Filter
+    },
     { id: "stats" as const, label: "Statistics", icon: FeatureIcons.Calendar }
   ];
 
   return (
-    <div className={`bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 ${className}`}>
+    <div
+      className={`bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 ${className}`}
+    >
       {/* Tab Navigation */}
       <div className="border-b border-gray-200 dark:border-gray-700">
         <nav className="flex space-x-8 px-6" aria-label="Profile sections">
@@ -186,32 +194,52 @@ export default function UserProfileComponent({
             <div className="flex items-start space-x-4">
               {/* Avatar */}
               <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
-                {currentUser.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
+                {currentUser.name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")
+                  .slice(0, 2)}
               </div>
 
               <div className="flex-1">
                 {isEditing ? (
                   <div className="space-y-4">
                     <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      <label
+                        htmlFor="name"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                      >
                         Name
                       </label>
                       <input
                         id="name"
                         type="text"
                         value={editedProfile.name}
-                        onChange={(e) => setEditedProfile(prev => ({ ...prev, name: e.target.value }))}
+                        onChange={(e) =>
+                          setEditedProfile((prev) => ({
+                            ...prev,
+                            name: e.target.value
+                          }))
+                        }
                         className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                       />
                     </div>
                     <div>
-                      <label htmlFor="bio" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      <label
+                        htmlFor="bio"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                      >
                         Bio
                       </label>
                       <textarea
                         id="bio"
                         value={editedProfile.bio}
-                        onChange={(e) => setEditedProfile(prev => ({ ...prev, bio: e.target.value }))}
+                        onChange={(e) =>
+                          setEditedProfile((prev) => ({
+                            ...prev,
+                            bio: e.target.value
+                          }))
+                        }
                         rows={3}
                         className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                         placeholder="Tell us about your meditation journey..."
@@ -248,12 +276,17 @@ export default function UserProfileComponent({
                         Edit
                       </button>
                     </div>
-                    <p className="text-gray-600 dark:text-gray-400 mb-2">{currentUser.email}</p>
+                    <p className="text-gray-600 dark:text-gray-400 mb-2">
+                      {currentUser.email}
+                    </p>
                     <p className="text-sm text-gray-500 dark:text-gray-500 mb-3">
-                      Member since {new Date(currentUser.joinDate).toLocaleDateString()}
+                      Member since{" "}
+                      {new Date(currentUser.joinDate).toLocaleDateString()}
                     </p>
                     {currentUser.bio && (
-                      <p className="text-gray-700 dark:text-gray-300">{currentUser.bio}</p>
+                      <p className="text-gray-700 dark:text-gray-300">
+                        {currentUser.bio}
+                      </p>
                     )}
                   </div>
                 )}
@@ -272,47 +305,68 @@ export default function UserProfileComponent({
               </h3>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <label htmlFor="autoplay" className="text-sm text-gray-700 dark:text-gray-300">
+                  <label
+                    htmlFor="autoplay"
+                    className="text-sm text-gray-700 dark:text-gray-300"
+                  >
                     Autoplay next content
                   </label>
                   <button
                     id="autoplay"
                     type="button"
-                    onClick={() => updatePreference("autoplay", !preferences.autoplay)}
+                    onClick={() =>
+                      updatePreference("autoplay", !preferences.autoplay)
+                    }
                     className={`relative w-11 h-6 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 ${
-                      preferences.autoplay ? "bg-orange-600" : "bg-gray-300 dark:bg-gray-600"
+                      preferences.autoplay
+                        ? "bg-orange-600"
+                        : "bg-gray-300 dark:bg-gray-600"
                     }`}
                   >
                     <div
                       className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${
-                        preferences.autoplay ? "translate-x-5" : "translate-x-0.5"
+                        preferences.autoplay
+                          ? "translate-x-5"
+                          : "translate-x-0.5"
                       }`}
                     />
                   </button>
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <label htmlFor="subtitles" className="text-sm text-gray-700 dark:text-gray-300">
+                  <label
+                    htmlFor="subtitles"
+                    className="text-sm text-gray-700 dark:text-gray-300"
+                  >
                     Show subtitles when available
                   </label>
                   <button
                     id="subtitles"
                     type="button"
-                    onClick={() => updatePreference("subtitles", !preferences.subtitles)}
+                    onClick={() =>
+                      updatePreference("subtitles", !preferences.subtitles)
+                    }
                     className={`relative w-11 h-6 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 ${
-                      preferences.subtitles ? "bg-orange-600" : "bg-gray-300 dark:bg-gray-600"
+                      preferences.subtitles
+                        ? "bg-orange-600"
+                        : "bg-gray-300 dark:bg-gray-600"
                     }`}
                   >
                     <div
                       className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${
-                        preferences.subtitles ? "translate-x-5" : "translate-x-0.5"
+                        preferences.subtitles
+                          ? "translate-x-5"
+                          : "translate-x-0.5"
                       }`}
                     />
                   </button>
                 </div>
 
                 <div>
-                  <label htmlFor="playback-rate" className="block text-sm text-gray-700 dark:text-gray-300 mb-2">
+                  <label
+                    htmlFor="playback-rate"
+                    className="block text-sm text-gray-700 dark:text-gray-300 mb-2"
+                  >
                     Default playback speed: {preferences.playbackRate}x
                   </label>
                   <input
@@ -322,13 +376,21 @@ export default function UserProfileComponent({
                     max="2"
                     step="0.25"
                     value={preferences.playbackRate}
-                    onChange={(e) => updatePreference("playbackRate", parseFloat(e.target.value))}
+                    onChange={(e) =>
+                      updatePreference(
+                        "playbackRate",
+                        parseFloat(e.target.value)
+                      )
+                    }
                     className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="volume" className="block text-sm text-gray-700 dark:text-gray-300 mb-2">
+                  <label
+                    htmlFor="volume"
+                    className="block text-sm text-gray-700 dark:text-gray-300 mb-2"
+                  >
                     Default volume: {Math.round(preferences.volume * 100)}%
                   </label>
                   <input
@@ -338,7 +400,9 @@ export default function UserProfileComponent({
                     max="1"
                     step="0.1"
                     value={preferences.volume}
-                    onChange={(e) => updatePreference("volume", parseFloat(e.target.value))}
+                    onChange={(e) =>
+                      updatePreference("volume", parseFloat(e.target.value))
+                    }
                     className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
                   />
                 </div>
@@ -352,60 +416,99 @@ export default function UserProfileComponent({
               </h3>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <label htmlFor="new-content" className="text-sm text-gray-700 dark:text-gray-300">
+                  <label
+                    htmlFor="new-content"
+                    className="text-sm text-gray-700 dark:text-gray-300"
+                  >
                     New content notifications
                   </label>
                   <button
                     id="new-content"
                     type="button"
-                    onClick={() => updateNestedPreference("notifications", "newContent", !preferences.notifications.newContent)}
+                    onClick={() =>
+                      updateNestedPreference(
+                        "notifications",
+                        "newContent",
+                        !preferences.notifications.newContent
+                      )
+                    }
                     className={`relative w-11 h-6 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 ${
-                      preferences.notifications.newContent ? "bg-orange-600" : "bg-gray-300 dark:bg-gray-600"
+                      preferences.notifications.newContent
+                        ? "bg-orange-600"
+                        : "bg-gray-300 dark:bg-gray-600"
                     }`}
                   >
                     <div
                       className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${
-                        preferences.notifications.newContent ? "translate-x-5" : "translate-x-0.5"
+                        preferences.notifications.newContent
+                          ? "translate-x-5"
+                          : "translate-x-0.5"
                       }`}
                     />
                   </button>
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <label htmlFor="learning-progress" className="text-sm text-gray-700 dark:text-gray-300">
+                  <label
+                    htmlFor="learning-progress"
+                    className="text-sm text-gray-700 dark:text-gray-300"
+                  >
                     Learning path progress
                   </label>
                   <button
                     id="learning-progress"
                     type="button"
-                    onClick={() => updateNestedPreference("notifications", "learningPathProgress", !preferences.notifications.learningPathProgress)}
+                    onClick={() =>
+                      updateNestedPreference(
+                        "notifications",
+                        "learningPathProgress",
+                        !preferences.notifications.learningPathProgress
+                      )
+                    }
                     className={`relative w-11 h-6 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 ${
-                      preferences.notifications.learningPathProgress ? "bg-orange-600" : "bg-gray-300 dark:bg-gray-600"
+                      preferences.notifications.learningPathProgress
+                        ? "bg-orange-600"
+                        : "bg-gray-300 dark:bg-gray-600"
                     }`}
                   >
                     <div
                       className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${
-                        preferences.notifications.learningPathProgress ? "translate-x-5" : "translate-x-0.5"
+                        preferences.notifications.learningPathProgress
+                          ? "translate-x-5"
+                          : "translate-x-0.5"
                       }`}
                     />
                   </button>
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <label htmlFor="reminder-bells" className="text-sm text-gray-700 dark:text-gray-300">
+                  <label
+                    htmlFor="reminder-bells"
+                    className="text-sm text-gray-700 dark:text-gray-300"
+                  >
                     Meditation reminder bells
                   </label>
                   <button
                     id="reminder-bells"
                     type="button"
-                    onClick={() => updateNestedPreference("notifications", "reminderBells", !preferences.notifications.reminderBells)}
+                    onClick={() =>
+                      updateNestedPreference(
+                        "notifications",
+                        "reminderBells",
+                        !preferences.notifications.reminderBells
+                      )
+                    }
                     className={`relative w-11 h-6 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 ${
-                      preferences.notifications.reminderBells ? "bg-orange-600" : "bg-gray-300 dark:bg-gray-600"
+                      preferences.notifications.reminderBells
+                        ? "bg-orange-600"
+                        : "bg-gray-300 dark:bg-gray-600"
                     }`}
                   >
                     <div
                       className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${
-                        preferences.notifications.reminderBells ? "translate-x-5" : "translate-x-0.5"
+                        preferences.notifications.reminderBells
+                          ? "translate-x-5"
+                          : "translate-x-0.5"
                       }`}
                     />
                   </button>
@@ -420,60 +523,99 @@ export default function UserProfileComponent({
               </h3>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <label htmlFor="track-progress" className="text-sm text-gray-700 dark:text-gray-300">
+                  <label
+                    htmlFor="track-progress"
+                    className="text-sm text-gray-700 dark:text-gray-300"
+                  >
                     Track listening progress
                   </label>
                   <button
                     id="track-progress"
                     type="button"
-                    onClick={() => updateNestedPreference("privacy", "trackProgress", !preferences.privacy.trackProgress)}
+                    onClick={() =>
+                      updateNestedPreference(
+                        "privacy",
+                        "trackProgress",
+                        !preferences.privacy.trackProgress
+                      )
+                    }
                     className={`relative w-11 h-6 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 ${
-                      preferences.privacy.trackProgress ? "bg-orange-600" : "bg-gray-300 dark:bg-gray-600"
+                      preferences.privacy.trackProgress
+                        ? "bg-orange-600"
+                        : "bg-gray-300 dark:bg-gray-600"
                     }`}
                   >
                     <div
                       className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${
-                        preferences.privacy.trackProgress ? "translate-x-5" : "translate-x-0.5"
+                        preferences.privacy.trackProgress
+                          ? "translate-x-5"
+                          : "translate-x-0.5"
                       }`}
                     />
                   </button>
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <label htmlFor="share-bookmarks" className="text-sm text-gray-700 dark:text-gray-300">
+                  <label
+                    htmlFor="share-bookmarks"
+                    className="text-sm text-gray-700 dark:text-gray-300"
+                  >
                     Share bookmarks publicly
                   </label>
                   <button
                     id="share-bookmarks"
                     type="button"
-                    onClick={() => updateNestedPreference("privacy", "shareBookmarks", !preferences.privacy.shareBookmarks)}
+                    onClick={() =>
+                      updateNestedPreference(
+                        "privacy",
+                        "shareBookmarks",
+                        !preferences.privacy.shareBookmarks
+                      )
+                    }
                     className={`relative w-11 h-6 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 ${
-                      preferences.privacy.shareBookmarks ? "bg-orange-600" : "bg-gray-300 dark:bg-gray-600"
+                      preferences.privacy.shareBookmarks
+                        ? "bg-orange-600"
+                        : "bg-gray-300 dark:bg-gray-600"
                     }`}
                   >
                     <div
                       className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${
-                        preferences.privacy.shareBookmarks ? "translate-x-5" : "translate-x-0.5"
+                        preferences.privacy.shareBookmarks
+                          ? "translate-x-5"
+                          : "translate-x-0.5"
                       }`}
                     />
                   </button>
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <label htmlFor="public-profile" className="text-sm text-gray-700 dark:text-gray-300">
+                  <label
+                    htmlFor="public-profile"
+                    className="text-sm text-gray-700 dark:text-gray-300"
+                  >
                     Public profile visibility
                   </label>
                   <button
                     id="public-profile"
                     type="button"
-                    onClick={() => updateNestedPreference("privacy", "publicProfile", !preferences.privacy.publicProfile)}
+                    onClick={() =>
+                      updateNestedPreference(
+                        "privacy",
+                        "publicProfile",
+                        !preferences.privacy.publicProfile
+                      )
+                    }
                     className={`relative w-11 h-6 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 ${
-                      preferences.privacy.publicProfile ? "bg-orange-600" : "bg-gray-300 dark:bg-gray-600"
+                      preferences.privacy.publicProfile
+                        ? "bg-orange-600"
+                        : "bg-gray-300 dark:bg-gray-600"
                     }`}
                   >
                     <div
                       className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${
-                        preferences.privacy.publicProfile ? "translate-x-5" : "translate-x-0.5"
+                        preferences.privacy.publicProfile
+                          ? "translate-x-5"
+                          : "translate-x-0.5"
                       }`}
                     />
                   </button>
@@ -534,7 +676,8 @@ export default function UserProfileComponent({
                 Recent Activity
               </h4>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Keep up the great work! You&apos;ve been consistently engaging with Dhamma content.
+                Keep up the great work! You&apos;ve been consistently engaging
+                with Dhamma content.
               </p>
             </div>
           </div>

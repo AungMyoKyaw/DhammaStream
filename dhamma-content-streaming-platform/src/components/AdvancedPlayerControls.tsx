@@ -51,9 +51,9 @@ export default function AdvancedPlayerControls({
     const secs = Math.floor(seconds % 60);
 
     if (hours > 0) {
-      return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      return `${hours}:${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
     }
-    return `${minutes}:${secs.toString().padStart(2, '0')}`;
+    return `${minutes}:${secs.toString().padStart(2, "0")}`;
   }, []);
 
   // Handle progress bar click
@@ -80,32 +80,35 @@ export default function AdvancedPlayerControls({
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Only handle keys when not in an input field
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement
+      ) {
         return;
       }
 
       switch (e.key) {
-        case ' ':
+        case " ":
           e.preventDefault();
           onPlayPause();
           break;
-        case 'ArrowLeft':
+        case "ArrowLeft":
           e.preventDefault();
           onSeek(Math.max(0, currentTime - 10));
           break;
-        case 'ArrowRight':
+        case "ArrowRight":
           e.preventDefault();
           onSeek(Math.min(duration, currentTime + 10));
           break;
-        case 'ArrowUp':
+        case "ArrowUp":
           e.preventDefault();
           onVolumeChange(Math.min(1, volume + 0.1));
           break;
-        case 'ArrowDown':
+        case "ArrowDown":
           e.preventDefault();
           onVolumeChange(Math.max(0, volume - 0.1));
           break;
-        case 'm':
+        case "m":
           e.preventDefault();
           onVolumeChange(volume > 0 ? 0 : 1);
           break;
@@ -114,13 +117,13 @@ export default function AdvancedPlayerControls({
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [currentTime, duration, volume, onPlayPause, onSeek, onVolumeChange]);
 
   // A-B Loop functionality
-  const setLoopPoint = (type: 'start' | 'end') => {
-    if (type === 'start') {
+  const setLoopPoint = (type: "start" | "end") => {
+    if (type === "start") {
       setLoopStart(currentTime);
       if (loopEnd && currentTime >= loopEnd) {
         setLoopEnd(null);
@@ -140,13 +143,20 @@ export default function AdvancedPlayerControls({
 
   // Handle looping during playback
   useEffect(() => {
-    if (isLooping && loopStart !== null && loopEnd !== null && currentTime >= loopEnd) {
+    if (
+      isLooping &&
+      loopStart !== null &&
+      loopEnd !== null &&
+      currentTime >= loopEnd
+    ) {
       onSeek(loopStart);
     }
   }, [currentTime, isLooping, loopStart, loopEnd, onSeek]);
 
   return (
-    <div className={`bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4 ${className}`}>
+    <div
+      className={`bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4 ${className}`}
+    >
       {/* Progress Bar */}
       <div className="mb-4">
         <button
@@ -178,7 +188,10 @@ export default function AdvancedPlayerControls({
           {/* Progress handle */}
           <div
             className="absolute top-1/2 transform -translate-y-1/2 w-4 h-4 bg-orange-600 dark:bg-orange-500 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
-            style={{ left: `${(currentTime / duration) * 100}%`, marginLeft: '-8px' }}
+            style={{
+              left: `${(currentTime / duration) * 100}%`,
+              marginLeft: "-8px"
+            }}
           />
         </button>
 
@@ -232,11 +245,11 @@ export default function AdvancedPlayerControls({
         <div className="flex items-center space-x-2">
           <button
             type="button"
-            onClick={() => setLoopPoint('start')}
+            onClick={() => setLoopPoint("start")}
             className={`px-3 py-1 text-sm rounded transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 ${
               loopStart !== null
-                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                : 'bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300'
+                ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                : "bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300"
             }`}
             title="Set loop start point (A)"
           >
@@ -247,11 +260,11 @@ export default function AdvancedPlayerControls({
 
           <button
             type="button"
-            onClick={() => setLoopPoint('end')}
+            onClick={() => setLoopPoint("end")}
             className={`px-3 py-1 text-sm rounded transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 ${
               loopEnd !== null
-                ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                : 'bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300'
+                ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                : "bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300"
             }`}
             title="Set loop end point (B)"
           >
@@ -265,8 +278,8 @@ export default function AdvancedPlayerControls({
                 onClick={() => setIsLooping(!isLooping)}
                 className={`px-3 py-1 text-sm rounded transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 ${
                   isLooping
-                    ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200'
-                    : 'bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300'
+                    ? "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200"
+                    : "bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300"
                 }`}
                 title="Toggle loop playback"
               >
@@ -338,7 +351,9 @@ export default function AdvancedPlayerControls({
                       setShowPlaybackRateMenu(false);
                     }}
                     className={`block w-full px-4 py-2 text-sm text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
-                      rate === playbackRate ? 'text-orange-600 dark:text-orange-400' : 'text-gray-700 dark:text-gray-300'
+                      rate === playbackRate
+                        ? "text-orange-600 dark:text-orange-400"
+                        : "text-gray-700 dark:text-gray-300"
                     }`}
                   >
                     {rate}x
@@ -359,19 +374,27 @@ export default function AdvancedPlayerControls({
           <div className="mt-2 space-y-1 text-xs">
             <div className="flex justify-between">
               <span>Play/Pause:</span>
-              <span className="font-mono bg-gray-100 dark:bg-gray-700 px-1 rounded">Space</span>
+              <span className="font-mono bg-gray-100 dark:bg-gray-700 px-1 rounded">
+                Space
+              </span>
             </div>
             <div className="flex justify-between">
               <span>Seek backward/forward:</span>
-              <span className="font-mono bg-gray-100 dark:bg-gray-700 px-1 rounded">← / →</span>
+              <span className="font-mono bg-gray-100 dark:bg-gray-700 px-1 rounded">
+                ← / →
+              </span>
             </div>
             <div className="flex justify-between">
               <span>Volume up/down:</span>
-              <span className="font-mono bg-gray-100 dark:bg-gray-700 px-1 rounded">↑ / ↓</span>
+              <span className="font-mono bg-gray-100 dark:bg-gray-700 px-1 rounded">
+                ↑ / ↓
+              </span>
             </div>
             <div className="flex justify-between">
               <span>Mute/unmute:</span>
-              <span className="font-mono bg-gray-100 dark:bg-gray-700 px-1 rounded">M</span>
+              <span className="font-mono bg-gray-100 dark:bg-gray-700 px-1 rounded">
+                M
+              </span>
             </div>
           </div>
         </details>

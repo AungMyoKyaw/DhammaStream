@@ -201,7 +201,7 @@ export default function CardDesignDemo() {
           {/* Implementation Notes */}
           <section className="bg-white rounded-lg p-8 shadow-md border border-orange-100">
             <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              Implementation Status & Recommendations
+              Implementation Status
             </h3>
             <div className="grid md:grid-cols-2 gap-8">
               <div>
