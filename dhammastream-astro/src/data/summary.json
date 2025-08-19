@@ -1,0 +1,11 @@
+{
+  "totalContent": 1000,
+  "speakers": 162,
+  "categories": 3,
+  "contentTypes": {
+    "audio": 600,
+    "video": 300,
+    "ebook": 100
+  },
+  "lastUpdated": "2025-08-19T18:00:05.967Z"
+}

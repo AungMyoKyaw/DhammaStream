@@ -1,0 +1,75 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Navigation from '../components/Navigation.astro';
+import '../styles/global.css';
+
+export interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  canonical?: string;
+}
+
+const { title, description, image, canonical } = Astro.props;
+---
+
+<BaseLayout title={title} description={description} image={image} canonical={canonical}>
+  <div class="min-h-screen flex flex-col">
+    <Navigation />
+    
+    <main class="flex-1">
+      <slot />
+    </main>
+    
+    <footer class="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+      <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- About Section -->
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">About DhammaStream</h3>
+            <p class="text-gray-600 dark:text-gray-300 text-sm">
+              A comprehensive platform for accessing Buddhist teachings, meditation guides, and spiritual content. 
+              Built with modern technology to provide the best learning experience.
+            </p>
+          </div>
+          
+          <!-- Quick Links -->
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Links</h3>
+            <ul class="space-y-2">
+              <li><a href="/browse/video" class="text-gray-600 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 text-sm transition-colors">Video Teachings</a></li>
+              <li><a href="/browse/audio" class="text-gray-600 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 text-sm transition-colors">Audio Content</a></li>
+              <li><a href="/browse/ebook" class="text-gray-600 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 text-sm transition-colors">Books</a></li>
+              <li><a href="/speakers" class="text-gray-600 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 text-sm transition-colors">Teachers</a></li>
+            </ul>
+          </div>
+          
+          <!-- Data Source -->
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Data Source</h3>
+            <p class="text-gray-600 dark:text-gray-300 text-sm mb-2">
+              Content provided by Myanmar Dhamma Catalog
+            </p>
+            <a 
+              href="https://catalogmm.org" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="inline-flex items-center text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 text-sm transition-colors"
+            >
+              Visit Source
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </a>
+          </div>
+        </div>
+        
+        <div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+          <p class="text-center text-gray-500 dark:text-gray-400 text-sm">
+            © 2025 DhammaStream. Built with ❤️ using Astro. Open source and modern.
+          </p>
+        </div>
+      </div>
+    </footer>
+  </div>
+</BaseLayout>

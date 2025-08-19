@@ -1,0 +1,286 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import contentData from '../data/content-by-type.json';
+import summary from '../data/summary.json';
+
+// Get recent content for featured sections
+const recentVideos = contentData.video.slice(0, 6);
+const recentAudio = contentData.audio.slice(0, 6);
+const recentEbooks = contentData.ebook.slice(0, 3);
+
+// Feature statistics
+const stats = [
+  { label: 'Video Teachings', value: summary.contentTypes.video.toLocaleString(), icon: '🎥' },
+  { label: 'Audio Content', value: summary.contentTypes.audio.toLocaleString(), icon: '🎧' },
+  { label: 'Books', value: summary.contentTypes.ebook.toLocaleString(), icon: '📚' },
+  { label: 'Teachers', value: summary.speakers.toLocaleString(), icon: '👨‍🏫' },
+];
+
+const features = [
+  {
+    title: 'Stream Anywhere',
+    description: 'Access content on any device - desktop, tablet, or mobile. Seamless playback across all platforms.',
+    icon: '📱'
+  },
+  {
+    title: 'Vast Library',
+    description: 'Thousands of hours of Buddhist teachings from renowned teachers and practitioners.',
+    icon: '📖'
+  },
+  {
+    title: 'Modern Experience',
+    description: 'Built with the latest technology for fast loading, smooth navigation, and offline support.',
+    icon: '⚡'
+  }
+];
+---
+
+<MainLayout title="DhammaStream - Buddhist Content Streaming Platform">
+  <!-- Hero Section -->
+  <section class="relative bg-gradient-to-br from-orange-50 to-amber-100 dark:from-gray-900 dark:to-gray-800 overflow-hidden">
+    <div class="absolute inset-0 bg-white/50 dark:bg-black/20"></div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+      <div class="text-center">
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 animate-fade-in">
+          Discover Buddhist
+          <span class="text-orange-600 dark:text-orange-400">Wisdom</span>
+        </h1>
+        <p class="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto animate-fade-in animation-delay-200">
+          Access thousands of Buddhist teachings, meditation guides, and spiritual content. 
+          Stream video, audio, and read ebooks from renowned teachers and practitioners.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in animation-delay-400">
+          <a 
+            href="/browse/video" 
+            class="btn btn-primary px-8 py-3 text-lg"
+          >
+            Start Watching
+          </a>
+          <a 
+            href="/browse/audio" 
+            class="btn btn-outline px-8 py-3 text-lg"
+          >
+            Listen Now
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="py-16 bg-white dark:bg-gray-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          Comprehensive Buddhist Library
+        </h2>
+        <p class="text-lg text-gray-600 dark:text-gray-300">
+          Thousands of hours of content from trusted sources
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+        {stats.map((stat, index) => (
+          <div class="text-center animate-slide-up" style={`animation-delay: ${index * 100}ms`}>
+            <div class="text-4xl mb-2">{stat.icon}</div>
+            <div class="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">
+              {stat.value}
+            </div>
+            <div class="text-gray-600 dark:text-gray-300 font-medium">
+              {stat.label}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="py-16 bg-gray-50 dark:bg-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          Why Choose DhammaStream?
+        </h2>
+        <p class="text-lg text-gray-600 dark:text-gray-300">
+          Experience the best in Buddhist content with features designed for your spiritual journey
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {features.map((feature, index) => (
+          <div class="text-center animate-fade-in" style={`animation-delay: ${index * 200}ms`}>
+            <div class="text-5xl mb-4">{feature.icon}</div>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+              {feature.title}
+            </h3>
+            <p class="text-gray-600 dark:text-gray-300">
+              {feature.description}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Recent Content Section -->
+  <section class="py-16 bg-white dark:bg-gray-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          Recent Additions
+        </h2>
+        <p class="text-lg text-gray-600 dark:text-gray-300">
+          Discover the latest content added to our library
+        </p>
+      </div>
+
+      <!-- Recent Videos -->
+      {recentVideos.length > 0 && (
+        <div class="mb-16">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Latest Videos</h3>
+            <a href="/browse/video" class="text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 font-medium">
+              View All →
+            </a>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {recentVideos.map((video) => (
+              <div class="content-card">
+                <div class="flex items-start space-x-3 mb-3">
+                  <div class="text-2xl">🎥</div>
+                  <div class="flex-1 min-w-0">
+                    <h4 class="font-semibold text-gray-900 dark:text-white line-clamp-2 mb-1">
+                      {video.title}
+                    </h4>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                      by {video.speaker}
+                    </p>
+                  </div>
+                </div>
+                {video.duration_estimate && (
+                  <div class="text-xs text-gray-500 dark:text-gray-400">
+                    Duration: {Math.round(video.duration_estimate / 60)} minutes
+                  </div>
+                )}
+                {video.category && (
+                  <div class="mt-2">
+                    <span class="inline-block px-2 py-1 text-xs bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200 rounded">
+                      {video.category}
+                    </span>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <!-- Recent Audio -->
+      {recentAudio.length > 0 && (
+        <div class="mb-16">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Latest Audio</h3>
+            <a href="/browse/audio" class="text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 font-medium">
+              View All →
+            </a>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {recentAudio.slice(0, 6).map((audio) => (
+              <div class="content-card">
+                <div class="flex items-start space-x-3 mb-3">
+                  <div class="text-2xl">🎧</div>
+                  <div class="flex-1 min-w-0">
+                    <h4 class="font-semibold text-gray-900 dark:text-white line-clamp-2 mb-1">
+                      {audio.title}
+                    </h4>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                      by {audio.speaker}
+                    </p>
+                  </div>
+                </div>
+                {audio.duration_estimate && (
+                  <div class="text-xs text-gray-500 dark:text-gray-400">
+                    Duration: {Math.round(audio.duration_estimate / 60)} minutes
+                  </div>
+                )}
+                {audio.category && (
+                  <div class="mt-2">
+                    <span class="inline-block px-2 py-1 text-xs bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200 rounded">
+                      {audio.category}
+                    </span>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <!-- Recent Books -->
+      {recentEbooks.length > 0 && (
+        <div>
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Latest Books</h3>
+            <a href="/browse/ebook" class="text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 font-medium">
+              View All →
+            </a>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {recentEbooks.map((book) => (
+              <div class="content-card">
+                <div class="flex items-start space-x-3 mb-3">
+                  <div class="text-2xl">📚</div>
+                  <div class="flex-1 min-w-0">
+                    <h4 class="font-semibold text-gray-900 dark:text-white line-clamp-2 mb-1">
+                      {book.title}
+                    </h4>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                      by {book.speaker}
+                    </p>
+                  </div>
+                </div>
+                {book.category && (
+                  <div class="mt-2">
+                    <span class="inline-block px-2 py-1 text-xs bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200 rounded">
+                      {book.category}
+                    </span>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="py-16 bg-gradient-to-r from-orange-600 to-amber-600 text-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">
+        Begin Your Spiritual Journey Today
+      </h2>
+      <p class="text-xl mb-8 opacity-90">
+        Explore thousands of teachings and find the wisdom that speaks to your heart
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/browse/video" class="btn bg-white text-orange-600 hover:bg-gray-100 px-8 py-3 text-lg font-semibold">
+          Explore Videos
+        </a>
+        <a href="/browse/audio" class="btn border-2 border-white text-white hover:bg-white hover:text-orange-600 px-8 py-3 text-lg font-semibold">
+          Listen to Audio
+        </a>
+      </div>
+    </div>
+  </section>
+</MainLayout>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>
