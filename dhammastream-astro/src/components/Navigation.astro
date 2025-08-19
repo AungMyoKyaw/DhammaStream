@@ -1,0 +1,154 @@
+---
+const currentPath = Astro.url.pathname;
+
+const navigationItems = [
+  { href: '/speakers', label: 'Teachers' },
+  { href: '/browse/video', label: 'Videos' },
+  { href: '/browse/audio', label: 'Audio' },
+  { href: '/browse/ebook', label: 'Books' }
+];
+
+function isActivePath(path: string): boolean {
+  return currentPath === path || currentPath.startsWith(path + '/');
+}
+---
+
+<header class="sticky top-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-b border-orange-100 dark:border-gray-700">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      <!-- Logo -->
+      <div class="flex items-center">
+        <a href="/" class="flex items-center space-x-2 text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 transition-colors">
+          <svg class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <title>DhammaStream Logo</title>
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+          <span class="text-xl font-bold">DhammaStream</span>
+        </a>
+      </div>
+
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex items-center space-x-8">
+        {navigationItems.map((item) => (
+          <a
+            href={item.href}
+            class={`transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 rounded-md px-2 py-1 ${
+              isActivePath(item.href)
+                ? 'text-orange-600 dark:text-orange-400 font-medium'
+                : 'text-gray-600 hover:text-orange-600 dark:text-gray-300 dark:hover:text-orange-400'
+            }`}
+          >
+            {item.label}
+          </a>
+        ))}
+      </nav>
+
+      <!-- Right Side Actions -->
+      <div class="flex items-center space-x-4">
+        <!-- Theme Toggle -->
+        <button
+          id="theme-toggle"
+          type="button"
+          class="p-2 rounded-lg text-gray-600 hover:text-orange-600 dark:text-gray-300 dark:hover:text-orange-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+          aria-label="Toggle theme"
+        >
+          <svg id="theme-icon-light" class="w-5 h-5 hidden dark:block" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+            <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd" />
+          </svg>
+          <svg id="theme-icon-dark" class="w-5 h-5 block dark:hidden" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+          </svg>
+        </button>
+
+        <!-- Mobile Menu Button -->
+        <button
+          id="mobile-menu-button"
+          type="button"
+          class="md:hidden p-2 rounded-lg text-gray-600 hover:text-orange-600 dark:text-gray-300 dark:hover:text-orange-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+          aria-label="Toggle mobile menu"
+          aria-expanded="false"
+        >
+          <svg id="menu-icon" class="w-6 h-6 block" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Menu -->
+    <div id="mobile-menu" class="md:hidden hidden pb-4 border-t border-orange-100 dark:border-gray-700">
+      <nav class="flex flex-col space-y-1 pt-4">
+        {navigationItems.map((item) => (
+          <a
+            href={item.href}
+            class={`block py-3 text-lg transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 rounded-md px-2 ${
+              isActivePath(item.href)
+                ? 'text-orange-600 dark:text-orange-400 font-medium'
+                : 'text-gray-600 hover:text-orange-600 dark:text-gray-300 dark:hover:text-orange-400'
+            }`}
+          >
+            {item.label}
+          </a>
+        ))}
+      </nav>
+    </div>
+  </div>
+</header>
+
+<script>
+  declare global {
+    interface Window {
+      toggleTheme: () => void;
+    }
+  }
+  
+  // Theme toggle functionality
+  const themeToggle = document.getElementById('theme-toggle');
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      if (typeof window.toggleTheme === 'function') {
+        window.toggleTheme();
+      }
+    });
+  }
+
+  // Mobile menu functionality
+  const mobileMenuButton = document.getElementById('mobile-menu-button');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const menuIcon = document.getElementById('menu-icon');
+  const closeIcon = document.getElementById('close-icon');
+  
+  if (mobileMenuButton && mobileMenu && menuIcon && closeIcon) {
+    mobileMenuButton.addEventListener('click', () => {
+      const isOpen = !mobileMenu.classList.contains('hidden');
+      
+      if (isOpen) {
+        // Close menu
+        mobileMenu.classList.add('hidden');
+        menuIcon.classList.remove('hidden');
+        closeIcon.classList.add('hidden');
+        mobileMenuButton.setAttribute('aria-expanded', 'false');
+      } else {
+        // Open menu
+        mobileMenu.classList.remove('hidden');
+        menuIcon.classList.add('hidden');
+        closeIcon.classList.remove('hidden');
+        mobileMenuButton.setAttribute('aria-expanded', 'true');
+      }
+    });
+
+    // Close mobile menu when clicking on a link
+    const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+    mobileMenuLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+        menuIcon.classList.remove('hidden');
+        closeIcon.classList.add('hidden');
+        mobileMenuButton.setAttribute('aria-expanded', 'false');
+      });
+    });
+  }
+</script>

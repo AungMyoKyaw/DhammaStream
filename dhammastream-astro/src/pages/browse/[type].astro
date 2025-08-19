@@ -1,0 +1,290 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import contentData from '../../data/content-by-type.json';
+
+export function getStaticPaths() {
+  return [
+    { params: { type: 'video' } },
+    { params: { type: 'audio' } },
+    { params: { type: 'ebook' } }
+  ];
+}
+
+declare global {
+  interface Window {
+    toggleTheme: () => void;
+  }
+}
+
+const { type } = Astro.params;
+const validTypes = ['video', 'audio', 'ebook'];
+
+if (!type || !validTypes.includes(type)) {
+  return Astro.redirect('/404');
+}
+
+const content = contentData[type as keyof typeof contentData] || [];
+const pageSize = 20;
+const currentPage = parseInt(Astro.url.searchParams.get('page') || '1');
+const totalPages = Math.ceil(content.length / pageSize);
+const startIndex = (currentPage - 1) * pageSize;
+const endIndex = startIndex + pageSize;
+const paginatedContent = content.slice(startIndex, endIndex);
+
+interface ContentConfig {
+  title: string;
+  description: string;
+  icon: string;
+  color: string;
+}
+
+const contentConfigs: Record<string, ContentConfig> = {
+  video: {
+    title: 'Video Teachings',
+    description: 'Discover enlightening video teachings from Buddhist masters and scholars',
+    icon: '🎥',
+    color: 'blue'
+  },
+  audio: {
+    title: 'Audio Content',
+    description: 'Listen to Buddhist talks, chants, and meditation guides',
+    icon: '🎧',
+    color: 'green'
+  },
+  ebook: {
+    title: 'Buddhist Books',
+    description: 'Read traditional texts, modern interpretations, and spiritual guides',
+    icon: '📚',
+    color: 'purple'
+  }
+};
+
+const contentConfig = contentConfigs[type];
+
+const pageTitle = `${contentConfig.title} - DhammaStream`;
+---
+
+<MainLayout title={pageTitle} description={contentConfig.description}>
+  <!-- Header Section -->
+  <section class="bg-gradient-to-br from-orange-50 to-amber-100 dark:from-gray-900 dark:to-gray-800 py-12 md:py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center">
+        <div class="text-4xl sm:text-5xl md:text-6xl mb-4">
+          {contentConfig.icon}
+        </div>
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+          {contentConfig.title}
+        </h1>
+        <p class="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8">
+          {contentConfig.description}
+        </p>
+        
+        <!-- Search Bar -->
+        <div class="max-w-lg mx-auto mb-8">
+          <div class="relative">
+            <input
+              type="text"
+              placeholder={`Search ${contentConfig.title.toLowerCase()}...`}
+              class="search-input w-full pl-10"
+              id="search-input"
+            />
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="text-sm text-gray-600 dark:text-gray-400">
+          Showing {startIndex + 1}-{Math.min(endIndex, content.length)} of {content.length.toLocaleString()} items
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Content Grid -->
+  <section class="py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {paginatedContent.length > 0 ? (
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="content-grid">
+          {paginatedContent.map((item: any) => (
+            <div class="content-card content-item" data-title={item.title.toLowerCase()} data-speaker={(item.speaker || '').toLowerCase()}>
+              <div class="flex items-start space-x-3 mb-4">
+                <div class="text-2xl flex-shrink-0">
+                  {contentConfig.icon}
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h3 class="font-semibold text-gray-900 dark:text-white line-clamp-2 mb-2">
+                    {item.title}
+                  </h3>
+                  {item.speaker && (
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                      by {item.speaker}
+                    </p>
+                  )}
+                  {item.description && (
+                    <p class="text-sm text-gray-500 dark:text-gray-400 line-clamp-3 mb-3">
+                      {item.description}
+                    </p>
+                  )}
+                </div>
+              </div>
+              
+              <div class="flex flex-wrap gap-2 items-center justify-between">
+                <div class="flex flex-wrap gap-2">
+                  {item.category && (
+                    <span class="inline-block px-2 py-1 text-xs bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200 rounded">
+                      {item.category}
+                    </span>
+                  )}
+                  {item.language && item.language !== 'Myanmar' && (
+                    <span class="inline-block px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded">
+                      {item.language}
+                    </span>
+                  )}
+                </div>
+                
+                {item.duration_estimate && (
+                  <div class="text-xs text-gray-500 dark:text-gray-400">
+                    {Math.round(item.duration_estimate / 60)} min
+                  </div>
+                )}
+              </div>
+
+              {item.file_url && (
+                <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <a
+                    href={item.file_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn btn-primary w-full text-center"
+                  >
+                    {type === 'video' ? 'Watch Now' : type === 'audio' ? 'Listen Now' : 'Read Now'}
+                  </a>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-12">
+          <div class="text-4xl mb-4">😔</div>
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">No content found</h3>
+          <p class="text-gray-600 dark:text-gray-400">Try adjusting your search criteria</p>
+        </div>
+      )}
+
+      <!-- Pagination -->
+      {totalPages > 1 && (
+        <div class="mt-12 flex justify-center">
+          <nav class="flex items-center space-x-2">
+            {currentPage > 1 && (
+              <a
+                href={`/browse/${type}?page=${currentPage - 1}`}
+                class="btn btn-outline px-4 py-2"
+              >
+                Previous
+              </a>
+            )}
+            
+            <div class="flex items-center space-x-1">
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                const page = i + Math.max(1, currentPage - 2);
+                if (page > totalPages) return null;
+                
+                return (
+                  <a
+                    href={`/browse/${type}?page=${page}`}
+                    class={`px-3 py-2 text-sm rounded-md transition-colors ${
+                      page === currentPage
+                        ? 'bg-orange-600 text-white'
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                    }`}
+                  >
+                    {page}
+                  </a>
+                );
+              })}
+            </div>
+            
+            {currentPage < totalPages && (
+              <a
+                href={`/browse/${type}?page=${currentPage + 1}`}
+                class="btn btn-outline px-4 py-2"
+              >
+                Next
+              </a>
+            )}
+          </nav>
+        </div>
+      )}
+    </div>
+  </section>
+</MainLayout>
+
+<script>
+  // Search functionality
+  const searchInput = document.getElementById('search-input');
+  const contentGrid = document.getElementById('content-grid');
+  
+  if (searchInput && contentGrid) {
+    const allItems = Array.from(contentGrid.querySelectorAll('.content-item'));
+    
+    searchInput.addEventListener('input', (e) => {
+      const target = e.target as HTMLInputElement;
+      const searchTerm = target?.value.toLowerCase().trim() || '';
+      
+      allItems.forEach(item => {
+        const htmlElement = item as HTMLElement;
+        const title = item.getAttribute('data-title') || '';
+        const speaker = item.getAttribute('data-speaker') || '';
+        const isMatch = title.includes(searchTerm) || speaker.includes(searchTerm);
+        
+        if (isMatch || searchTerm === '') {
+          htmlElement.style.display = 'block';
+          item.classList.remove('hidden');
+        } else {
+          htmlElement.style.display = 'none';
+          item.classList.add('hidden');
+        }
+      });
+      
+      // Show/hide no results message
+      const visibleItems = allItems.filter(item => !item.classList.contains('hidden'));
+      const noResultsMsg = contentGrid.querySelector('.no-results');
+      
+      if (visibleItems.length === 0 && searchTerm !== '') {
+        if (!noResultsMsg) {
+          const msg = document.createElement('div');
+          msg.className = 'no-results col-span-full text-center py-12';
+          msg.innerHTML = `
+            <div class="text-4xl mb-4">🔍</div>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">No results found</h3>
+            <p class="text-gray-600 dark:text-gray-400">Try searching with different keywords</p>
+          `;
+          contentGrid.appendChild(msg);
+        }
+      } else if (noResultsMsg) {
+        noResultsMsg.remove();
+      }
+    });
+  }
+</script>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>
