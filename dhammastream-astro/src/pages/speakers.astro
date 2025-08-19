@@ -1,0 +1,265 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import speakersData from '../data/speakers.json';
+import contentData from '../data/content.json';
+
+// Group content by speaker to get counts
+const speakerContentCounts: Record<string, number> = {};
+contentData.forEach((item: any) => {
+  if (item.speaker) {
+    speakerContentCounts[item.speaker] = (speakerContentCounts[item.speaker] || 0) + 1;
+  }
+});
+
+// Create speaker objects with content counts
+const speakers = speakersData.map(speaker => ({
+  name: speaker,
+  contentCount: speakerContentCounts[speaker] || 0
+})).sort((a, b) => b.contentCount - a.contentCount);
+
+const pageSize = 30;
+const currentPage = parseInt(Astro.url.searchParams.get('page') || '1');
+const totalPages = Math.ceil(speakers.length / pageSize);
+const startIndex = (currentPage - 1) * pageSize;
+const endIndex = startIndex + pageSize;
+const paginatedSpeakers = speakers.slice(startIndex, endIndex);
+---
+
+<MainLayout 
+  title="Buddhist Teachers - DhammaStream" 
+  description="Discover teachings from renowned Buddhist masters, scholars, and practitioners from around the world"
+>
+  <!-- Header Section -->
+  <section class="bg-gradient-to-br from-orange-50 to-amber-100 dark:from-gray-900 dark:to-gray-800 py-12 md:py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center">
+        <div class="text-4xl sm:text-5xl md:text-6xl mb-4">
+          👨‍🏫
+        </div>
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+          Buddhist Teachers
+        </h1>
+        <p class="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8">
+          Discover teachings from renowned Buddhist masters, scholars, and practitioners from around the world
+        </p>
+        
+        <!-- Search Bar -->
+        <div class="max-w-lg mx-auto mb-8">
+          <div class="relative">
+            <input
+              type="text"
+              placeholder="Search teachers..."
+              class="search-input w-full pl-10"
+              id="search-input"
+            />
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="text-sm text-gray-600 dark:text-gray-400">
+          Showing {startIndex + 1}-{Math.min(endIndex, speakers.length)} of {speakers.length.toLocaleString()} teachers
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Teachers Grid -->
+  <section class="py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {paginatedSpeakers.length > 0 ? (
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="teachers-grid">
+          {paginatedSpeakers.map((speaker) => (
+            <div class="teacher-item content-card" data-name={speaker.name.toLowerCase()}>
+              <div class="text-center">
+                <div class="w-16 h-16 bg-orange-100 dark:bg-orange-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg class="w-8 h-8 text-orange-600 dark:text-orange-400" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                  </svg>
+                </div>
+                
+                <h3 class="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
+                  {speaker.name}
+                </h3>
+                
+                <div class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  {speaker.contentCount} {speaker.contentCount === 1 ? 'teaching' : 'teachings'}
+                </div>
+                
+                {speaker.contentCount > 0 && (
+                  <div class="space-y-2">
+                    <a
+                      href={`/search?q=${encodeURIComponent(speaker.name)}`}
+                      class="btn btn-primary w-full text-sm"
+                    >
+                      View All Content
+                    </a>
+                    <div class="flex gap-2">
+                      <a
+                        href={`/browse/video?q=${encodeURIComponent(speaker.name)}`}
+                        class="btn btn-outline flex-1 text-xs"
+                      >
+                        Videos
+                      </a>
+                      <a
+                        href={`/browse/audio?q=${encodeURIComponent(speaker.name)}`}
+                        class="btn btn-outline flex-1 text-xs"
+                      >
+                        Audio
+                      </a>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-12">
+          <div class="text-4xl mb-4">😔</div>
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">No teachers found</h3>
+          <p class="text-gray-600 dark:text-gray-400">Try adjusting your search criteria</p>
+        </div>
+      )}
+
+      <!-- Pagination -->
+      {totalPages > 1 && (
+        <div class="mt-12 flex justify-center">
+          <nav class="flex items-center space-x-2">
+            {currentPage > 1 && (
+              <a
+                href={`/speakers?page=${currentPage - 1}`}
+                class="btn btn-outline px-4 py-2"
+              >
+                Previous
+              </a>
+            )}
+            
+            <div class="flex items-center space-x-1">
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                const page = i + Math.max(1, currentPage - 2);
+                if (page > totalPages) return null;
+                
+                return (
+                  <a
+                    href={`/speakers?page=${page}`}
+                    class={`px-3 py-2 text-sm rounded-md transition-colors ${
+                      page === currentPage
+                        ? 'bg-orange-600 text-white'
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                    }`}
+                  >
+                    {page}
+                  </a>
+                );
+              })}
+            </div>
+            
+            {currentPage < totalPages && (
+              <a
+                href={`/speakers?page=${currentPage + 1}`}
+                class="btn btn-outline px-4 py-2"
+              >
+                Next
+              </a>
+            )}
+          </nav>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- Top Teachers Section -->
+  <section class="py-12 bg-gray-50 dark:bg-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">
+        Most Prolific Teachers
+      </h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {speakers.slice(0, 6).map((speaker, index) => (
+          <div class="bg-white dark:bg-gray-900 rounded-lg p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center space-x-4">
+              <div class="flex-shrink-0">
+                <div class="w-12 h-12 bg-orange-100 dark:bg-orange-900 rounded-full flex items-center justify-center">
+                  <span class="text-orange-600 dark:text-orange-400 font-bold">
+                    #{index + 1}
+                  </span>
+                </div>
+              </div>
+              <div class="flex-1 min-w-0">
+                <h3 class="font-semibold text-gray-900 dark:text-white line-clamp-2 mb-1">
+                  {speaker.name}
+                </h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  {speaker.contentCount} teachings
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</MainLayout>
+
+<script>
+  // Search functionality
+  const searchInput = document.getElementById('search-input');
+  const teachersGrid = document.getElementById('teachers-grid');
+  
+  if (searchInput && teachersGrid) {
+    const allItems = Array.from(teachersGrid.querySelectorAll('.teacher-item'));
+    
+    searchInput.addEventListener('input', (e) => {
+      const target = e.target as HTMLInputElement;
+      const searchTerm = target?.value.toLowerCase().trim() || '';
+      
+      allItems.forEach(item => {
+        const htmlElement = item as HTMLElement;
+        const name = item.getAttribute('data-name') || '';
+        const isMatch = name.includes(searchTerm);
+        
+        if (isMatch || searchTerm === '') {
+          htmlElement.style.display = 'block';
+          item.classList.remove('hidden');
+        } else {
+          htmlElement.style.display = 'none';
+          item.classList.add('hidden');
+        }
+      });
+      
+      // Show/hide no results message
+      const visibleItems = allItems.filter(item => !item.classList.contains('hidden'));
+      const noResultsMsg = teachersGrid.querySelector('.no-results');
+      
+      if (visibleItems.length === 0 && searchTerm !== '') {
+        if (!noResultsMsg) {
+          const msg = document.createElement('div');
+          msg.className = 'no-results col-span-full text-center py-12';
+          msg.innerHTML = `
+            <div class="text-4xl mb-4">🔍</div>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">No teachers found</h3>
+            <p class="text-gray-600 dark:text-gray-400">Try searching with different keywords</p>
+          `;
+          teachersGrid.appendChild(msg);
+        }
+      } else if (noResultsMsg) {
+        noResultsMsg.remove();
+      }
+    });
+  }
+</script>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

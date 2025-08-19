@@ -1,0 +1,103 @@
+---
+export interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  canonical?: string;
+}
+
+const { title, description = "Access thousands of Buddhist teachings, meditation guides, and spiritual content. Stream video, audio, and read ebooks from renowned teachers and practitioners.", image = "/images/og-image.jpg", canonical } = Astro.props;
+
+const canonicalURL = canonical || new URL(Astro.url.pathname, Astro.site);
+const imageURL = new URL(image, Astro.site);
+---
+
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href={canonicalURL} />
+    
+    <!-- Primary Meta Tags -->
+    <title>{title}</title>
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+    <meta name="keywords" content="Buddhism, Dharma, meditation, teachings, spiritual content, Buddhist videos, audio, ebooks" />
+    <meta name="author" content="DhammaStream" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={imageURL} />
+    <meta property="og:site_name" content="DhammaStream" />
+    <meta property="og:locale" content="en_US" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalURL} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={imageURL} />
+    
+    <!-- Robots -->
+    <meta name="robots" content="index, follow" />
+    
+    <!-- Preload critical fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    
+    <!-- Theme Script (prevent FOUC) -->
+    <script is:inline>
+      // Prevent flash of unstyled content
+      (function() {
+        const theme = localStorage.getItem('theme') || 
+                     (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.classList.toggle('dark', theme === 'dark');
+      })();
+    </script>
+  </head>
+  <body class="min-h-full bg-background text-foreground antialiased">
+    <slot />
+    
+    <!-- Theme Toggle Script -->
+    <script>
+      declare global {
+        interface Window {
+          toggleTheme: () => void;
+        }
+      }
+      
+      // Theme toggle functionality
+      function toggleTheme() {
+        const html = document.documentElement;
+        const isDark = html.classList.contains('dark');
+        const newTheme = isDark ? 'light' : 'dark';
+        
+        html.classList.toggle('dark', newTheme === 'dark');
+        localStorage.setItem('theme', newTheme);
+        
+        // Dispatch custom event for components that need to react to theme changes
+        window.dispatchEvent(new CustomEvent('theme-changed', { detail: { theme: newTheme } }));
+      }
+      
+      // Make toggle function globally available
+      window.toggleTheme = toggleTheme;
+      
+      // Listen for system theme changes
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        if (!localStorage.getItem('theme')) {
+          document.documentElement.classList.toggle('dark', e.matches);
+        }
+      });
+    </script>
+  </body>
+</html>
