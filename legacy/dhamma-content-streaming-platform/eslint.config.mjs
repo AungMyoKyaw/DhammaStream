@@ -2,6 +2,7 @@ import { dirname } from "path";
 import { fileURLToPath } from "url";
 import { FlatCompat } from "@eslint/eslintrc";
 import sonarjs from "eslint-plugin-sonarjs";
+import { globalIgnores } from "@eslint/js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -11,6 +12,18 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
+  globalIgnores([
+    "node_modules/**",
+    ".next/**",
+    "out/**",
+    "build/**",
+    "dist/**",
+    ".turbo/**",
+    "coverage/**",
+    "*.config.js",
+    "*.config.mjs",
+    "*.config.ts"
+  ]),
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
     languageOptions: {
