@@ -12,7 +12,7 @@
 
 	function isActive(href: string): boolean {
 		const pathname = $page.url.pathname;
-		const basePath = $base.replace(/\/$/, '');
+		const basePath = base.replace(/\/$/, '');
 		const fullPath = basePath + href;
 		
 		if (href === '/') {
@@ -29,7 +29,7 @@
 <header class="nav-header">
 	<nav class="nav-container container">
 		<!-- Logo -->
-		<a href="{$base}" class="logo-link">
+		<a href={base} class="logo-link">
 			<div class="logo">
 				<svg class="lotus-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<path
@@ -49,7 +49,7 @@
 		<!-- Desktop Navigation -->
 		<div class="nav-links">
 			{#each navItems as item}
-				<a href="{$base + item.href}" class="nav-link" class:active={isActive(item.href)}>
+				<a href={base + item.href} class="nav-link" class:active={isActive(item.href)}>
 					<span class="nav-link-en">{item.label}</span>
 					<span class="nav-link-mm myanmar-text">{item.labelMm}</span>
 				</a>
@@ -92,7 +92,7 @@
 		<div class="mobile-menu animate-slide-down">
 			{#each navItems as item, i}
 				<a
-					href={$base + item.href}
+					href={base + item.href}
 					class="mobile-nav-link stagger-{i + 1}"
 					class:active={isActive(item.href)}
 					onclick={() => (mobileMenuOpen = false)}
