@@ -6,9 +6,15 @@
 
 	let { data }: { data: PageData } = $props();
 
-	// Filter states
-	let selectedType = $state(data.filters.type || 'all');
-	let selectedLanguage = $state(data.filters.language || 'all');
+	// Filter states using derived to avoid warnings
+	let selectedType = $state('all');
+	let selectedLanguage = $state('all');
+	
+	// Sync with URL params
+	$effect(() => {
+		selectedType = data.filters.type || 'all';
+		selectedLanguage = data.filters.language || 'all';
+	});
 
 	// Apply filters
 	function applyFilters() {
