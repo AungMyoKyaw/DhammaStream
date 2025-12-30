@@ -1,6 +1,8 @@
 import { getAllMedia, getStats } from '$lib/server/db';
 import type { PageServerLoad } from './$types';
 
+export const prerender = false;
+
 export const load: PageServerLoad = async ({ url }) => {
 	const type = url.searchParams.get('type') || undefined;
 	const language = url.searchParams.get('language') || undefined;
