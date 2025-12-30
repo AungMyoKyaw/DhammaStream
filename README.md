@@ -2,8 +2,6 @@
 
 > A modern, high-performance web platform for streaming Buddhist teachings from venerable teachers.
 
-![DhammaStream](legacy/screenshots/dhamma-stream.png)
-
 [![Deploy to GitHub Pages](https://github.com/aungmyokyaw/DhammaStream/actions/workflows/deploy.yml/badge.svg)](https://github.com/aungmyokyaw/DhammaStream/actions/workflows/deploy.yml)
 
 ## 📖 About
