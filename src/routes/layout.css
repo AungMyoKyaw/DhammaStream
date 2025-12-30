@@ -163,7 +163,12 @@ img {
 
 /* Utility Classes */
 .text-gradient {
-	background: linear-gradient(135deg, var(--color-accent-dark) 0%, var(--color-accent) 50%, var(--color-accent-light) 100%);
+	background: linear-gradient(
+		135deg,
+		var(--color-accent-dark) 0%,
+		var(--color-accent) 50%,
+		var(--color-accent-light) 100%
+	);
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 	background-clip: text;
@@ -281,7 +286,12 @@ img {
 
 /* Loading Skeleton */
 .skeleton {
-	background: linear-gradient(90deg, var(--color-bg-secondary) 25%, var(--color-bg-tertiary) 50%, var(--color-bg-secondary) 75%);
+	background: linear-gradient(
+		90deg,
+		var(--color-bg-secondary) 25%,
+		var(--color-bg-tertiary) 50%,
+		var(--color-bg-secondary) 75%
+	);
 	background-size: 200% 100%;
 	animation: shimmer 1.5s infinite;
 	border-radius: 4px;

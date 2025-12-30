@@ -35,7 +35,8 @@
 	<title>Teachers | DhammaStream</title>
 	<meta
 		name="description"
-		content="Explore teachings from {data.stats.totalTeachers} venerable Buddhist teachers on DhammaStream."
+		content="Explore teachings from {data.stats
+			.totalTeachers} venerable Buddhist teachers on DhammaStream."
 	/>
 </svelte:head>
 
@@ -50,8 +51,8 @@
 			<h1 class="hero-title">Venerable Teachers</h1>
 			<p class="hero-subtitle myanmar-text">သာသနာ့ဆရာတော်ကြီးများ</p>
 			<p class="hero-description">
-				Discover the wisdom of {data.stats.totalTeachers} teachers who have dedicated their lives to
-				sharing the Dhamma. Browse their teachings in audio, video, and written formats.
+				Discover the wisdom of {data.stats.totalTeachers} teachers who have dedicated their lives to sharing
+				the Dhamma. Browse their teachings in audio, video, and written formats.
 			</p>
 		</div>
 		<div class="hero-stats">

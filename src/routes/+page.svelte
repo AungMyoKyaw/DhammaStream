@@ -20,7 +20,14 @@
 	<div class="hero-content container">
 		<div class="hero-text animate-slide-up">
 			<span class="hero-badge">
-				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<svg
+					width="16"
+					height="16"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+				>
 					<circle cx="12" cy="12" r="10" />
 					<path d="M12 6v6l4 2" />
 				</svg>
@@ -31,23 +38,28 @@
 				<span class="text-gradient">Enlightenment</span>
 			</h1>
 			<p class="hero-subtitle">
-				Access thousands of Dhamma teachings from venerable teachers.
-				Audio discourses, video lectures, and sacred texts in English and Myanmar.
+				Access thousands of Dhamma teachings from venerable teachers. Audio discourses, video
+				lectures, and sacred texts in English and Myanmar.
 			</p>
 			<p class="hero-subtitle-mm myanmar-text">
 				သာသနာ့ဆရာတော်ကြီးများ၏ တရားတော်များကို နာယူလေ့လာပါ။
 			</p>
 			<div class="hero-actions">
-				<a href={base + "/browse"} class="btn-primary">
-					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<a href={base + '/browse'} class="btn-primary">
+					<svg
+						width="20"
+						height="20"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<circle cx="11" cy="11" r="8" />
 						<path d="m21 21-4.35-4.35" />
 					</svg>
 					Browse Library
 				</a>
-				<a href={base + "/teachers"} class="btn-secondary">
-					Meet Our Teachers
-				</a>
+				<a href={base + '/teachers'} class="btn-secondary"> Meet Our Teachers </a>
 			</div>
 		</div>
 
@@ -55,7 +67,14 @@
 		<div class="hero-stats animate-slide-up stagger-2">
 			<div class="stat-card">
 				<div class="stat-icon audio">
-					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<path d="M9 18V5l12-2v13" />
 						<circle cx="6" cy="18" r="3" />
 						<circle cx="18" cy="16" r="3" />
@@ -68,7 +87,14 @@
 			</div>
 			<div class="stat-card">
 				<div class="stat-icon video">
-					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<rect x="2" y="6" width="20" height="12" rx="2" />
 						<path d="m10 9 5 3-5 3V9z" />
 					</svg>
@@ -80,7 +106,14 @@
 			</div>
 			<div class="stat-card">
 				<div class="stat-icon ebook">
-					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
 						<path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
 					</svg>
@@ -92,7 +125,14 @@
 			</div>
 			<div class="stat-card">
 				<div class="stat-icon teachers">
-					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
 						<circle cx="12" cy="7" r="4" />
 					</svg>
@@ -118,9 +158,16 @@
 				<h2 class="section-title">Venerable Teachers</h2>
 				<p class="section-subtitle myanmar-text">သာသနာ့ဆရာတော်ကြီးများ</p>
 			</div>
-			<a href="/teachers" class="view-all-link">
+			<a href={base + '/teachers'} class="view-all-link">
 				View All Teachers
-				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<svg
+					width="16"
+					height="16"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+				>
 					<path d="M5 12h14M12 5l7 7-7 7" />
 				</svg>
 			</a>
@@ -140,14 +187,19 @@
 	<div class="container">
 		<div class="section-header center">
 			<h2 class="section-title">Explore by Content Type</h2>
-			<p class="section-description">
-				Discover teachings in the format that suits your practice
-			</p>
+			<p class="section-description">Discover teachings in the format that suits your practice</p>
 		</div>
 		<div class="content-types-grid">
-			<a href="/browse?type=audio" class="content-type-card audio">
+			<a href={base + '/browse?type=audio'} class="content-type-card audio">
 				<div class="content-type-icon">
-					<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+					<svg
+						width="48"
+						height="48"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="1.5"
+					>
 						<path d="M9 18V5l12-2v13" />
 						<circle cx="6" cy="18" r="3" />
 						<circle cx="18" cy="16" r="3" />
@@ -159,9 +211,16 @@
 					Dhamma talks, meditation instructions, and chanting from venerable teachers
 				</p>
 			</a>
-			<a href="/browse?type=video" class="content-type-card video">
+			<a href={base + '/browse?type=video'} class="content-type-card video">
 				<div class="content-type-icon">
-					<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+					<svg
+						width="48"
+						height="48"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="1.5"
+					>
 						<rect x="2" y="6" width="20" height="12" rx="2" />
 						<path d="m10 9 5 3-5 3V9z" />
 					</svg>
@@ -172,9 +231,16 @@
 					Visual teachings, retreat recordings, and ceremonial events
 				</p>
 			</a>
-			<a href="/browse?type=ebook" class="content-type-card ebook">
+			<a href={base + '/browse?type=ebook'} class="content-type-card ebook">
 				<div class="content-type-icon">
-					<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+					<svg
+						width="48"
+						height="48"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="1.5"
+					>
 						<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
 						<path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
 					</svg>
@@ -197,9 +263,16 @@
 				<h2 class="section-title">Recent Additions</h2>
 				<p class="section-subtitle">Latest teachings added to our library</p>
 			</div>
-			<a href="/browse" class="view-all-link">
+			<a href={base + '/browse'} class="view-all-link">
 				Browse All
-				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<svg
+					width="16"
+					height="16"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+				>
 					<path d="M5 12h14M12 5l7 7-7 7" />
 				</svg>
 			</a>
@@ -218,26 +291,40 @@
 <section class="section languages">
 	<div class="container">
 		<div class="languages-grid">
-			<a href="/browse?language=myanmar" class="language-card myanmar">
+			<a href={base + '/browse?language=myanmar'} class="language-card myanmar">
 				<div class="language-content">
 					<span class="language-label">Myanmar Language</span>
 					<h3 class="language-title myanmar-text">မြန်မာဘာသာ</h3>
 					<p class="language-count">{data.stats.totalMyanmarContent.toLocaleString()} teachings</p>
 				</div>
 				<div class="language-arrow">
-					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<path d="M5 12h14M12 5l7 7-7 7" />
 					</svg>
 				</div>
 			</a>
-			<a href="/browse?language=english" class="language-card english">
+			<a href={base + '/browse?language=english'} class="language-card english">
 				<div class="language-content">
 					<span class="language-label">English Language</span>
 					<h3 class="language-title">English</h3>
 					<p class="language-count">{data.stats.totalEnglishContent.toLocaleString()} teachings</p>
 				</div>
 				<div class="language-arrow">
-					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<path d="M5 12h14M12 5l7 7-7 7" />
 					</svg>
 				</div>
@@ -251,7 +338,13 @@
 	<div class="container">
 		<div class="cta-content">
 			<div class="cta-decoration">
-				<svg width="80" height="80" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<svg
+					width="80"
+					height="80"
+					viewBox="0 0 40 40"
+					fill="none"
+					xmlns="http://www.w3.org/2000/svg"
+				>
 					<path
 						d="M20 4C18 12 12 18 4 20C12 22 18 28 20 36C22 28 28 22 36 20C28 18 22 12 20 4Z"
 						fill="currentColor"
@@ -263,12 +356,10 @@
 			<h2 class="cta-title">Begin Your Journey of Learning</h2>
 			<p class="cta-subtitle myanmar-text">သင်၏ တရားအားထုတ်မှုခရီးကို စတင်ပါ</p>
 			<p class="cta-description">
-				All teachings are freely available for the benefit of all beings.
-				May you find peace and wisdom in the Dhamma.
+				All teachings are freely available for the benefit of all beings. May you find peace and
+				wisdom in the Dhamma.
 			</p>
-			<a href="/browse" class="btn-primary large">
-				Start Exploring
-			</a>
+			<a href={base + '/browse'} class="btn-primary large"> Start Exploring </a>
 		</div>
 	</div>
 </section>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { base } from '$app/paths';
 	const currentYear = new Date().getFullYear();
 </script>
 
@@ -9,7 +10,12 @@
 			<!-- Brand Column -->
 			<div class="footer-brand">
 				<div class="brand-logo">
-					<svg class="lotus-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<svg
+						class="lotus-icon"
+						viewBox="0 0 40 40"
+						fill="none"
+						xmlns="http://www.w3.org/2000/svg"
+					>
 						<path
 							d="M20 4C18 12 12 18 4 20C12 22 18 28 20 36C22 28 28 22 36 20C28 18 22 12 20 4Z"
 							fill="currentColor"
@@ -23,11 +29,8 @@
 					</div>
 				</div>
 				<p class="brand-description">
-					Preserving and sharing the wisdom of the Buddha's teachings through audio, video, and written
-					content from venerable teachers.
-				</p>
-				<p class="brand-description myanmar-text">
-					ဘုရားရှင်၏ တရားတော်များကို သင်္ဂိတင်ထိန်းသိမ်းပြီး မျှဝေခြင်း။
+					Preserving and sharing the wisdom of the Buddha's teachings through audio, video, and
+					written content from venerable teachers.
 				</p>
 			</div>
 
@@ -35,10 +38,10 @@
 			<div class="footer-links">
 				<h4 class="footer-heading">Explore</h4>
 				<ul class="link-list">
-					<li><a href="/teachers">Teachers</a></li>
-					<li><a href="/browse?type=audio">Audio Teachings</a></li>
-					<li><a href="/browse?type=video">Video Teachings</a></li>
-					<li><a href="/browse?type=ebook">E-Books</a></li>
+					<li><a href={base + '/teachers'}>Teachers</a></li>
+					<li><a href={base + '/browse?type=audio'}>Audio Teachings</a></li>
+					<li><a href={base + '/browse?type=video'}>Video Teachings</a></li>
+					<li><a href={base + '/browse?type=ebook'}>E-Books</a></li>
 				</ul>
 			</div>
 
@@ -46,8 +49,8 @@
 			<div class="footer-links">
 				<h4 class="footer-heading">Languages</h4>
 				<ul class="link-list">
-					<li><a href="/browse?language=english">English Content</a></li>
-					<li><a href="/browse?language=myanmar">Myanmar Content</a></li>
+					<li><a href={base + '/browse?language=english'}>English Content</a></li>
+					<li><a href={base + '/browse?language=myanmar'}>Myanmar Content</a></li>
 				</ul>
 			</div>
 
@@ -69,9 +72,6 @@
 		<div class="footer-bottom">
 			<p class="copyright">
 				© {currentYear} DhammaStream. For the benefit of all beings.
-			</p>
-			<p class="blessing myanmar-text">
-				သဗ္ဗေ သတ္တာ ဘဝန္တု သုခိတတ္တာ။
 			</p>
 		</div>
 	</div>

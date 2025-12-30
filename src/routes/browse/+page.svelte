@@ -9,7 +9,7 @@
 	// Filter states using derived to avoid warnings
 	let selectedType = $state('all');
 	let selectedLanguage = $state('all');
-	
+
 	// Sync with URL params
 	$effect(() => {
 		selectedType = data.filters.type || 'all';
@@ -74,8 +74,8 @@
 			<h1 class="hero-title">{getPageTitle()}</h1>
 			<p class="hero-subtitle myanmar-text">တရားတော်များ ရှာဖွေရန်</p>
 			<p class="hero-description">
-				Explore our collection of {data.stats.totalMedia.toLocaleString()} teachings from venerable
-				teachers. Filter by content type and language to find exactly what you're looking for.
+				Explore our collection of {data.stats.totalMedia.toLocaleString()} teachings from venerable teachers.
+				Filter by content type and language to find exactly what you're looking for.
 			</p>
 		</div>
 	</div>
@@ -88,7 +88,12 @@
 			<!-- Type Filter -->
 			<div class="filter-group">
 				<label class="filter-label" for="type-filter">Content Type</label>
-				<select id="type-filter" class="filter-select" bind:value={selectedType} onchange={applyFilters}>
+				<select
+					id="type-filter"
+					class="filter-select"
+					bind:value={selectedType}
+					onchange={applyFilters}
+				>
 					<option value="all">All Types</option>
 					<option value="audio">Audio ({data.stats.totalAudio.toLocaleString()})</option>
 					<option value="video">Video ({data.stats.totalVideo.toLocaleString()})</option>
@@ -106,8 +111,12 @@
 					onchange={applyFilters}
 				>
 					<option value="all">All Languages</option>
-					<option value="myanmar">Myanmar ({data.stats.totalMyanmarContent.toLocaleString()})</option>
-					<option value="english">English ({data.stats.totalEnglishContent.toLocaleString()})</option>
+					<option value="myanmar"
+						>Myanmar ({data.stats.totalMyanmarContent.toLocaleString()})</option
+					>
+					<option value="english"
+						>English ({data.stats.totalEnglishContent.toLocaleString()})</option
+					>
 				</select>
 			</div>
 

@@ -9,7 +9,10 @@
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
-	<meta name="description" content="DhammaStream - Discover and listen to Buddhist teachings from venerable teachers. Audio, video, and e-book content in English and Myanmar." />
+	<meta
+		name="description"
+		content="DhammaStream - Discover and listen to Buddhist teachings from venerable teachers. Audio, video, and e-book content in English and Myanmar."
+	/>
 	<meta name="theme-color" content="#c4883a" />
 </svelte:head>
 
