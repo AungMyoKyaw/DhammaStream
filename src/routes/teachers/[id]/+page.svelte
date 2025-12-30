@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import MediaCard from '$lib/components/MediaCard.svelte';
+	import { base } from '$app/paths';
 
 	let { data }: { data: PageData } = $props();
 
@@ -65,18 +66,15 @@
 	<div class="hero-content container">
 		<!-- Breadcrumb -->
 		<nav class="breadcrumb">
-			<a href="/">Home</a>
+			<a href={base + '/'}>Home</a>
 			<span class="breadcrumb-sep">/</span>
-			<a href="/teachers">Teachers</a>
+			<a href={base + '/teachers'}>Teachers</a>
 			<span class="breadcrumb-sep">/</span>
 			<span class="breadcrumb-current">{data.teacher.name}</span>
 		</nav>
 
 		<div class="teacher-profile">
-			<div
-				class="teacher-avatar"
-				style="--avatar-color: {getAvatarColor(data.teacher.name)}"
-			>
+			<div class="teacher-avatar" style="--avatar-color: {getAvatarColor(data.teacher.name)}">
 				{#if data.teacher.image_url}
 					<img src={data.teacher.image_url} alt={data.teacher.name} class="avatar-image" />
 				{:else}

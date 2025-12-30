@@ -35,22 +35,47 @@
 	}
 </script>
 
-<a href={base + "/media/" + media.id} class="media-card media-{media.type} card-hover" class:compact>
+<a
+	href={base + '/media/' + media.id}
+	class="media-card media-{media.type} card-hover"
+	class:compact
+>
 	<!-- Media Type Badge -->
 	<div class="media-badge">
 		{#if media.type === 'audio'}
-			<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+			<svg
+				width="14"
+				height="14"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+			>
 				<path d="M9 18V5l12-2v13" />
 				<circle cx="6" cy="18" r="3" />
 				<circle cx="18" cy="16" r="3" />
 			</svg>
 		{:else if media.type === 'video'}
-			<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+			<svg
+				width="14"
+				height="14"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+			>
 				<rect x="2" y="6" width="20" height="12" rx="2" />
 				<path d="m10 9 5 3-5 3V9z" />
 			</svg>
 		{:else}
-			<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+			<svg
+				width="14"
+				height="14"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+			>
 				<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
 				<path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
 			</svg>
@@ -67,7 +92,14 @@
 
 		{#if media.teacher_name || media.teacher_name_myanmar}
 			<div class="media-teacher">
-				<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<svg
+					width="12"
+					height="12"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+				>
 					<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
 					<circle cx="12" cy="7" r="4" />
 				</svg>
@@ -85,7 +117,14 @@
 	<div class="media-footer">
 		{#if media.duration}
 			<span class="media-duration">
-				<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<svg
+					width="12"
+					height="12"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+				>
 					<circle cx="12" cy="12" r="10" />
 					<path d="M12 6v6l4 2" />
 				</svg>
@@ -97,7 +136,14 @@
 
 	<!-- Hover Arrow -->
 	<div class="media-arrow">
-		<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+		<svg
+			width="16"
+			height="16"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="2"
+		>
 			<path d="M5 12h14M12 5l7 7-7 7" />
 		</svg>
 	</div>

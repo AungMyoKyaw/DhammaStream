@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import MediaCard from '$lib/components/MediaCard.svelte';
+	import { base } from '$app/paths';
 
 	let { data }: { data: PageData } = $props();
 
@@ -24,7 +25,10 @@
 
 <svelte:head>
 	<title>{data.media.title} | DhammaStream</title>
-	<meta name="description" content="{data.media.title} - {getTypeLabel(data.media.type)} teaching on DhammaStream." />
+	<meta
+		name="description"
+		content="{data.media.title} - {getTypeLabel(data.media.type)} teaching on DhammaStream."
+	/>
 </svelte:head>
 
 <!-- Media Detail Section -->
@@ -32,11 +36,11 @@
 	<div class="container">
 		<!-- Breadcrumb -->
 		<nav class="breadcrumb">
-			<a href="/">Home</a>
+			<a href={base + '/'}>Home</a>
 			<span class="breadcrumb-sep">/</span>
-			<a href="/browse">Browse</a>
+			<a href={base + '/browse'}>Browse</a>
 			<span class="breadcrumb-sep">/</span>
-			<a href="/browse?type={data.media.type}">{getTypeLabel(data.media.type)}</a>
+			<a href={base + '/browse?type=' + data.media.type}>{getTypeLabel(data.media.type)}</a>
 			<span class="breadcrumb-sep">/</span>
 			<span class="breadcrumb-current">{data.media.title.slice(0, 30)}...</span>
 		</nav>
@@ -48,24 +52,48 @@
 				<div class="player-card" style="--type-color: {getTypeColor(data.media.type)}">
 					<div class="player-icon-wrapper">
 						{#if data.media.type === 'audio'}
-							<svg class="player-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+							<svg
+								class="player-icon"
+								width="64"
+								height="64"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="1.5"
+							>
 								<path d="M9 18V5l12-2v13" />
 								<circle cx="6" cy="18" r="3" />
 								<circle cx="18" cy="16" r="3" />
 							</svg>
 						{:else if data.media.type === 'video'}
-							<svg class="player-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+							<svg
+								class="player-icon"
+								width="64"
+								height="64"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="1.5"
+							>
 								<rect x="2" y="6" width="20" height="12" rx="2" />
 								<path d="m10 9 5 3-5 3V9z" />
 							</svg>
 						{:else}
-							<svg class="player-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+							<svg
+								class="player-icon"
+								width="64"
+								height="64"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="1.5"
+							>
 								<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
 								<path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
 							</svg>
 						{/if}
 					</div>
-					
+
 					<div class="player-content">
 						<span class="media-type-badge">{getTypeLabel(data.media.type)}</span>
 						<h1 class="media-title">{data.media.title}</h1>
@@ -77,17 +105,38 @@
 					<!-- Action Button -->
 					<a href={data.media.url} target="_blank" rel="noopener noreferrer" class="play-button">
 						{#if data.media.type === 'audio'}
-							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<svg
+								width="20"
+								height="20"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+							>
 								<polygon points="5 3 19 12 5 21 5 3" fill="currentColor" />
 							</svg>
 							Listen Now
 						{:else if data.media.type === 'video'}
-							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<svg
+								width="20"
+								height="20"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+							>
 								<polygon points="5 3 19 12 5 21 5 3" fill="currentColor" />
 							</svg>
 							Watch Now
 						{:else}
-							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<svg
+								width="20"
+								height="20"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+							>
 								<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
 								<polyline points="7 10 12 15 17 10" />
 								<line x1="12" y1="15" x2="12" y2="3" />
@@ -115,7 +164,7 @@
 						{#if data.teacher}
 							<li class="info-item">
 								<span class="info-label">Teacher</span>
-								<a href="/teachers/{data.teacher.id}" class="info-value link">
+								<a href={base + '/teachers/' + data.teacher.id} class="info-value link">
 									{data.teacher.name}
 									{#if data.teacher.name_myanmar}
 										<span class="myanmar-text">({data.teacher.name_myanmar})</span>
@@ -160,14 +209,28 @@
 
 				<!-- Quick Links -->
 				<div class="quick-links">
-					<a href="/browse?type={data.media.type}" class="quick-link">
-						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<a href={base + '/browse?type=' + data.media.type} class="quick-link">
+						<svg
+							width="16"
+							height="16"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+						>
 							<path d="M5 12h14M12 5l7 7-7 7" />
 						</svg>
 						More {getTypeLabel(data.media.type)} Content
 					</a>
-					<a href="/browse?language={data.media.language}" class="quick-link">
-						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<a href={base + '/browse?language=' + data.media.language} class="quick-link">
+						<svg
+							width="16"
+							height="16"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+						>
 							<path d="M5 12h14M12 5l7 7-7 7" />
 						</svg>
 						More in {data.media.language === 'myanmar' ? 'Myanmar' : 'English'}

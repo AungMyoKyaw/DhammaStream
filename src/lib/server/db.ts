@@ -180,11 +180,21 @@ export function getStats(): Stats {
 		count: number;
 	};
 	const mediaCount = db.prepare('SELECT COUNT(*) as count FROM media').get() as { count: number };
-	const audioCount = db.prepare("SELECT COUNT(*) as count FROM media WHERE type = 'audio'").get() as { count: number };
-	const videoCount = db.prepare("SELECT COUNT(*) as count FROM media WHERE type = 'video'").get() as { count: number };
-	const ebookCount = db.prepare("SELECT COUNT(*) as count FROM media WHERE type = 'ebook'").get() as { count: number };
-	const myanmarCount = db.prepare("SELECT COUNT(*) as count FROM media WHERE language = 'myanmar'").get() as { count: number };
-	const englishCount = db.prepare("SELECT COUNT(*) as count FROM media WHERE language = 'english'").get() as { count: number };
+	const audioCount = db
+		.prepare("SELECT COUNT(*) as count FROM media WHERE type = 'audio'")
+		.get() as { count: number };
+	const videoCount = db
+		.prepare("SELECT COUNT(*) as count FROM media WHERE type = 'video'")
+		.get() as { count: number };
+	const ebookCount = db
+		.prepare("SELECT COUNT(*) as count FROM media WHERE type = 'ebook'")
+		.get() as { count: number };
+	const myanmarCount = db
+		.prepare("SELECT COUNT(*) as count FROM media WHERE language = 'myanmar'")
+		.get() as { count: number };
+	const englishCount = db
+		.prepare("SELECT COUNT(*) as count FROM media WHERE language = 'english'")
+		.get() as { count: number };
 
 	return {
 		totalTeachers: teacherCount.count,
