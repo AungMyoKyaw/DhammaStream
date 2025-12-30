@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { page, base } from '$app/stores';
+	import { page } from '$app/stores';
+	import { base } from '$app/paths';
 
 	const navItems = [
 		{ href: '/', label: 'Home', labelMm: 'ပင်မစာမျက်နှာ' },
