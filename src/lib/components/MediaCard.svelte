@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Media } from '$lib/server/db';
+	import { base } from '$app/paths';
 
 	interface Props {
 		media: Media;
@@ -34,7 +35,7 @@
 	}
 </script>
 
-<a href="/media/{media.id}" class="media-card media-{media.type} card-hover" class:compact>
+<a href={base + "/media/" + media.id} class="media-card media-{media.type} card-hover" class:compact>
 	<!-- Media Type Badge -->
 	<div class="media-badge">
 		{#if media.type === 'audio'}
