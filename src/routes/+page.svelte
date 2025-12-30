@@ -2,6 +2,7 @@
 	import type { PageData } from './$types';
 	import MediaCard from '$lib/components/MediaCard.svelte';
 	import TeacherCard from '$lib/components/TeacherCard.svelte';
+	import { base } from '$app/paths';
 
 	let { data }: { data: PageData } = $props();
 </script>
@@ -37,14 +38,14 @@
 				သာသနာ့ဆရာတော်ကြီးများ၏ တရားတော်များကို နာယူလေ့လာပါ။
 			</p>
 			<div class="hero-actions">
-				<a href="/browse" class="btn-primary">
+				<a href={base + "/browse"} class="btn-primary">
 					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 						<circle cx="11" cy="11" r="8" />
 						<path d="m21 21-4.35-4.35" />
 					</svg>
 					Browse Library
 				</a>
-				<a href="/teachers" class="btn-secondary">
+				<a href={base + "/teachers"} class="btn-secondary">
 					Meet Our Teachers
 				</a>
 			</div>
