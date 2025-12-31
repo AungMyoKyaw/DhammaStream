@@ -1,8 +1,12 @@
 import { error } from '@sveltejs/kit';
-import { getTeacherById, getMediaByTeacherId } from '$lib/server/db';
-import type { PageServerLoad } from './$types';
+import { getTeacherById, getMediaByTeacherId, getAllTeacherIds } from '$lib/server/db';
+import type { PageServerLoad, EntryGenerator } from './$types';
 
-export const prerender = false;
+export const prerender = true;
+
+export const entries: EntryGenerator = () => {
+	return getAllTeacherIds().map((id) => ({ id: id.toString() }));
+};
 
 export const load: PageServerLoad = async ({ params }) => {
 	const id = parseInt(params.id, 10);

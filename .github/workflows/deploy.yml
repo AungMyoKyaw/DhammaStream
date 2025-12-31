@@ -19,9 +19,17 @@ jobs:
       - name: Install dependencies
         run: bun install
 
+      - name: Optimize Database for Build
+        run: |
+          sqlite3 dhamma.db "PRAGMA journal_mode = WAL;" || true
+          sqlite3 dhamma.db "PRAGMA synchronous = NORMAL;" || true
+          sqlite3 dhamma.db "PRAGMA optimize;" || true
+          echo "✅ Database optimized for concurrent reads"
+
       - name: Build
         env:
           BASE_PATH: '/${{ github.event.repository.name }}'
+          NODE_OPTIONS: '--max-old-space-size=6144'
         run: bun run build
 
       - name: Upload Artifacts
