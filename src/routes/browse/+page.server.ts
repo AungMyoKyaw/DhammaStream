@@ -1,34 +1,20 @@
 import { getAllMedia, getStats } from '$lib/server/db';
 import type { PageServerLoad } from './$types';
 
-export const prerender = false;
+// Enable prerendering for static export
+export const prerender = true;
 
-export const load: PageServerLoad = async ({ url }) => {
-	const type = url.searchParams.get('type') || undefined;
-	const language = url.searchParams.get('language') || undefined;
-	const page = parseInt(url.searchParams.get('page') || '1', 10);
-	const limit = 24;
-	const offset = (page - 1) * limit;
-
+export const load: PageServerLoad = async () => {
+	// Load ALL media for client-side filtering (no pagination on static site)
 	const { items: media, total } = getAllMedia({
-		limit,
-		offset,
-		type,
-		language
+		limit: 999999 // Get all records
 	});
 
 	const stats = getStats();
-	const totalPages = Math.ceil(total / limit);
 
 	return {
 		media,
 		total,
-		page,
-		totalPages,
-		stats,
-		filters: {
-			type,
-			language
-		}
+		stats
 	};
 };

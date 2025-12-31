@@ -4,6 +4,13 @@ import path from 'path';
 const dbPath = path.resolve('dhamma.db');
 const db = new Database(dbPath, { readonly: true });
 
+// Optimize database for concurrent reads and performance
+db.exec('PRAGMA journal_mode = WAL;');
+db.exec('PRAGMA synchronous = NORMAL;');
+db.exec('PRAGMA cache_size = -64000;'); // 64MB cache
+db.exec('PRAGMA temp_store = MEMORY;'); // Store temp tables in RAM
+db.exec('PRAGMA mmap_size = 30000000000;'); // Enable memory-mapped I/O
+
 // Types
 export interface Teacher {
 	id: number;
@@ -238,13 +245,23 @@ export function getRelatedMedia(mediaId: number, limit = 6): Media[] {
 	const media = getMediaById(mediaId);
 	if (!media) return [];
 
+	// Optimized: deterministic ordering instead of RANDOM() for faster builds
 	const stmt = db.prepare(`
 		SELECT m.*, t.name as teacher_name, t.name_myanmar as teacher_name_myanmar
 		FROM media m
 		LEFT JOIN teachers t ON m.teacher_id = t.id
 		WHERE m.id != ? AND (m.teacher_id = ? OR m.type = ?)
-		ORDER BY RANDOM()
+		ORDER BY 
+			CASE WHEN m.teacher_id = ? THEN 0 ELSE 1 END,
+			ABS(m.id - ?)
 		LIMIT ?
 	`);
-	return stmt.all(mediaId, media.teacher_id, media.type, limit) as Media[];
+	return stmt.all(
+		mediaId,
+		media.teacher_id,
+		media.type,
+		media.teacher_id,
+		mediaId,
+		limit
+	) as Media[];
 }

@@ -1,42 +1,57 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import MediaCard from '$lib/components/MediaCard.svelte';
-	import { goto } from '$app/navigation';
-	import { page } from '$app/state';
 
 	let { data }: { data: PageData } = $props();
 
-	// Filter states using derived to avoid warnings
+	// Filter and pagination states
 	let selectedType = $state('all');
 	let selectedLanguage = $state('all');
+	let currentPage = $state(1);
+	const itemsPerPage = 24;
 
-	// Sync with URL params
-	$effect(() => {
-		selectedType = data.filters.type || 'all';
-		selectedLanguage = data.filters.language || 'all';
+	// Client-side filtering
+	let filteredMedia = $derived(() => {
+		let result = data.media;
+
+		if (selectedType !== 'all') {
+			result = result.filter((m) => m.type === selectedType);
+		}
+
+		if (selectedLanguage !== 'all') {
+			result = result.filter((m) => m.language === selectedLanguage);
+		}
+
+		return result;
 	});
+
+	// Client-side pagination
+	let paginatedMedia = $derived(() => {
+		const filtered = filteredMedia();
+		const start = (currentPage - 1) * itemsPerPage;
+		const end = start + itemsPerPage;
+		return filtered.slice(start, end);
+	});
+
+	let totalPages = $derived(Math.ceil(filteredMedia().length / itemsPerPage));
+	let filteredTotal = $derived(filteredMedia().length);
 
 	// Apply filters
 	function applyFilters() {
-		const params = new URLSearchParams();
-		if (selectedType && selectedType !== 'all') params.set('type', selectedType);
-		if (selectedLanguage && selectedLanguage !== 'all') params.set('language', selectedLanguage);
-		params.set('page', '1');
-		goto(`/browse?${params.toString()}`);
+		currentPage = 1; // Reset to first page when filtering
 	}
 
 	// Clear filters
 	function clearFilters() {
 		selectedType = 'all';
 		selectedLanguage = 'all';
-		goto('/browse');
+		currentPage = 1;
 	}
 
 	// Pagination
 	function goToPage(pageNum: number) {
-		const params = new URLSearchParams(page.url.searchParams);
-		params.set('page', String(pageNum));
-		goto(`/browse?${params.toString()}`);
+		currentPage = pageNum;
+		window.scrollTo({ top: 0, behavior: 'smooth' });
 	}
 
 	// Get page title based on filters
@@ -141,11 +156,11 @@
 		<!-- Results Count -->
 		<div class="results-info">
 			<span class="results-count">
-				Showing <strong>{data.media.length}</strong> of
-				<strong>{data.total.toLocaleString()}</strong> teachings
+				Showing <strong>{paginatedMedia().length}</strong> of
+				<strong>{filteredTotal.toLocaleString()}</strong> teachings
 			</span>
-			{#if data.totalPages > 1}
-				<span class="page-info">Page {data.page} of {data.totalPages}</span>
+			{#if totalPages > 1}
+				<span class="page-info">Page {currentPage} of {totalPages}</span>
 			{/if}
 		</div>
 	</div>
@@ -154,9 +169,9 @@
 <!-- Content Section -->
 <section class="content-section">
 	<div class="container">
-		{#if data.media.length > 0}
+		{#if paginatedMedia().length > 0}
 			<div class="media-grid">
-				{#each data.media as media, i}
+				{#each paginatedMedia() as media, i}
 					<div class="animate-scale-in stagger-{(i % 8) + 1}">
 						<MediaCard {media} />
 					</div>
@@ -164,12 +179,12 @@
 			</div>
 
 			<!-- Pagination -->
-			{#if data.totalPages > 1}
+			{#if totalPages > 1}
 				<nav class="pagination" aria-label="Pagination">
 					<button
 						class="pagination-btn prev"
-						disabled={data.page <= 1}
-						onclick={() => goToPage(data.page - 1)}
+						disabled={currentPage <= 1}
+						onclick={() => goToPage(currentPage - 1)}
 					>
 						<svg
 							width="16"
@@ -185,40 +200,40 @@
 					</button>
 
 					<div class="pagination-numbers">
-						{#if data.page > 3}
+						{#if currentPage > 3}
 							<button class="pagination-num" onclick={() => goToPage(1)}>1</button>
-							{#if data.page > 4}
+							{#if currentPage > 4}
 								<span class="pagination-ellipsis">...</span>
 							{/if}
 						{/if}
 
-						{#each Array.from({ length: Math.min(5, data.totalPages) }, (_, i) => {
-							const start = Math.max(1, Math.min(data.page - 2, data.totalPages - 4));
+						{#each Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+							const start = Math.max(1, Math.min(currentPage - 2, totalPages - 4));
 							return start + i;
-						}).filter((p) => p >= 1 && p <= data.totalPages) as pageNum}
+						}).filter((p) => p >= 1 && p <= totalPages) as pageNum}
 							<button
 								class="pagination-num"
-								class:active={pageNum === data.page}
+								class:active={pageNum === currentPage}
 								onclick={() => goToPage(pageNum)}
 							>
 								{pageNum}
 							</button>
 						{/each}
 
-						{#if data.page < data.totalPages - 2}
-							{#if data.page < data.totalPages - 3}
+						{#if currentPage < totalPages - 2}
+							{#if currentPage < totalPages - 3}
 								<span class="pagination-ellipsis">...</span>
 							{/if}
-							<button class="pagination-num" onclick={() => goToPage(data.totalPages)}
-								>{data.totalPages}</button
+							<button class="pagination-num" onclick={() => goToPage(totalPages)}
+								>{totalPages}</button
 							>
 						{/if}
 					</div>
 
 					<button
 						class="pagination-btn next"
-						disabled={data.page >= data.totalPages}
-						onclick={() => goToPage(data.page + 1)}
+						disabled={currentPage >= totalPages}
+						onclick={() => goToPage(currentPage + 1)}
 					>
 						Next
 						<svg

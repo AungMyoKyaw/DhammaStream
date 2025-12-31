@@ -10,14 +10,16 @@ const config = {
 			pages: 'build',
 			assets: 'build',
 			fallback: '404.html',
-			precompress: true,
+			precompress: false, // Disabled for faster builds - GitHub Pages compresses automatically
 			strict: false
 		}),
 		paths: {
 			base: process.argv.includes('dev') ? '' : process.env.BASE_PATH || '/DhammaStream'
 		},
 		prerender: {
-			entries: ['/', '/teachers', '/browse'],
+			concurrency: process.env.CI ? 20 : 40, // Higher concurrency for faster builds
+			crawl: false, // Disable crawling overhead
+			entries: ['*', '/teachers', '/browse'], // Explicit entry points
 			handleHttpError: 'warn'
 		}
 	}
