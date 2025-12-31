@@ -112,8 +112,8 @@
 	<div class="container">
 		{#if filteredTeachers().length > 0}
 			<div class="teachers-grid">
-				{#each filteredTeachers() as teacher, i}
-					<div class="animate-scale-in stagger-{(i % 8) + 1}">
+				{#each filteredTeachers() as teacher (teacher.id)}
+					<div class="animate-scale-in stagger-{(filteredTeachers().indexOf(teacher) % 8) + 1}">
 						<TeacherCard {teacher} />
 					</div>
 				{/each}

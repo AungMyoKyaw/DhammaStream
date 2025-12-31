@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { base } from '$app/paths';
+	import { resolve } from '$app/paths';
 	const currentYear = new Date().getFullYear();
 </script>
 
@@ -38,10 +38,10 @@
 			<div class="footer-links">
 				<h4 class="footer-heading">Explore</h4>
 				<ul class="link-list">
-					<li><a href={base + '/teachers'}>Teachers</a></li>
-					<li><a href={base + '/browse?type=audio'}>Audio Teachings</a></li>
-					<li><a href={base + '/browse?type=video'}>Video Teachings</a></li>
-					<li><a href={base + '/browse?type=ebook'}>E-Books</a></li>
+					<li><a href={resolve('/teachers')}>Teachers</a></li>
+					<li><a href={resolve('/browse?type=audio')}>Audio Teachings</a></li>
+					<li><a href={resolve('/browse?type=video')}>Video Teachings</a></li>
+					<li><a href={resolve('/browse?type=ebook')}>E-Books</a></li>
 				</ul>
 			</div>
 
@@ -49,8 +49,8 @@
 			<div class="footer-links">
 				<h4 class="footer-heading">Languages</h4>
 				<ul class="link-list">
-					<li><a href={base + '/browse?language=english'}>English Content</a></li>
-					<li><a href={base + '/browse?language=myanmar'}>Myanmar Content</a></li>
+					<li><a href={resolve('/browse?language=english')}>English Content</a></li>
+					<li><a href={resolve('/browse?language=myanmar')}>Myanmar Content</a></li>
 				</ul>
 			</div>
 

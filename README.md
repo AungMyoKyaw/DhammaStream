@@ -15,6 +15,7 @@ Preserving and sharing the wisdom of the Buddha's teachings through audio, video
 ## ✨ Features
 
 ### 📚 Content Library
+
 - **28,835+ Media Files** across audio, video, and e-books
 - **212+ Venerable Teachers** from diverse Buddhist traditions
 - **Multi-language Support** (English and Myanmar/Burmese)
@@ -24,6 +25,7 @@ Preserving and sharing the wisdom of the Buddha's teachings through audio, video
   - E-books, texts, and commentaries
 
 ### 🎨 User Experience
+
 - **Modern, Responsive Design** with earthy Zen aesthetics
 - **Fast, Seamless Navigation** with client-side routing
 - **Static Site Generation** for optimal performance
@@ -32,6 +34,7 @@ Preserving and sharing the wisdom of the Buddha's teachings through audio, video
 - **Pagination Support** for large content collections
 
 ### 🏗️ Technical Highlights
+
 - **SvelteKit Framework** for modern full-stack development
 - **Svelte 5** with Runes for reactive state management
 - **Static Site Generation** via adapter-static
@@ -139,17 +142,20 @@ DhammaStream/
 ## 🛠️ Technology Stack
 
 ### Frontend
+
 - **[SvelteKit](https://kit.svelte.dev/)** - Full-stack framework for Svelte
 - **[Svelte 5](https://svelte.dev/)** - Reactive UI framework with Runes
 - **[Tailwind CSS v4](https://tailwindcss.com/)** - Utility-first CSS framework
 - **[TypeScript](https://www.typescriptlang.org/)** - Type-safe JavaScript
 
 ### Backend & Data
+
 - **[Better SQLite3](https://github.com/WiseLibs/better-sqlite3)** - Fast, synchronous SQLite database
 - **Bun SQLite** - Native SQLite integration for Bun runtime
 - **Server-side Rendering** with SvelteKit load functions
 
 ### Development & Build
+
 - **[Bun](https://bun.sh/)** - Fast JavaScript runtime and package manager
 - **[Vite](https://vitejs.dev/)** - Lightning-fast build tool with HMR
 - **[Vitest](https://vitest.dev/)** - Unit testing framework
@@ -158,6 +164,7 @@ DhammaStream/
 - **[Prettier](https://prettier.io/)** - Code formatting
 
 ### Deployment
+
 - **[adapter-static](https://kit.svelte.dev/docs/adapter-static)** - Static site generation
 - **GitHub Actions** - CI/CD automation
 - **GitHub Pages** - Free static hosting
@@ -213,6 +220,7 @@ CREATE TABLE categories (
 ## 🎨 Design System
 
 ### Color Palette
+
 DhammaStream uses a warm, earthy palette inspired by Buddhist aesthetics:
 
 - **Primary Accent**: Saffron/Gold (#c4883a) - inspired by Buddhist robes
@@ -224,6 +232,7 @@ DhammaStream uses a warm, earthy palette inspired by Buddhist aesthetics:
   - E-book: Brown (#8e7a6b)
 
 ### Typography
+
 - **Display Font**: Cormorant Garamond (serif)
 - **Body Font**: DM Sans (sans-serif)
 - **Myanmar Font**: Noto Sans Myanmar
@@ -291,12 +300,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📮 Contact
 
 For questions, suggestions, or issues:
+
 - Open an issue on [GitHub](https://github.com/aungmyokyaw/DhammaStream/issues)
 - Check the [Discussions](https://github.com/aungmyokyaw/DhammaStream/discussions) page
 
 ## 🌟 Support
 
 If you find this project helpful:
+
 - ⭐ Star the repository
 - 🐛 Report bugs or issues
 - 💡 Suggest new features
@@ -307,4 +318,4 @@ If you find this project helpful:
 
 **May all beings be happy. May all beings be free from suffering.**
 
-*Sadhu! Sadhu! Sadhu!*
+_Sadhu! Sadhu! Sadhu!_
