@@ -1,5 +1,6 @@
 <script lang="ts">
 	import './layout.css';
+	import 'plyr/dist/plyr.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import Navigation from '$lib/components/Navigation.svelte';
 	import Footer from '$lib/components/Footer.svelte';

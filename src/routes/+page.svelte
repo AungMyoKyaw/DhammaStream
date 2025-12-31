@@ -2,7 +2,7 @@
 	import type { PageData } from './$types';
 	import MediaCard from '$lib/components/MediaCard.svelte';
 	import TeacherCard from '$lib/components/TeacherCard.svelte';
-	import { base } from '$app/paths';
+	import { resolve } from '$app/paths';
 
 	let { data }: { data: PageData } = $props();
 </script>
@@ -45,7 +45,7 @@
 				သာသနာ့ဆရာတော်ကြီးများ၏ တရားတော်များကို နာယူလေ့လာပါ။
 			</p>
 			<div class="hero-actions">
-				<a href={base + '/browse'} class="btn-primary">
+				<a href={resolve('/browse')} class="btn-primary">
 					<svg
 						width="20"
 						height="20"
@@ -59,7 +59,7 @@
 					</svg>
 					Browse Library
 				</a>
-				<a href={base + '/teachers'} class="btn-secondary"> Meet Our Teachers </a>
+				<a href={resolve('/teachers')} class="btn-secondary"> Meet Our Teachers </a>
 			</div>
 		</div>
 
@@ -158,7 +158,7 @@
 				<h2 class="section-title">Venerable Teachers</h2>
 				<p class="section-subtitle myanmar-text">သာသနာ့ဆရာတော်ကြီးများ</p>
 			</div>
-			<a href={base + '/teachers'} class="view-all-link">
+			<a href={resolve('/teachers')} class="view-all-link">
 				View All Teachers
 				<svg
 					width="16"
@@ -173,8 +173,8 @@
 			</a>
 		</div>
 		<div class="teachers-grid">
-			{#each data.featuredTeachers as teacher, i}
-				<div class="animate-scale-in stagger-{i + 1}">
+			{#each data.featuredTeachers as teacher (teacher.id)}
+				<div class="animate-scale-in stagger-{data.featuredTeachers.indexOf(teacher) + 1}">
 					<TeacherCard {teacher} />
 				</div>
 			{/each}
@@ -190,7 +190,7 @@
 			<p class="section-description">Discover teachings in the format that suits your practice</p>
 		</div>
 		<div class="content-types-grid">
-			<a href={base + '/browse?type=audio'} class="content-type-card audio">
+			<a href={resolve('/browse?type=audio')} class="content-type-card audio">
 				<div class="content-type-icon">
 					<svg
 						width="48"
@@ -211,7 +211,7 @@
 					Dhamma talks, meditation instructions, and chanting from venerable teachers
 				</p>
 			</a>
-			<a href={base + '/browse?type=video'} class="content-type-card video">
+			<a href={resolve('/browse?type=video')} class="content-type-card video">
 				<div class="content-type-icon">
 					<svg
 						width="48"
@@ -231,7 +231,7 @@
 					Visual teachings, retreat recordings, and ceremonial events
 				</p>
 			</a>
-			<a href={base + '/browse?type=ebook'} class="content-type-card ebook">
+			<a href={resolve('/browse?type=ebook')} class="content-type-card ebook">
 				<div class="content-type-icon">
 					<svg
 						width="48"
@@ -263,7 +263,7 @@
 				<h2 class="section-title">Recent Additions</h2>
 				<p class="section-subtitle">Latest teachings added to our library</p>
 			</div>
-			<a href={base + '/browse'} class="view-all-link">
+			<a href={resolve('/browse')} class="view-all-link">
 				Browse All
 				<svg
 					width="16"
@@ -278,8 +278,8 @@
 			</a>
 		</div>
 		<div class="media-grid">
-			{#each data.recentMedia as media, i}
-				<div class="animate-slide-up stagger-{(i % 6) + 1}">
+			{#each data.recentMedia as media (media.id)}
+				<div class="animate-slide-up stagger-{(data.recentMedia.indexOf(media) % 6) + 1}">
 					<MediaCard {media} />
 				</div>
 			{/each}
@@ -291,7 +291,7 @@
 <section class="section languages">
 	<div class="container">
 		<div class="languages-grid">
-			<a href={base + '/browse?language=myanmar'} class="language-card myanmar">
+			<a href={resolve('/browse?language=myanmar')} class="language-card myanmar">
 				<div class="language-content">
 					<span class="language-label">Myanmar Language</span>
 					<h3 class="language-title myanmar-text">မြန်မာဘာသာ</h3>
@@ -310,7 +310,7 @@
 					</svg>
 				</div>
 			</a>
-			<a href={base + '/browse?language=english'} class="language-card english">
+			<a href={resolve('/browse?language=english')} class="language-card english">
 				<div class="language-content">
 					<span class="language-label">English Language</span>
 					<h3 class="language-title">English</h3>
@@ -359,7 +359,7 @@
 				All teachings are freely available for the benefit of all beings. May you find peace and
 				wisdom in the Dhamma.
 			</p>
-			<a href={base + '/browse'} class="btn-primary large"> Start Exploring </a>
+			<a href={resolve('/browse')} class="btn-primary large"> Start Exploring </a>
 		</div>
 	</div>
 </section>

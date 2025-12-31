@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Teacher } from '$lib/server/db';
-	import { base } from '$app/paths';
+	import { resolve } from '$app/paths';
 
 	interface Props {
 		teacher: Teacher;
@@ -38,7 +38,7 @@
 	}
 </script>
 
-<a href={base + '/teachers/' + teacher.id} class="teacher-card card-hover">
+<a href={resolve('/teachers/' + teacher.id)} class="teacher-card card-hover">
 	<div class="teacher-avatar" style="--avatar-color: {getAvatarColor(teacher.name)}">
 		{#if teacher.image_url}
 			<img src={teacher.image_url} alt={teacher.name} class="avatar-image" />

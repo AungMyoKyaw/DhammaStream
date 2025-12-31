@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import MediaCard from '$lib/components/MediaCard.svelte';
-	import { base } from '$app/paths';
+	import { resolve } from '$app/paths';
 
 	let { data }: { data: PageData } = $props();
 
@@ -66,9 +66,9 @@
 	<div class="hero-content container">
 		<!-- Breadcrumb -->
 		<nav class="breadcrumb">
-			<a href={base + '/'}>Home</a>
+			<a href={resolve('/')} class="breadcrumb-link">Home</a>
 			<span class="breadcrumb-sep">/</span>
-			<a href={base + '/teachers'}>Teachers</a>
+			<a href={resolve('/teachers')} class="breadcrumb-link">Teachers</a>
 			<span class="breadcrumb-sep">/</span>
 			<span class="breadcrumb-current">{data.teacher.name}</span>
 		</nav>
@@ -219,8 +219,8 @@
 		<!-- Media Grid -->
 		{#if displayedMedia().length > 0}
 			<div class="media-grid">
-				{#each displayedMedia() as media, i}
-					<div class="animate-scale-in stagger-{(i % 8) + 1}">
+				{#each displayedMedia() as media (media.id)}
+					<div class="animate-scale-in stagger-{(displayedMedia().indexOf(media) % 8) + 1}">
 						<MediaCard {media} />
 					</div>
 				{/each}

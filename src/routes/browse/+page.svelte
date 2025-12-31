@@ -171,8 +171,8 @@
 	<div class="container">
 		{#if paginatedMedia().length > 0}
 			<div class="media-grid">
-				{#each paginatedMedia() as media, i}
-					<div class="animate-scale-in stagger-{(i % 8) + 1}">
+				{#each paginatedMedia() as media (media.id)}
+					<div class="animate-scale-in stagger-{(paginatedMedia().indexOf(media) % 8) + 1}">
 						<MediaCard {media} />
 					</div>
 				{/each}
@@ -210,7 +210,7 @@
 						{#each Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
 							const start = Math.max(1, Math.min(currentPage - 2, totalPages - 4));
 							return start + i;
-						}).filter((p) => p >= 1 && p <= totalPages) as pageNum}
+						}).filter((p) => p >= 1 && p <= totalPages) as pageNum (pageNum)}
 							<button
 								class="pagination-num"
 								class:active={pageNum === currentPage}

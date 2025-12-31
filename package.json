@@ -45,6 +45,9 @@
 	},
 	"dependencies": {
 		"@types/better-sqlite3": "^7.6.13",
-		"better-sqlite3": "^12.5.0"
+		"better-sqlite3": "^12.5.0",
+		"lucide-svelte": "^0.562.0",
+		"pdfjs-dist": "^5.4.530",
+		"plyr": "^3.8.3"
 	}
 }

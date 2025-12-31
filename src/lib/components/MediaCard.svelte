@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Media } from '$lib/server/db';
-	import { base } from '$app/paths';
+	import { resolve } from '$app/paths';
 
 	interface Props {
 		media: Media;
@@ -8,20 +8,6 @@
 	}
 
 	let { media, compact = false }: Props = $props();
-
-	// Get icon based on media type
-	function getTypeIcon(type: string): string {
-		switch (type) {
-			case 'audio':
-				return 'audio';
-			case 'video':
-				return 'video';
-			case 'ebook':
-				return 'ebook';
-			default:
-				return 'audio';
-		}
-	}
 
 	// Format duration if available
 	function formatDuration(duration: string | null): string {
@@ -36,7 +22,7 @@
 </script>
 
 <a
-	href={base + '/media/' + media.id}
+	href={resolve('/media/' + media.id)}
 	class="media-card media-{media.type} card-hover"
 	class:compact
 >
