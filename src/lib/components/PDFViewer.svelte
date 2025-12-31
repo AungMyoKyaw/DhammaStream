@@ -331,7 +331,7 @@
 
 			<div class="pdf-canvas-container">
 				{#if pdfCanvas}
-					<canvas bind:this={pdfCanvas} />
+					<canvas bind:this={pdfCanvas}></canvas>
 				{/if}
 			</div>
 		{/if}

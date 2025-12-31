@@ -4,6 +4,18 @@
 	import { resolve } from '$app/paths';
 	import MediaFallback from './MediaFallback.svelte';
 
+	function resolveUrl(url: string): string {
+		// Only use resolve for internal paths, return external URLs as-is
+		try {
+			const urlObj = new URL(url);
+			// If it has a protocol, it's external
+			return url;
+		} catch {
+			// If URL parsing fails, assume it's a relative/internal path
+			return resolve(url);
+		}
+	}
+
 	interface Props {
 		url: string;
 		title: string;
@@ -12,7 +24,7 @@
 
 	let { url, title, downloadUrl = url }: Props = $props();
 
-	let audioElement: HTMLAudioElement;
+	let audioElement: HTMLAudioElement | undefined;
 	let player: unknown = null;
 	let isLoading = $state(true);
 	let error = $state<string | null>(null);
@@ -166,7 +178,7 @@
 		</audio>
 
 		<div class="download-fallback">
-			<a href={resolve(downloadUrl)} download class="download-button">
+			<a href={resolveUrl(downloadUrl)} download class="download-button">
 				<svg
 					width="16"
 					height="16"
