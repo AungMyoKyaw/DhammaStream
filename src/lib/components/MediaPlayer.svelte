@@ -12,7 +12,7 @@
 	let { media }: Props = $props();
 
 	// Determine download URL (use media URL as download URL)
-	const downloadUrl = media.url;
+	const downloadUrl = $derived(media.url);
 </script>
 
 {#if media.type === 'audio'}

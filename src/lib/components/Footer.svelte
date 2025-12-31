@@ -219,12 +219,6 @@
 		color: var(--color-text-muted);
 	}
 
-	.blessing {
-		font-size: 0.85rem;
-		color: var(--color-accent);
-		font-style: italic;
-	}
-
 	.footer-decoration {
 		position: absolute;
 		bottom: 0;

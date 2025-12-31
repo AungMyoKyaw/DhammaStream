@@ -4,6 +4,15 @@
 	import { resolve } from '$app/paths';
 	import MediaFallback from './MediaFallback.svelte';
 
+	function resolveUrl(url: string): string {
+		try {
+			const urlObj = new URL(url);
+			return url;
+		} catch {
+			return resolve(url);
+		}
+	}
+
 	interface Props {
 		url: string;
 		title: string;
@@ -13,7 +22,7 @@
 
 	let { url, title, downloadUrl = url, poster }: Props = $props();
 
-	let videoElement: HTMLVideoElement;
+	let videoElement: HTMLVideoElement | undefined;
 	let player: unknown = null;
 	let isLoading = $state(true);
 	let error = $state<string | null>(null);
@@ -180,7 +189,7 @@
 		</div>
 
 		<div class="download-fallback">
-			<a href={resolve(downloadUrl)} download class="download-button">
+			<a href={resolveUrl(downloadUrl)} download class="download-button">
 				<svg
 					width="16"
 					height="16"
