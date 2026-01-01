@@ -6,7 +6,7 @@
 
 	function resolveUrl(url: string): string {
 		try {
-			const urlObj = new URL(url);
+			new URL(url);
 			return url;
 		} catch {
 			return resolve(url);
@@ -189,6 +189,7 @@
 		</div>
 
 		<div class="download-fallback">
+			<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
 			<a href={resolveUrl(downloadUrl)} download class="download-button">
 				<svg
 					width="16"

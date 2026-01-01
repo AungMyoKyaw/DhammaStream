@@ -7,7 +7,7 @@
 	function resolveUrl(url: string): string {
 		// Only use resolve for internal paths, return external URLs as-is
 		try {
-			const urlObj = new URL(url);
+			new URL(url);
 			// If it has a protocol, it's external
 			return url;
 		} catch {
@@ -178,6 +178,7 @@
 		</audio>
 
 		<div class="download-fallback">
+			<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
 			<a href={resolveUrl(downloadUrl)} download class="download-button">
 				<svg
 					width="16"
