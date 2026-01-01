@@ -39,9 +39,12 @@
 				<h4 class="footer-heading">Explore</h4>
 				<ul class="link-list">
 					<li><a href={resolve('/teachers')}>Teachers</a></li>
-					<li><a href={resolve('/browse?type=audio')}>Audio Teachings</a></li>
-					<li><a href={resolve('/browse?type=video')}>Video Teachings</a></li>
-					<li><a href={resolve('/browse?type=ebook')}>E-Books</a></li>
+					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+					<li><a href={`${resolve('/browse')}?type=audio`}>Audio Teachings</a></li>
+					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+					<li><a href={`${resolve('/browse')}?type=video`}>Video Teachings</a></li>
+					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+					<li><a href={`${resolve('/browse')}?type=ebook`}>E-Books</a></li>
 				</ul>
 			</div>
 
@@ -49,8 +52,10 @@
 			<div class="footer-links">
 				<h4 class="footer-heading">Languages</h4>
 				<ul class="link-list">
-					<li><a href={resolve('/browse?language=english')}>English Content</a></li>
-					<li><a href={resolve('/browse?language=myanmar')}>Myanmar Content</a></li>
+					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+					<li><a href={`${resolve('/browse')}?language=english`}>English Content</a></li>
+					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+					<li><a href={`${resolve('/browse')}?language=myanmar`}>Myanmar Content</a></li>
 				</ul>
 			</div>
 
@@ -61,6 +66,16 @@
 					<li><span class="info-text">Free Dhamma Resources</span></li>
 					<li><span class="info-text">212+ Teachers</span></li>
 					<li><span class="info-text">28,000+ Media Files</span></li>
+					<li>
+						<a
+							href="https://github.com/AungMyoKyaw/DhammaStream"
+							target="_blank"
+							rel="noopener noreferrer"
+							class="external-link"
+						>
+							Open Source Project
+						</a>
+					</li>
 				</ul>
 			</div>
 		</div>
@@ -191,6 +206,17 @@
 	.info-text {
 		font-size: 0.9rem;
 		color: var(--color-text-muted);
+	}
+
+	.external-link {
+		font-size: 0.9rem;
+		color: var(--color-text-secondary);
+		transition: color var(--transition-fast);
+		text-decoration: none;
+	}
+
+	.external-link:hover {
+		color: var(--color-accent);
 	}
 
 	.footer-divider {
