@@ -24,7 +24,7 @@
 
 	let { url, title, downloadUrl = url }: Props = $props();
 
-	let audioElement: HTMLAudioElement | undefined;
+	let audioElement = $state<HTMLAudioElement | undefined>(undefined);
 	let player: unknown = null;
 	let isLoading = $state(true);
 	let error = $state<string | null>(null);
