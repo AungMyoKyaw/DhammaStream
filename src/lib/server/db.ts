@@ -4,12 +4,25 @@ import path from 'path';
 const dbPath = path.resolve('dhamma.db');
 const db = new Database(dbPath, { readonly: true });
 
+// Database configuration constants
+const DB_CONFIG = {
+	// 64MB cache for better performance
+	CACHE_SIZE_KB: -64000,
+	// 30GB memory-mapped I/O for faster reads
+	MMAP_SIZE_BYTES: 30_000_000_000,
+	// 30 days retention for resume playback data
+	RESUME_DATA_RETENTION_DAYS: 30
+} as const;
+
 // Optimize database for concurrent reads and performance
 db.exec('PRAGMA journal_mode = WAL;');
 db.exec('PRAGMA synchronous = NORMAL;');
-db.exec('PRAGMA cache_size = -64000;'); // 64MB cache
-db.exec('PRAGMA temp_store = MEMORY;'); // Store temp tables in RAM
-db.exec('PRAGMA mmap_size = 30000000000;'); // Enable memory-mapped I/O
+db.exec(`PRAGMA cache_size = ${DB_CONFIG.CACHE_SIZE_KB};`);
+db.exec('PRAGMA temp_store = MEMORY;');
+db.exec(`PRAGMA mmap_size = ${DB_CONFIG.MMAP_SIZE_BYTES};`);
+
+// Export configuration for use in other modules
+export { DB_CONFIG };
 
 // Types
 export interface Teacher {
@@ -73,7 +86,7 @@ export interface Stats {
 	totalEnglishContent: number;
 }
 
-// Get all teachers with media count
+// Get all teachers with media count - Optimized query
 export function getAllTeachers(): Teacher[] {
 	const stmt = db.prepare(`
 		SELECT t.*, COUNT(m.id) as media_count 
@@ -181,37 +194,32 @@ export function getAllCategories(): Category[] {
 	return stmt.all() as Category[];
 }
 
-// Get statistics
+// Get statistics - Optimized to use a single query
 export function getStats(): Stats {
-	const teacherCount = db.prepare('SELECT COUNT(*) as count FROM teachers').get() as {
-		count: number;
-	};
-	const mediaCount = db.prepare('SELECT COUNT(*) as count FROM media').get() as { count: number };
-	const audioCount = db
-		.prepare("SELECT COUNT(*) as count FROM media WHERE type = 'audio'")
-		.get() as { count: number };
-	const videoCount = db
-		.prepare("SELECT COUNT(*) as count FROM media WHERE type = 'video'")
-		.get() as { count: number };
-	const ebookCount = db
-		.prepare("SELECT COUNT(*) as count FROM media WHERE type = 'ebook'")
-		.get() as { count: number };
-	const myanmarCount = db
-		.prepare("SELECT COUNT(*) as count FROM media WHERE language = 'myanmar'")
-		.get() as { count: number };
-	const englishCount = db
-		.prepare("SELECT COUNT(*) as count FROM media WHERE language = 'english'")
-		.get() as { count: number };
+	const stmt = db.prepare(`
+		SELECT 
+			COUNT(DISTINCT t.id) as totalTeachers,
+			COUNT(m.id) as totalMedia,
+			SUM(CASE WHEN m.type = 'audio' THEN 1 ELSE 0 END) as totalAudio,
+			SUM(CASE WHEN m.type = 'video' THEN 1 ELSE 0 END) as totalVideo,
+			SUM(CASE WHEN m.type = 'ebook' THEN 1 ELSE 0 END) as totalEbooks,
+			SUM(CASE WHEN m.language = 'myanmar' THEN 1 ELSE 0 END) as totalMyanmarContent,
+			SUM(CASE WHEN m.language = 'english' THEN 1 ELSE 0 END) as totalEnglishContent
+		FROM teachers t
+		LEFT JOIN media m ON t.id = m.teacher_id
+	`);
 
-	return {
-		totalTeachers: teacherCount.count,
-		totalMedia: mediaCount.count,
-		totalAudio: audioCount.count,
-		totalVideo: videoCount.count,
-		totalEbooks: ebookCount.count,
-		totalMyanmarContent: myanmarCount.count,
-		totalEnglishContent: englishCount.count
+	const result = stmt.get() as {
+		totalTeachers: number;
+		totalMedia: number;
+		totalAudio: number;
+		totalVideo: number;
+		totalEbooks: number;
+		totalMyanmarContent: number;
+		totalEnglishContent: number;
 	};
+
+	return result;
 }
 
 // Get featured teachers (top 6 by media count)

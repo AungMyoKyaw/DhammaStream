@@ -22,7 +22,7 @@
 
 	let { url, title, downloadUrl = url, poster }: Props = $props();
 
-	let videoElement: HTMLVideoElement | undefined;
+	let videoElement = $state<HTMLVideoElement | undefined>(undefined);
 	let player: unknown = null;
 	let isLoading = $state(true);
 	let error = $state<string | null>(null);
