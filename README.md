@@ -3,6 +3,10 @@
 > A modern, high-performance web platform for streaming Buddhist teachings from venerable teachers.
 
 [![Deploy to GitHub Pages](https://github.com/aungmyokyaw/DhammaStream/actions/workflows/deploy.yml/badge.svg)](https://github.com/aungmyokyaw/DhammaStream/actions/workflows/deploy.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Bun](https://img.shields.io/badge/runtime-bun-black?logo=bun)](https://bun.sh)
+[![SvelteKit](https://img.shields.io/badge/framework-SvelteKit-ff3e00?logo=svelte&logoColor=white)](https://kit.svelte.dev)
+[![TypeScript](https://img.shields.io/badge/language-TypeScript-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 
 ## 📖 About
 
@@ -271,20 +275,35 @@ BASE_PATH=/DhammaStream bun run build
 
 Contributions are welcome! This project aims to make Buddhist teachings accessible to all.
 
-### Guidelines
+### Quick Start
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Clone your fork: `git clone https://github.com/<your-username>/DhammaStream.git`
+3. Install dependencies: `bun install`
+4. Start development server: `bun run dev`
+5. Make your changes and test: `bun run check && bun test`
+
+### Pull Request Process
+
+1. Create a feature branch: `git checkout -b feature/amazing-feature`
+2. Make your changes following the code standards below
+3. Run linting and tests: `bun run lint && bun test`
+4. Commit with conventional commits: `git commit -m 'feat: add amazing feature'`
+5. Push and open a Pull Request
 
 ### Code Standards
 
-- Follow the existing code style
-- Write meaningful commit messages
-- Add tests for new features
-- Update documentation as needed
+- **Style**: Follow existing code style, 2-space indentation
+- **Commits**: Use [Conventional Commits](https://www.conventionalcommits.org/)
+  - `feat:` - New features
+  - `fix:` - Bug fixes
+  - `docs:` - Documentation changes
+  - `refactor:` - Code refactoring
+  - `test:` - Adding/updating tests
+  - `chore:` - Maintenance tasks
+- **Testing**: Add tests for new features
+- **Documentation**: Update documentation as needed
+- **Type Safety**: Ensure TypeScript passes with `bun run check`
 
 ## 📝 License
 

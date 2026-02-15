@@ -25,3 +25,35 @@ vite.config.ts.timestamp-*
 # SQLite WAL files
 *.db-wal
 *.db-shm
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+bun-debug.log*
+
+# Test Coverage
+coverage/
+.nyc_output/
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# TypeScript
+*.tsbuildinfo
+
+# Package Manager Lock Files (project uses bun.lock)
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Debug
+.debug/
+
+# Temporary files
+*.tmp
+*.temp
